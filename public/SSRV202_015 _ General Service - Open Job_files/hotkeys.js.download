@@ -1,0 +1,293 @@
+var mintAjaxForHotKey          =   0;
+var blnSearchDataForHotKey    =   false;
+// hotkeys.js
+var lobjNewVal ;
+var lobjOldVal ;
+//If F1 pressed - call save function by using showHelp
+document.onhelp = showHelp;
+
+//code to detect the key pressed
+document.onkeydown = detectKey;
+
+//function to do differnt operations
+function detectKey(){
+    var lstrKeyCode = event.keyCode;
+/* Change Begin by AW on 29-Mar-2007 */
+/* changed for Backspace handling Backspace Key code is 8*/
+    var lobjEvSrc   = window.event.srcElement.type;
+   
+    if(( lstrKeyCode >= 112 && lstrKeyCode <= 121 ) || 
+		 ( lstrKeyCode == 13 && lobjEvSrc != 'select-one' ) || 
+         ( lstrKeyCode == 8 && lobjEvSrc != 'text' && lobjEvSrc != 'textarea' && lobjEvSrc != 'password' )){
+
+/* Change End by AW on 29-Mar-2007 */
+        //stop propagation of keys
+        window.event.keyCode = 8;
+        window.event.cancelBubble = true;
+        window.event.returnValue = false;
+    }else if(lstrKeyCode == 27){
+    	window.event.cancelBubble = true;
+    	window.event.returnValue = false;
+        return false;
+    }else{
+        return true;
+    }
+//    addHidden();
+    switch(lstrKeyCode){
+
+        //Enter pressed - call save data function
+        case 13:   
+        return false;
+        if (isButtonDisabled('processOk')){
+                            return false;
+                        }
+                        return processOk(); 
+                 break;
+
+        //F2 pressed - call save data function
+        case 113: 
+        return false;
+            if (isButtonDisabled('searchData')){
+                return false;
+            }
+            if(mintAjaxForHotKey != 1){
+                return searchData();
+            }else{
+                blnSearchDataForHotKey = true;
+                mintAjaxForHotKey = false;
+                return ;
+            }
+            break;
+
+        //F3 pressed - call print data function
+        case 114: 
+        return false; 
+                        if (isButtonDisabled('printData')){
+                            return false;
+                        }
+                        return printData(); 
+                  break;
+
+        //F4 pressed - call save data function
+        case 115: 
+        return false;
+                if (isButtonDisabled('processBack')){
+                    return false;
+                }
+                return processBack();  break;
+
+        //F5 pressed - call generate bill  function
+        case 116:  
+        return false;
+          if (isButtonDisabled('processGenBill')){
+                            return false;
+                        }
+                        return processGenBill(); 
+                  break;
+
+        //F6 pressed - call logOff function
+        case 117: return processLogOff(); break;
+
+        //F7 pressed - call delete row function
+        case 118:  if (isButtonDisabled('deleteRow')){
+                            return false;
+                        }
+                        return deleteRow('DataTable'); 
+                  break;
+
+        //F8 pressed - call process ok function
+        case 119: return false; break;
+
+        //F9 pressed - call process cancel function
+        case 120: 
+                    if (isButtonDisabled('processCancel')){
+                            return false;
+                        }
+                        return processCancel(); 
+                  break;
+
+        //F10 pressed - call add row function
+        case 121: 
+                        if (isButtonDisabled('addRow')){
+                            return false;
+                        }
+                        return addRow(); 
+                  break;
+    }
+    return false;
+}
+
+function callOnblur()
+{
+    var lobjClkElm = window.event.srcElement ;
+    if( lobjClkElm.type == 'text'       || 
+        lobjClkElm.type == 'checkbox'   || 
+        lobjClkElm.type == 'textarea'   ) {
+        lobjClkElm.fireEvent("onblur");
+        fireOnChange();
+    }
+    if(lobjClkElm.type == 'image'|| 
+        lobjClkElm.type == 'select-one' || 
+        lobjClkElm.type == 'radio'){
+        lobjClkElm.fireEvent("onblur");
+    }
+}
+
+function isButtonDisabled(operation)
+{   
+    var docElements = document.getElementsByTagName("input");
+    
+    var lblnStatus = true;
+    if(docElements.length > 0 ) {
+        for (i = 0; i < docElements.length ; i++ ){
+            if(docElements[i].type == 'image'){
+                var attrib = docElements[i].attributes ;
+                var oAttr = attrib.getNamedItem("onclick");
+                if( oAttr != null ) {
+                    if(oAttr.value != null && oAttr.value.indexOf(operation) > -1 ){
+                        if(docElements[i].disabled){
+                            lblnStatus = true;
+                            break;
+                        }else{
+                            //call onblur
+                            callOnblur();
+                            lblnStatus = false;
+                            break;
+                        }
+                    }
+                } 
+            }
+        }
+    }
+    return lblnStatus;
+}
+// function for process ok - Enter 
+function processOk() {
+    return false;
+}
+
+// function for calling save data - F1
+function showHelp() {
+
+    var lobjClkElm = window.event.srcElement ;
+    if( lobjClkElm.type == 'text'       || 
+        lobjClkElm.type == 'checkbox'   || 
+        lobjClkElm.type == 'textarea'   || 
+        lobjClkElm.type == 'select-one' || 
+        lobjClkElm.type == 'radio') {
+        lobjNewVal = lobjClkElm.value;
+    }
+    if (isButtonDisabled('saveData')){
+        return false;
+    }
+    return false;    
+}
+
+// function for save data - show Help
+function saveData(){
+    return false;
+}
+
+// function for search data - F2
+function searchData() {
+    return false;
+}
+
+// function for print data - F3
+function printData() {
+    return false;
+}
+
+function fireOnChange()
+{
+    var lobjClkElm = window.event.srcElement ;
+    lobjClkElm.fireEvent("onchange");
+    return false;
+}
+
+// function for process back - F4
+function processBack() {
+    return false;
+}
+
+// function for process generate bill - F5
+function processGenBill(){
+    return false;
+}
+
+//function for processing logoff - F6
+function processLogOff(){
+    callOnblur();
+    if(checkNoChangesToSave_()) {
+         if(!showQuestion("FW0004", FW0004)) {
+             return false;
+         }
+     }
+/* Change Begin by AW on 29-Mar-2007 */
+/* changed for Logoff to main and not child page*/
+
+    window.close();
+    window.opener.document.URL= lstrCtxPath + '/do/openlogin' + '?screenIdFw=screenId';
+
+/* Change End by AW on 29-Mar-2007 */
+    return false;
+}
+
+// function for delete row -F7
+function deleteRow() {
+    return false;
+}
+
+// function for refresh screen -F8
+function processRefresh() {
+    if(checkNoChangesToSave_()) {
+        if(!showQuestion("FW0004", FW0004)) {
+            return false;
+        }
+    }
+
+    var lstrRefreshURL = document.AppJsp.refreshURL.value;
+
+    if(lstrRefreshURL != null && lstrRefreshURL.length > 0){
+        document.forms[0].action = lstrRefreshURL;
+        document.forms[0].submit();
+    }
+    return false;
+}
+
+// function for process cancel- F9
+function processCancel() {
+    return false;
+}
+
+// function for add row -F10
+function addRow() {
+    return false;
+}
+
+function checkDataModified() {
+	return false;
+}
+function clickIE4(){
+	if (event.button==2){
+		return false;
+	}
+}
+
+function clickNS4(e){
+	if (document.layers||document.getElementById&&!document.all){
+		if (e.which==2||e.which==3){
+			return false;
+		}
+	}
+}
+
+if (document.layers){
+	document.captureEvents(Event.MOUSEDOWN);
+	document.onmousedown=clickNS4;
+}else if (document.all&&!document.getElementById){
+	document.onmousedown=clickIE4;
+}
+
+document.oncontextmenu=new Function("return false;");
+

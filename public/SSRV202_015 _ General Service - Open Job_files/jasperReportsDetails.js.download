@@ -1,0 +1,122 @@
+function submitJasperReport(){
+	var url			= '';
+	var dlrCd 		= '';
+	var brcCd 		= '';
+	var docNo 		= '';
+	var userID		= '';
+	var docType		= '';
+	var invDocType	= '';
+	var estNo		= '';
+	var apprFlg		= '';
+	var reptFlg		= '';
+	var dupFlg		= '';
+	var fixedURL	= arguments[2];
+	
+    if(arguments[0]=="RSRV019"){
+		//Reciept
+		dlrCd 			= arguments[1].substring(12, 17);
+		brcCd 			= arguments[1].substring(18, 23);
+		docNo 			= arguments[1].substring(24, 34);
+		var jobType 	= arguments[1].substring(35, 37);
+		var payType		= arguments[1].substring(38, 39);
+		var jobNo 		= arguments[1].substring(40, 51);
+		userID			= arguments[1].substring(56, 63);
+		url = fixedURL+'module=RSRV019&reportDetails=RSRV019%23'+dlrCd+'%23'+brcCd+'%23'+docNo+'%23'+jobType+'%23'+payType+'%23'+jobNo+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+    if(arguments[0]=="RSRV204_015"){
+		dlrCd 			= arguments[1].substring(12, 17);
+		brcCd 			= arguments[1].substring(18, 23);
+		docType 		= arguments[1].substring(24, 27);
+		docNo 			= arguments[1].substring(28, 38);
+		apprFlg			= arguments[1].substring(39, 40);
+		reptFlg			= arguments[1].substring(41, 42);
+		userID			= arguments[1].substring(43, 50);
+		url = fixedURL+'module=RSRV204_015&reportDetails=RSRV204_015%23'+dlrCd+'%23'+brcCd+'%23'+docType+'%23'+docNo+'%23'+apprFlg+'%23'+reptFlg+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+    if(arguments[0]=="RSRV204_015_1"){
+		dlrCd 			= arguments[1].substring(14, 19);
+		brcCd 			= arguments[1].substring(20, 25);
+		docType 		= arguments[1].substring(26, 29);
+		docNo 			= arguments[1].substring(30, 40);
+		apprFlg			= arguments[1].substring(41, 42);
+		reptFlg			= arguments[1].substring(43, 44);
+		userID			= arguments[1].substring(45, 52);
+		url = fixedURL+'module=RSRV204_015_1&reportDetails=RSRV204_015_1%23'+dlrCd+'%23'+brcCd+'%23'+docType+'%23'+docNo+'%23'+apprFlg+'%23'+reptFlg+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+	if(arguments[0]=="RSRV204_015_NEW"){
+		dlrCd 			= arguments[1].substring(12, 17);
+		brcCd 			= arguments[1].substring(18, 23);
+		docType 		= arguments[1].substring(24, 27);
+		docNo 			= arguments[1].substring(28, 38);
+		apprFlg			= arguments[1].substring(39, 40);
+		reptFlg			= arguments[1].substring(41, 42);
+		userID			= arguments[1].substring(43, 50);
+		url = fixedURL+'module=RSRV204_015_NEW&reportDetails=RSRV204_015_NEW%23'+dlrCd+'%23'+brcCd+'%23'+docType+'%23'+docNo+'%23'+apprFlg+'%23'+reptFlg+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+    if(arguments[0]=="RSRV206_017_1"){
+    	//BP Print Invoice
+		dlrCd 			= arguments[1].substring(14, 19);
+		brcCd 			= arguments[1].substring(20, 25);
+		docType 		= arguments[1].substring(26, 29);
+		docNo 			= arguments[1].substring(30, 40);
+		invDocType		= arguments[1].substring(41, 42);
+		estNo 			= arguments[1].substring(43, 53);
+		dupFlg			= arguments[1].substring(54, 55);
+		userID			= arguments[1].substring(58, 65);
+		url = fixedURL+'module=RSRV206_17_1&reportDetails=RSRV206_17_1%23'+dlrCd+'%23'+brcCd+'%23'+docType+'%23'+docNo+'%23'+invDocType+'%23'+estNo+'%23'+dupFlg+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+    if(arguments[0]=="RSRV206_017_2"){
+    	//BP Preview Invoice
+		dlrCd 			= arguments[1].substring(14, 19);
+		brcCd 			= arguments[1].substring(20, 25);
+		docType 		= arguments[1].substring(26, 30);
+		docNo 			= arguments[1].substring(31, 41);
+		if(docNo.charAt(0)=="#"){
+			docNo 			= "";
+			invDocType		= arguments[1].substring(32, 33);
+			estNo 			= arguments[1].substring(34, 44);
+			dupFlg			= arguments[1].substring(45, 46);
+			userID			= arguments[1].substring(47, 54);
+		}else{
+			invDocType		= arguments[1].substring(42, 43);
+			estNo 			= arguments[1].substring(44, 54);
+			dupFlg			= arguments[1].substring(55, 56);
+			userID			= arguments[1].substring(59, 66);
+		}
+		url = fixedURL+'module=RSRV206_17_1&reportDetails=RSRV206_17_1%23'+dlrCd+'%23'+brcCd+'%23'+docType+'%23'+docNo+'%23'+invDocType+'%23'+estNo+'%23'+dupFlg+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+    if(arguments[0]=="RSRV206_017_NEW"){
+    	//GS Print Invoice
+    	dlrCd 			= arguments[1].substring(12, 17);
+		brcCd 			= arguments[1].substring(18, 23);
+		docType 		= arguments[1].substring(24, 27);
+		docNo 			= arguments[1].substring(28, 38);
+		invDocType		= arguments[1].substring(39, 40);
+		estNo 			= arguments[1].substring(41, 51);
+		dupFlg			= arguments[1].substring(52, 53);
+		userID			= arguments[1].substring(56, 63);
+		url = fixedURL+'module=RSRV206_017_NEW&reportDetails=RSRV206_017_NEW%23'+dlrCd+'%23'+brcCd+'%23'+docType+'%23'+docNo+'%23'+invDocType+'%23'+estNo+'%23'+dupFlg+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+    if(arguments[0]=="RSRV206_017_PRE"){
+    	//GS Preview Invoice
+    	dlrCd 			= arguments[1].substring(12, 17);
+		brcCd 			= arguments[1].substring(18, 23);
+		docType 		= arguments[1].substring(24, 28);
+		docNo 			= arguments[1].substring(29, 39);
+		invDocType		= arguments[1].substring(40, 41);
+		if(invDocType=="#"){
+			invDocType="";
+			estNo 			= arguments[1].substring(41, 51);
+			dupFlg			= arguments[1].substring(52, 53);
+			userID			= arguments[1].substring(56, 63);
+		}else{
+			estNo 			= arguments[1].substring(42, 52);
+			dupFlg			= arguments[1].substring(53, 54);
+			userID			= arguments[1].substring(57, 64);
+		}
+		
+		url = fixedURL+'module=RSRV206_017_NEW&reportDetails=RSRV206_017_NEW%23'+dlrCd+'%23'+brcCd+'%23'+docType+'%23'+docNo+'%23'+invDocType+'%23'+estNo+'%23'+dupFlg+'%23'+userID+'&userId=AKS&displayType=PDF';
+	}
+	return url;
+}
+

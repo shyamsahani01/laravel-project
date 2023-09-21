@@ -1,0 +1,465 @@
+var excludeAjaxCheckList = new Array(
+    "RADM001",        "RADM002",        "REPC001",        "RPRT013",
+    "RPRT209_030",    "RPRT210_031",    "RPRT211_032",    "RPRT038",
+    "RPRT039",         "RPRT044",        "RSRV204_015",     "RSRV205_016",
+    "RSRV206_017",     "RSRV207_018",     "RSRV208_019",     "RSRV020",
+    "RSRV048",      "RSRV216",      "RSRV204_015_1","RSRV206_017_1",
+    "RPRT211_032_1", "RSRV218", "RSRV206_017_BGST", "RSRV206_017_1_BGST");
+// Added for GST by Vignesh on 25/06/2017
+var tmtReportList = new Array();
+var excludeReportDebugInfo = new Array();
+var exportPDFExcel = new Array(
+    "RPRT001",        "RPRT002",         "RPRT003",         "RPRT004",
+    "RPRT005",         "RPRT006",         "RPRT007",         "RPRT008",
+    "RPRT012",         "RPRT013",         "RPRT019",         "RPRT021",
+    "RPRT204_024",     "RPRT205_025",    "RPRT026",         "RPRT209_030",
+    "RPRT210_031",     "RPRT211_032",     "REST004",         "RSRV003",
+    "RSRV200_004",     "RSRV204_015",     "RSRV011",         "RSRV013",
+    "RSRV205_016",     "RSRV206_017",     "RSRV207_018",     "RSRV208_019",
+    "RSRV020",         "RSRV039",         "RMST204_001",     "RMST205_004",
+    "REPC001",         "RWNT001",         "RWNT200_002",     "RWNT201_003",
+    "RWNT202_004",     "RADM001",        "RADM002",        "RSRV052",
+    "RPRT213",      "RSRV045",        "RSRV202_009",    "RMST206",
+    "RMST207",      "RCMP001",        "RCMP004",        "REST006",
+    "RPRT050",        "RPRT214",        "RPRT215",
+    "RSRV210",        "RSRV212",        "RSRV213",      "RSRV216",
+    "RMST208",      "RSRV204_015_1",    "RSRV206_017_1", "RPRT211_032_1",
+    "RSRV218", 		"RSRV206_017_BGST", "RSRV206_017_1_BGST");
+//Added for GST by Vignesh on 25/06/2017
+Array.prototype.contains = function (element) {
+ for (var i = 0; i < this.length; i++) {
+     if (this[i] == element) {
+         return true;
+     }
+ }
+return false;
+}
+
+function callReportFromMenu(){
+    // Set Error Flag to true so that Buttons are not disabled of parent
+         var module=callReportFromMenu.arguments[0];
+
+         if(excludeReportDebugInfo.contains(module)){
+           callReport1(arguments[0],arguments[1]);
+           return false;
+        }
+
+        try{
+            document.getElementById('btnPrint').disabled = true;
+            document.getElementById('btnPrint').style.filter ='alpha(opacity=40)';
+        }catch(error){
+        }
+
+        isErrFlg = true;
+
+
+        //REPORTNAME#NO OF PARAMS#PARAM1#PARAM2#PARAM3#PARAM4(userid)
+        var reportDetails=callReportFromMenu.arguments[1];
+        callAjaxForReportProcessController(module, reportDetails);
+
+}
+
+function callGPFromMenu(){
+    // Set Error Flag to true so that Buttons are not disabled of parent
+         var module=callGPFromMenu.arguments[0];
+         if(excludeReportDebugInfo.contains(module)){
+           callReport1(arguments[0],arguments[1]);
+           return false;
+        }
+
+        try{
+            document.getElementById('btnGatePass').disabled = true;
+            document.getElementById('btnGatePass').style.filter ='alpha(opacity=40)';
+        }catch(error){
+        }
+
+        isErrFlg = true;
+
+
+      //REPORTNAME#NO OF PARAMS#PARAM1#PARAM2#PARAM3#PARAM4(userid)
+        var reportDetails=callGPFromMenu.arguments[1];
+        callAjaxForReportProcessController(module, reportDetails);
+
+}
+
+function callMailReportFromMenu(){
+    // Set Error Flag to true so that Buttons are not disabled of parent
+    isErrFlg = true;
+    //return false;
+    var module=callMailReportFromMenu.arguments[0];
+    //REPORTNAME#NO OF PARAMS#PARAM1#PARAM2#PARAM3#PARAM4(userid)
+    var reportDetails= callMailReportFromMenu.arguments[1];
+    // M - MAIL , F-FTP(For Future)
+    var sendType     = callMailReportFromMenu.arguments[2];
+    // 0 - RPT , 1 - XLS , 2 - doc , 3 - pdf , 5 - txt
+    var exportDetails= callMailReportFromMenu.arguments[3];
+
+    document.MenuReportFrm.module.value = module;
+    document.MenuReportFrm.reportDetails.value = reportDetails;
+    document.MenuReportFrm.sendType.value      = sendType;
+    document.MenuReportFrm.exportDetails.value = exportDetails;
+    document.MenuReportFrm.action = lstrCtxPath + '/do/mailreport?screenIdFw=screenId';
+    document.MenuReportFrm.submit();
+}
+
+//changes start by sachin on 12/03/2015 for tkm tablet access
+/*
+function callCalendarFromMenu()
+{
+    // Set Error Flag to true so that Buttons are not disabled of parent
+    isErrFlg = true;
+    if(arguments[1] == '' || arguments[1] == 'undefined' ){
+           window.showModalDialog(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&thShowFlag='+arguments[0],self,'dialogHeight:238px;dialogWidth:211px;status=no');
+      }else{
+        window.showModalDialog(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&passedDate='+arguments[1]+'&thShowFlag='+arguments[0],self,'dialogHeight:238px;dialogWidth:211px;status=no');
+    }
+}
+*/
+
+function callCalendarFromMenu()
+{
+    try {
+        // Set Error Flag to true so that Buttons are not disabled of parent
+        isErrFlg = true;
+        if (window.showModalDialog) {
+            if (window.event) {
+                if(arguments[1] == '' || typeof(arguments[1]) == 'undefined' ) {
+                    window.showModalDialog(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&thShowFlag='+arguments[0],self,'dialogHeight:238px;dialogWidth:211px;status=no');
+                } else {
+                    window.showModalDialog(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&passedDate='+arguments[1]+'&thShowFlag='+arguments[0],self,'dialogHeight:238px;dialogWidth:211px;status=no');
+                }
+            } else {
+                var lstrTop  = 0;
+                var lstrLeft = 0;
+                var width    = 0;
+                var height   = 0;
+
+                try {
+                    width    = window.innerWidth;
+                    height   = window.innerHeight;
+                    height   = parseInt(height);
+                    width    = parseInt(width);
+                    lstrTop  = (height - 238)/2;
+                    lstrLeft = (width-211)/2;
+                } catch (error) {
+                    lstrTop  = 0;
+                    lstrLeft = 0;
+                }
+
+                if (arguments[1] == '' || typeof(arguments[1]) == 'undefined' ) {
+                    window.showModalDialog(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&thShowFlag='+arguments[0],self,'dialogHeight:238px;dialogWidth:211px;status=no;dialogLeft:' + lstrLeft + ';dialogTop:' + lstrTop +';');
+                } else {
+                    window.showModalDialog(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&passedDate='+arguments[1]+'&thShowFlag='+arguments[0],self,'dialogHeight:238px;dialogWidth:211px;status=no;dialogLeft:' + lstrLeft + ';dialogTop:' + lstrTop +';');
+                }
+            }
+        } else {
+            if(arguments[1] == '' || typeof(arguments[1]) == 'undefined' ){
+                window.open(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&thShowFlag='+arguments[0], "_blank", 'left=300,modal=yes,alwaysRaised=yes,width=200,height=205', null);
+            } else {
+                window.open(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&passedDate='+arguments[1]+'&thShowFlag='+arguments[0], "_blank", 'left=300,modal=yes,alwaysRaised=yes,width=200,height=205', null);
+            }
+        }
+    } catch(error) {
+        if(arguments[1] == '' || typeof(arguments[1]) == 'undefined' ){
+                window.open(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&thShowFlag='+arguments[0], "_blank", 'left=300,modal=yes,alwaysRaised=yes,width=200,height=205', null);
+            } else {
+                window.open(lstrCtxPath + '/do/opencalendar?screenIdFw=screenId&passedDate='+arguments[1]+'&thShowFlag='+arguments[0], "_blank", 'left=300,modal=yes,alwaysRaised=yes,width=200,height=205', null);
+            }
+    }
+}
+//changes end by sachin on 12/03/2015 for tkm tablet access
+
+function callColorPalletteFromMenu()
+{
+    // Set Error Flag to true so that Buttons are not disabled of parent
+    isErrFlg = true;
+	window.open(lstrCtxPath + '/common/ColorPallette.jsp?screenIdFw=screenId', "_blank", 'left=300, width=211,height=261, status=no');
+	
+    //window.showModalDialog(lstrCtxPath + '/common/ColorPallette.jsp?screenIdFw=screenId',self,'dialogHeight:238px;dialogWidth:211px;status=no');
+}
+function callJSPFromApplet()
+{
+    var lstrAction = callJSPFromApplet.arguments[0];
+    var lstrParam  = callJSPFromApplet.arguments[1];
+    document.AppJsp.jspParam.value = callJSPFromApplet.arguments[1];
+    document.AppJsp.action = lstrCtxPath + '/do/' + lstrAction;
+    document.AppJsp.submit();
+}
+
+function callAppletFromJSP()
+{
+    // Set Error Flag to true so that Buttons are not disabled of parent
+    isErrFlg = true;
+    document.AppJsp.appletParam.value    = callAppletFromJSP.arguments[3];
+    document.AppJsp.parentParam.value    = callAppletFromJSP.arguments[4];
+
+    document.AppJsp.action = lstrCtxPath + '/do/' + callAppletFromJSP.arguments[0] +
+                '?title=' + callAppletFromJSP.arguments[1] + '&modulename=' + callAppletFromJSP.arguments[2];
+    document.AppJsp.submit();
+}
+
+
+function callJSPChildFromApplet() {
+    openChildWindow(lstrCtxPath + '/do/' + callJSPChildFromApplet.arguments[0] +
+        callJSPChildFromApplet.arguments[1], callJSPChildFromApplet.arguments[1]);
+}
+
+function nextPage()
+{
+    // Check if any records to save
+    if( ! recordToSave() ) {
+        return false;
+    }
+    var currRec = document.forms[0].currRecord.value;
+    var recPer  = document.forms[0].recPerPage.value;
+    var newCurrRec = (( currRec-0) + (recPer-0) ) ;
+    var lstrUrl = getActionUrl();
+    if( lstrUrl != '' ) {
+        document.forms[0].currRecord.value= newCurrRec ;
+        document.forms[0].action = lstrUrl ;
+        document.forms[0].submit();
+    }
+    //added by ramesh on 21/06/2011 to show processing message on clicking navigation hyperlinks
+    disableButtons('H');
+    return false;
+}
+
+function goPage()
+{
+    // Check if any records to save
+    if( ! recordToSave() ) {
+        return false;
+    }
+    var currRec = document.forms[0].currRecord.value;
+    var recPer  = document.forms[0].recPerPage.value;
+    var recGoTo  = document.forms[0].gotoPage.value;
+    var totRec  = document.forms[0].totRecord.value;
+
+    var totPage = Math.floor((totRec/recPer));
+
+    var newCurrRec = 0;
+
+    if( !isInteger(recGoTo) || recGoTo <= 0 ) {
+        showError("FE2153",FE2153);
+        return false;
+    }
+   /*else if( totRec%recPer == 0 ) {
+        document.forms[0].gotoPage.value = ( totPage - 1 );
+        newCurrRec = ((( totPage-1)* recPer) + 1) ;
+    }*/
+    else if ( recGoTo > totPage ) {
+        document.forms[0].gotoPage.value = ( totPage + 1 )
+        newCurrRec = ((totPage* recPer) + 1) ;
+    } else {
+        newCurrRec = ((( recGoTo-1)* recPer) + 1) ;
+    }
+    var lstrUrl = getActionUrl();
+    if( lstrUrl != '' ) {
+        document.forms[0].currRecord.value= newCurrRec ;
+        document.forms[0].action = lstrUrl ;
+        document.forms[0].submit();
+    }
+    //added by ramesh on 21/06/2011 to show processing message on clicking navigation hyperlinks
+    disableButtons('H');
+    return false;
+}
+
+function lastPage()
+{
+    // Check if any records to save
+    if( ! recordToSave() ) {
+        return false;
+    }
+
+    var currRec = document.forms[0].currRecord.value;
+    var recPer  = document.forms[0].recPerPage.value;
+    var totRec  = document.forms[0].totRecord.value;
+    var newCurrRec = 1;
+    if( totRec%recPer > 0 ) {
+        newCurrRec = totRec - ( totRec%recPer );
+    } else {
+        newCurrRec = totRec - recPer ;
+    }
+    var newCurrRec = (( newCurrRec-0) + (1-0) ) ;
+
+    var lstrUrl = getActionUrl();
+
+    if( lstrUrl != '' ) {
+        document.forms[0].currRecord.value= newCurrRec ;
+        document.forms[0].action = lstrUrl ;
+        document.forms[0].submit();
+    }
+    //added by ramesh on 21/06/2011 to show processing message on clicking navigation hyperlinks
+    disableButtons('H');
+    return false;
+}
+
+function prevPage()
+{
+    // Check if any records to save
+    if( ! recordToSave() ) {
+        return false;
+    }
+
+    var currRec = document.forms[0].currRecord.value;
+    var recPer  = document.forms[0].recPerPage.value;
+    var newCurrRec = currRec - recPer ;
+
+    var lstrUrl = getActionUrl();
+
+    if( lstrUrl != '' ) {
+        document.forms[0].currRecord.value= newCurrRec ;
+        document.forms[0].action = lstrUrl;
+        document.forms[0].submit();
+    }
+    //added by ramesh on 21/06/2011 to show processing message on clicking navigation hyperlinks
+    disableButtons('H');
+    return false;
+}
+
+function firstPage()
+{
+    // Check if any records to save
+    if( ! recordToSave() ) {
+        return false;
+    }
+
+    var lstrUrl = getActionUrl();
+
+    if( lstrUrl != '' ) {
+        document.forms[0].currRecord.value= 1 ;
+        document.forms[0].action = lstrUrl ;
+        document.forms[0].submit();
+    }
+    //added by ramesh on 21/06/2011 to show processing message on clicking navigation hyperlinks
+    disableButtons('H');
+    return false;
+}
+
+function recordToSave()
+{
+    if(checkNoChangesToSave_()) {
+        if(!showQuestion("FW0004", FW0004)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+ function callAjaxForReportProcessController()
+    {
+      if(arguments[0]=="RSRV216"){
+          setTimeout("enablePrintGP()",2000);
+      }else{
+          setTimeout("enablePrint()",2000);
+      }
+      var lstrReportDetails   = arguments[1];
+      var excludeReport = 'N';
+      var larrReportDetail    = lstrReportDetails.split("#");
+      var lstrReportId        = arguments[0];
+      var dlrCD =  larrReportDetail[1];
+      var brcCD =  larrReportDetail[2];
+     if(tmtReportList.contains(lstrReportId)){
+        dlrCD =  larrReportDetail[2];
+         brcCD =  larrReportDetail[3];
+        }
+       if(excludeAjaxCheckList.contains(lstrReportId)){
+          excludeReport  = 'Y';
+        }
+
+
+
+            var url                 = document.AppJsp.ajaxServlet.value +
+                                      "/reportProcessController";
+            var params              =   'dlrCd='      + dlrCD  +
+                                        '&brcCd='     + brcCD   +
+                                        '&rptId='     + lstrReportId         +
+                                        '&rptParam='  + lstrReportDetails+
+                                        '&excludeReport='+excludeReport;
+
+    var req = initRequest(url);
+    req.onreadystatechange =
+            function() {
+                if (req.readyState == 4) {
+                    if (req.status == 200) {
+                        var  aa = req.responseXML;
+                        callXmlDtlsForRptProcessCtrller(req.responseXML,lstrReportId,lstrReportDetails);
+                    } else if (req.status == 204){
+                        //showError('Error: Some Error in file reading');
+                    }
+                }
+            };
+    req.open("POST", url, true);
+    //Send the proper header information along with the request
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.setRequestHeader("Content-length", params.length);
+    req.setRequestHeader("Connection", "close");
+    req.send(params);
+    }
+
+
+   function callXmlDtlsForRptProcessCtrller(){
+
+        responseXML= arguments[0];
+        var lobjstatuscdroot;
+        var lobjstatuscdchild;
+        lobjstatuscdroot = responseXML.getElementsByTagName("statuscdroot")[0];
+        if (lobjstatuscdroot.childNodes.length >= 0) {
+            lobjstatuscdchild = lobjstatuscdroot.childNodes[0];
+            if(lobjstatuscdchild.childNodes[0].nodeValue != 'S' && lobjstatuscdchild.childNodes[0].nodeValue != 'NA'){
+            //added by Ramesh on 15/11/2011 to avoid multiple clicks
+              if (lobjstatuscdchild.childNodes[0].nodeValue == 'FE2227')
+                  showError("FE2227", FE2227);
+              else if(lobjstatuscdchild.childNodes[0].nodeValue == 'FE0922' )
+                  showError("FE0922", FE0922);
+              else if(lobjstatuscdchild.childNodes[0].nodeValue == 'FE0923' )
+                  showError("FE0923", FE0923);
+              else if(lobjstatuscdchild.childNodes[0].nodeValue == 'FE2186' )
+                  showError("FE2186", FE2186);
+              else if(lobjstatuscdchild.childNodes[0].nodeValue == 'FE2187' )
+                  showError("FE2187", FE2187);
+              else {
+                  showError("FE0924", FE0924,null,new Array(lobjstatuscdroot.childNodes[1].childNodes[0].nodeValue));
+              }
+
+               return false;
+            }
+        }
+
+        callReport1(arguments[1],arguments[2]);
+    }
+    function callReport1(){
+
+        var module=arguments[0];
+        var sendTyp = ''
+        var action = "/tops/common/topsCRVreport.jsp";
+        if(exportPDFExcel.contains(module)){
+              action  = "/tops/common/topsPDFreport.jsp";
+        }
+        //return false;
+        //REPORTNAME#NO OF PARAMS#PARAM1#PARAM2#PARAM3#PARAM4(userid)
+        var reportDetails=arguments[1];
+        document.MenuReportFrm.module.value = module;
+        document.MenuReportFrm.reportDetails.value = reportDetails;
+        document.MenuReportFrm.sendType.value      = sendTyp;
+        document.MenuReportFrm.exportDetails.value = '';
+        document.MenuReportFrm.action =action;
+        document.MenuReportFrm.submit();
+        return false;
+    }
+function enablePrint(){
+           try{
+                   document.getElementById('btnPrint').disabled = false;
+                   document.getElementById('btnPrint').style.filter ='alpha(opacity=1000)';
+               }catch(error){
+               }
+}
+function enablePrintGP(){
+           try{
+                   document.getElementById('btnGatePass').disabled = false;
+                   document.getElementById('btnGatePass').style.filter ='alpha(opacity=1000)';
+               }catch(error){
+               }
+}
+

@@ -1,0 +1,3974 @@
+/****************************************************/
+/*                                                  */
+/*              COMMON FUNCTIONS                    */
+/*                                                  */
+/****************************************************/
+
+
+// VARIABLES FOR COLOR
+var BG_ERR_CLR = 'red';             // error background color.
+var FG_ERR_CLR = 'white';           // error foreground color.
+var BG_DEF_CLR = 'white';           // default background color.
+var FG_DEF_CLR = 'black';           // default foreground color.
+var CONTROL    = 'CONTROL';         // default foreground color.
+var SELECT     = '<-Select->';
+var ALL = '<-All->';
+var updEnbDsb  = false;
+// VARIABLES FOR DATE
+var dtCh= "/";
+var minYear=1000;
+var maxYear=9999;
+
+/* ID of the heading Division of the table(Optional)
+ * required for sync. the Hor-Scrolling of Data Section
+*/
+var headingDivisionID = "DivHeading";
+
+/* ID of the heading Division of the table(Optional)
+ * required for sync. the Hor-Scrolling of Data Section
+*/
+var headingDivisionID = "DivHeading";
+
+/* Status Column Values*/
+var ADD = "ADD";
+var UPD = "UPD";
+var HIDE = "HIDE";
+var DEL = "DEL";
+var BLANK = "";
+
+var isIE = false;
+
+var isErrFlg = false ;
+
+document.onclick = onClickDisable;
+
+//changes start by sachin on 12/03/2015 for tkm tablet access
+function onClickDisable(e) {
+ try{
+    if(window.event){
+       e = window.event;
+    }
+
+    var imageSrc='';
+
+		if (document.forms[0] != null && typeof(document.forms[0]) != 'undefined') {
+       if( window.event){
+        if ( document.forms[0].action == '' ||
+                   (e.srcElement.type == 'image' && e.srcElement.disabled)||
+                        ((document.forms[0].action == window.location) && navigator.userAgent.toLowerCase().indexOf('safari') > 0)) {
+            isErrFlg = true ;
+            imageSrc = e.srcElement.src;
+        }
+       }else{
+         if ( document.forms[0].action == '' ||(e.target.type == 'image' && e.target.disabled)) {
+                isErrFlg = true ;
+                imageSrc = e.target.src ;
+            }
+        }
+    }
+		
+    //document.getElementsByTagName("body").style="cursor: move";
+    disableButtons('1',e);
+
+    isErrFlg = false;
+		
+		if ((imageSrc != null && typeof(imageSrc) != 'undefined') &&  imageSrc.toLowerCase().indexOf('btn_add')) {
+        resetElementIds();
+		}
+          
+	} catch(error) {
+ }
+}
+//changes end by sachin on 12/03/2015 for tkm tablet access 
+
+//changes start by sachin on 12/03/2015 for tkm tablet access
+function disableButtons()
+{
+var browser = navigator.userAgent;			
+   
+   ee = arguments[1];
+   var target = '';
+    
+     if(window.event){ 
+	   ee = window.event;
+		if(window.event.srcElement != null) {
+          target= window.event.srcElement.type;
+		}
+    }else{
+        try {
+			target= ee.target.type;
+		} catch(error){}
+    }
+	
+    if( (arguments[0] == '0'||arguments[0] == '2') || 
+        (arguments[0] == '1' && !isErrFlg && target == 'image' )) {
+		
+        var docElements = document.getElementsByTagName("input");
+        if(docElements.length > 0 ) {
+            for (i = 0; i < docElements.length ; i++ ){
+                if(docElements[i].type == 'image'){
+                    var attrib = docElements[i].attributes ;
+                    if((arguments[0] == '1' ||arguments[0] == '2') && !docElements[i].disabled){
+                        docElements[i].disabled = true;
+                    }
+					
+                    if( docElements[i].disabled ){
+                        if(window.event){ 
+								// START TMT Code - chnaged by Rajeev - need to discuss with Sachin
+								if(browser.toLowerCase().indexOf('safari') > 0 || browser.toLowerCase().indexOf('firefox') >0){		
+									docElements[i].setAttribute("class" ,"topsOpacityLow");
+								} else {
+									docElements[i].setAttribute("className" ,"topsOpacityLow");
+								}
+								// END TMT Code - chnaged by Rajeev - need to discuss with Sachin
+						}else{
+                                 docElements[i].setAttribute("class" ,"topsOpacityLow");
+                         }
+                    }
+                }
+            }
+        }
+    }
+
+    if ( arguments[0] == '1' && !isErrFlg && target == 'image' ) {
+		ShowLayer();
+		try {
+        waitBox.Show();         
+		} catch (error) {}	         
+	}
+	
+	//added by ramesh on 21/06/2011 to show processing message on clicking navigation hyperlinks
+	if ( arguments[0] == 'H' && !isErrFlg) {
+		ShowLayer();
+		try {
+        waitBox.Show();         
+        } catch (error) {}	         
+	}
+
+}
+//changes end by sachin on 12/03/2015 for tkm tablet access
+
+function ShowLayer() {
+    // hide all dropdowns on the page
+
+    // looping through all forms on the page
+    for (f = 0; f < document.forms.length; f++)
+    {
+        var elements = document.forms[f].elements;
+        // looping through all elements on certain form
+
+        for (e = 0; e < elements.length; e++)
+        {
+            if (elements[e].type == "select-one")
+            {
+                elements[e].style.display = 'none';
+            }
+        }
+    }
+}
+
+/**
+ * showError()
+ * ================
+ *
+ * Show the Message Box (Error, Information, Warning)
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Message ID>              MANDATORY MUST BE PASSED BY USER
+ * <Parameter2> - <Message>                 MANDATORY MUST BE PASSED BY USER
+ * <Parameter3> - <Field>                   OPTIONAL
+ * <Parameter4> - <PlaceHolders Array>      OPTIONAL
+ * <Parameter5> - <Visible Tab String>      OPTIONAL
+ * Return value
+ * ------------
+ */
+function showError(){
+    // Set Error Flag to true Begin
+    isErrFlg = true ;
+    // Set Error Flag to true End
+
+    lstrMessageID = showError.arguments[0];
+    lstrMessage   = showError.arguments[1];
+    lobjField     = showError.arguments[2];
+
+    //Array to store Place Holder Replacement
+    var larrMessage     = new Array()   ;
+    //Variable to store Default Error Icon and Title Message
+    var lstrIconType    = 16            ;
+    var lstrMessgeType  = "Error"       ;
+    //Variable to store messge type like (I/W/E)
+    var lstrMsgTyp                      ;
+    //Variable to Count the place holder and get the insert position of place holder
+    var counter         = 0             ;
+    var insertPosition                  ;
+
+
+    larrMessage = showError.arguments[3];
+
+    //variables to store the Tab status
+    lstrVisibleTab  = showError.arguments[4];
+
+    //Set the status of Tab to visible
+    if(lstrVisibleTab != null && lstrVisibleTab.length >0){
+        manageTab(lstrVisibleTab);
+    }
+
+    if(larrMessage != null &&
+           larrMessage.length > 0 ){
+
+        while((insertPosition = lstrMessage.indexOf('#')) > -1){
+
+            if(larrMessage[counter] == null ){
+                larrMessage[counter] = "";
+            }
+
+            lstrMessage = lstrMessage.substring(0,insertPosition) +
+                          larrMessage[counter] +
+                          lstrMessage.substring(insertPosition+1,lstrMessage.length);
+            counter++;
+        }
+    }
+
+    lstrFinalMsg  = lstrMessageID + ' : ' + lstrMessage;
+
+    if(lobjField!=null){
+        setErrorColor(lobjField);
+        lobjField.focus();
+    }
+
+    //Set the icon type and Title
+    if(lstrMessageID != null || lstrMessageID.length() != 0){
+        lstrMsgTyp = lstrMessageID.substring(1,2);
+
+        if( lstrMsgTyp == 'W'){
+            lstrIconType  = 48;
+            lstrMessgeType = "Warning";
+        }else if(lstrMsgTyp == 'I'){
+            lstrIconType  = 64;
+            lstrMessgeType = "Information";
+        }
+    }
+	
+     //changes start by sachin on 12/03/2015 for tkm tablet access
+  var browser = navigator.userAgent;
+	if(browser.toLowerCase().indexOf('safari') > 0 || browser.toLowerCase().indexOf('firefox') >0) {
+       alert(lstrFinalMsg)
+	} else {
+       showAlert(lstrFinalMsg, lstrIconType, lstrMessgeType);
+	}
+  //changes end by sachin on 12/03/2015 for tkm tablet access  
+}
+
+
+/**
+ * showQuestion()
+ * ================
+ *
+ * Show the Message Box (Warning) - Yes/No
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Message ID> MANDATORY MUST BE PASSED BY USER
+ * <Parameter2> - <Message>    MANDATORY MUST BE PASSED BY USER
+ * <Parameter3> - <Field>      OPTIONAL
+ * <Parameter4> - <PlaceHolders Array>      OPTIONAL
+ * Return value
+ * ------------
+ * <Boolean> - <true/false>
+ */
+function showQuestion(){
+    lstrMessageID = showQuestion.arguments[0];
+    lstrMessage   = showQuestion.arguments[1];
+    lobjField     = showQuestion.arguments[2];
+	
+    //changes start by sachin on 12/03/2015 for tkm tablet access 
+    //lstrCaleeFunction = funcname(arguments.caller.callee);
+    lstrCaleeFunction = funcname(arguments.callee);
+    //changes end by sachin on 12/03/2015 for tkm tablet access 
+	
+    //Array to store Place Holder Replacement
+    var larrMessage     = new Array()   ;
+    var insertPosition                  ;
+    var counter         = 0        ;
+
+    larrMessage = showQuestion.arguments[3];
+
+    if(larrMessage != null &&
+           larrMessage.length > 0 ){
+
+        while((insertPosition = lstrMessage.indexOf('#')) > -1){
+
+            if(larrMessage[counter] == null ){
+                larrMessage[counter] = "";
+            }
+             lstrMessage = lstrMessage.substring(0,insertPosition) +
+                          larrMessage[counter] +
+                          lstrMessage.substring(insertPosition+1,lstrMessage.length);
+             counter++;
+        }
+    }
+
+    lstrFinalMsg  = lstrMessageID + ' : ' + lstrMessage;
+
+    if(lobjField!=null){
+        lobjField.focus();
+    }
+    var cnfUser = confirm(lstrFinalMsg);
+    if( !cnfUser ) {
+        isErrFlg = true;
+    }
+    if(cnfUser && lstrCaleeFunction == 'onLoad'){
+    	disableButtons('2');
+    }
+    //End ADD BY SACHIN
+    return cnfUser;
+}
+
+function showQuestionAllProcess(){
+
+    lstrMessageID = showQuestionAllProcess.arguments[0];
+    lstrMessage   = showQuestionAllProcess.arguments[1];
+    lobjField     = showQuestionAllProcess.arguments[2];
+	
+    //changes start by sachin on 12/03/2015 for tkm tablet access 
+    //lstrCaleeFunction = funcname(arguments.caller.callee);
+    lstrCaleeFunction = funcname(arguments.callee);
+    //changes end by sachin on 12/03/2015 for tkm tablet access 
+	
+    //Array to store Place Holder Replacement
+    var larrMessage     = new Array()   ;
+    var insertPosition                  ;
+    var counter         = 0        ;
+
+    larrMessage = showQuestionAllProcess.arguments[3];
+
+    if(larrMessage != null &&
+           larrMessage.length > 0 ){
+
+        while((insertPosition = lstrMessage.indexOf('#')) > -1){
+
+            if(larrMessage[counter] == null ){
+                larrMessage[counter] = "";
+            }
+             lstrMessage = lstrMessage.substring(0,insertPosition) +
+                          larrMessage[counter] +
+                          lstrMessage.substring(insertPosition+1,lstrMessage.length);
+             counter++;
+        }
+    }
+
+    lstrFinalMsg  = lstrMessageID + ' : ' + lstrMessage;
+
+    if(lobjField!=null){
+        lobjField.focus();
+    }
+
+    var cnfUser = confirm(lstrFinalMsg);
+    
+    if(cnfUser && lstrCaleeFunction == 'onLoad'){
+    	disableButtons('2');
+    }
+    //End ADD BY SACHIN
+    return cnfUser;
+}
+//Start ADD BY SACHIN
+function funcname(f) {
+    var s = f.toString().match(/function (\w*)/)[1];
+    if ((s == null) || (s.length==0)) return "anonymous";
+    return s;
+}
+//End ADD BY SACHIN
+////////////////////////////////// VALIDATIONS FOR NUMBERS - BEGIN /////////////////////////////////////
+
+/**
+ * isInteger()
+ * ================
+ *
+ * Method to check whether the data is numeric or not
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Number Value> MANDATORY MUST BE PASSED BY USER
+ * *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - Number is an Integer , FALSE - Number is not an Integer>
+ */
+function isInteger(aValue){
+   var lstrValue = aValue;
+   re = new RegExp(",","g");
+   lstrValue = lstrValue.replace(re,"");
+   for (lintCounter = 0; lintCounter < lstrValue.length; lintCounter++){
+        // Check that current character is number.
+        var c = lstrValue.charAt(lintCounter);
+        if (((c < "0") || (c > "9"))){
+            return false;
+        }
+    }
+    // All characters are numbers.
+    return true;
+}
+
+
+/**
+ * validateFloat()
+ * ================
+ *
+ * To validate that the number passed is valid or not
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <NumberValue> MANDATORY MUST BE PASSED BY USER
+ * <Parameter2> - <Number of digits before the decimal> MANDATORY MUST BE PASSED BY USER
+ * <Parameter3> - <Number of digits after the decimal> MANDATORY MUST BE PASSED BY USER
+ * <Parameter4> - <Negative Allowed : boolean> OPTIONAL (By default it is false)
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - Number is correct , FALSE - Number is incorrect>
+ */
+function validateFloat(astrNumber,astrDigitsBefDec,astrDigitsAfterDec)
+{
+    var lreComma = new RegExp(",","g");
+    var lblnResult = false;
+    var lstrVal = astrNumber;
+    var lstrDigitsBefDec    = astrDigitsBefDec;
+    var lstrDigitsAfterDec  = astrDigitsAfterDec;
+    var lblnNegativeAllowed = validateFloat.arguments[3];
+    // Replace the commas if present in the value
+    if(lstrVal != null && lstrVal.length > 0){
+        lstrVal = validateFloat.arguments[0].replace(lreComma,"");
+    }else{
+        // If Null is passed then return false
+        return false;
+    }
+
+    if(lblnNegativeAllowed == null || lblnNegativeAllowed.length == 0){
+        lblnNegativeAllowed = false;
+    }
+
+    if(lblnNegativeAllowed){
+        //To match positive or negative real numbers with or without a decimal point and 0 to <<specified>> decimal places.
+        lexp = "^-?\\d{0," + lstrDigitsBefDec + "}(\\.\\d{0," + lstrDigitsAfterDec + "})?$";
+        lreData = new RegExp(lexp);
+        lblnResult = lreData.test(lstrVal);
+    }else{
+        //To match positive real numbers with or without a decimal point and 0 to <<specified>> decimal places.
+        lexp = "^\\d{0," + lstrDigitsBefDec + "}(\\.\\d{0," + lstrDigitsAfterDec + "})?$";
+        lreData = new RegExp(lexp);
+        lblnResult = lreData.test(lstrVal);
+    }
+    return lblnResult;
+}
+////////////////////////////////// VALIDATIONS FOR NUMBERS - END /////////////////////////////////////
+
+////////////////////////////////// VALIDATIONS FOR DATES - BEGIN /////////////////////////////////////
+
+/**
+ * isValidDate()
+ * ================
+ *
+ * Method to check whether the data is A VALID DATE or not
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Date> : the date to be in DDMMYYYY or DD/MM/YYYY format <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - Date is correct , FALSE - Date is incorrect>
+ */
+function isValidDate(dtStr){
+    re = new RegExp("/","g");
+    dtStr = dtStr.replace(re,"");
+    if(!isInteger(dtStr)){
+        return false;
+    }
+    if(dtStr.length != 8) {
+        return false;
+    }
+    var daysInMonth = DaysArray(12)
+    var pos1=dtStr.indexOf(dtCh)
+
+    var strDay=dtStr.substring(0,2)
+    var strMonth=dtStr.substring(2,4)
+    var strYear=dtStr.substring(4)
+    strYr=strYear
+    if (strDay.charAt(0)=="0" && strDay.length>1) strDay=strDay.substring(1)
+    if (strMonth.charAt(0)=="0" && strMonth.length>1) strMonth=strMonth.substring(1)
+    for (var i = 1; i <= 3; i++) {
+        if (strYr.charAt(0)=="0" && strYr.length>1) strYr=strYr.substring(1)
+    }
+    month=parseInt(strMonth)
+    day=parseInt(strDay)
+    year=parseInt(strYr)
+    if (pos1 != -1){
+        return false
+    }
+    if (month<1 || month>12){
+        return false
+    }
+    if (day<1 || day>31 || (month==2 && day>daysInFebruary(year)) || day > daysInMonth[month]){
+        return false
+    }
+    if (strYear.length != 4 || year==0 || year<minYear || year>maxYear){
+        return false
+    }
+    return true
+}
+
+
+/**
+ * isValidMonthYear()
+ * ================
+ *
+ * Check the validity of Date in YYYY/MM or YYYYMM format
+ *          '0000/00' is a valid date for From Date
+ *          '9999/99' is valid for To Date
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Date String><MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <Date Type> : '1' if it's From Date '2' if it's To Date <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - If Valid Month-Year, FALSE if invalid month year >
+ */
+function isValidMonthYear(dtStr, FromToCheck){
+    re = new RegExp("/","g");
+    var formatdtStr = dtStr.replace(re,"");
+
+    if(!isInteger(formatdtStr)){
+        return false;
+    }
+    if(formatdtStr == '000000' && FromToCheck == '1'){
+        return true;
+    }
+    if(formatdtStr == '999999' && FromToCheck == '2'){
+        return true;
+    }
+    var month;
+    var year;
+    if(formatdtStr.length != 6) {
+        return false;
+    }
+
+   year = formatdtStr.substring (0, 4);
+   month = formatdtStr.substring (4, 6);
+
+   if(month < "01" || month > "12"){
+       return false;
+   }
+   if(year < "1000" || year > "9999"){
+       return false;
+   }
+   return true
+}
+
+/**
+ * isValidYrMonth()
+ * ================
+ *
+ * Check the validity of Date in YYYY/MM format
+ *          '0000/00' is a valid date for From Date
+ *          '9999/99' is valid for To Date
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Date String><MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <Date Type> : '1' if it's From Date '2' if it's To Date <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - If Valid Month-Year, FALSE if invalid month year >
+ */
+function isValidYrMonth(dtStr, FromToCheck){
+
+    re = new RegExp("/","g");
+    var dtStr = dtStr.replace(re,"");
+
+    if(!isInteger(dtStr)){
+        return false;
+    }
+    if(dtStr == '000000' && FromToCheck == '1'){
+        return true;
+    }
+    if(dtStr == '999999' && FromToCheck == '2'){
+        return true;
+    }
+   var month;
+   var year;
+    if(dtStr.length != 6) {
+        return false;
+    }
+   year = dtStr.substring (0, 4);
+   month = dtStr.substring (4, 6);
+
+   if(year.length != 4 ){
+       return false;
+   }
+   if(month.length != 2 ){
+       return false;
+   }
+   if(month < "01" || month > "12"){
+       return false;
+   }
+   if(year < "1000" || year > "9999"){
+       return false;
+   }
+   return true
+}
+
+/**
+ * compareDates()
+ * ================
+ *
+ * Method to compare the From and To dates
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <From Date> : the date to be in DD/MM/YYYY format <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <To   Date> : the date to be in DD/MM/YYYY format <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <Number> -   0 if the dates are same
+ *              -1 if the first one is an earlier date
+ *              1 if the first one is a later date
+ */
+function compareDates (value1, value2) {
+   var date1, date2;
+   var month1, month2;
+   var year1, year2;
+   re = new RegExp("/","g");
+   value1 = value1.replace(re,"");
+   value2 = value2.replace(re,"");
+
+   date1= value1.substring (0, 2);
+   month1 = value1.substring (2, 4);
+   year1 = value1.substring (4, 8);
+
+   date2= value2.substring (0, 2);
+   month2 = value2.substring (2, 4);
+   year2 = value2.substring (4, 8);
+
+   if (year1 > year2) return 1;
+   else if (year1 < year2) return -1;
+   else if (month1 > month2) return 1;
+   else if (month1 < month2) return -1;
+   else if (date1 > date2) return 1;
+   else if (date1 < date2) return -1;
+   else return 0;
+}
+
+/**
+ * compareYearMonth()
+ * ================
+ *
+ * Method to compare the From and To dates
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <From Date> : the date to be in YYYY/MM format <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <To   Date> : the date to be in YYYY/MM format <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <Number> -   0 if the dates are same
+ *              -1 if the first one is an earlier date
+ *              1 if the first one is a later date
+ */
+function compareYearMonth(value1, value2) {
+   var month1, month2;
+   var year1, year2;
+
+    re = new RegExp("/","g");
+    value1 = value1.replace(re,"");
+    value2 = value2.replace(re,"");
+
+    year1 = value1.substring(0, 4);
+    month1 = value1.substring(4, 6);
+
+    year2 = value2.substring(0, 4);
+    month2 = value2.substring(4, 6);
+
+    if (year1 > year2) return 1;
+    else if (year1 < year2) return -1;
+    else if (month1 > month2) return 1;
+    else if (month1 < month2) return -1;
+    else return 0;
+}
+
+/**
+ * daysInFebruary()
+ * ================
+ *
+ * To validate days in February (Used Internally)
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Year> MANDATORY MUST BE PASSED BY USER
+ *
+ * Return value
+ * ------------
+ * <Number> - Number of Days in February
+ */
+function daysInFebruary (year){
+    // February has 29 days in any year evenly divisible by four,
+    // EXCEPT for centurial years which are not also divisible by 400.
+    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
+}
+
+
+/**
+ * DaysArray()
+ * ================
+ *
+ * To get the days array (Used Internally)
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Year> MANDATORY MUST BE PASSED BY USER
+ *
+ * Return value
+ * ------------
+ * <Array> - Days
+ */
+function DaysArray(n) {
+    for (var i = 1; i <= n; i++) {
+        this[i] = 31
+        if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
+        if (i==2) {this[i] = 29}
+   }
+   return this
+}
+
+////////////////////////////////// VALIDATIONS FOR DATES - END /////////////////////////////////////
+/**
+ * setErrorColor()
+ * ================
+ *
+ * Method to Set the ERROR color in a field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ */
+function setErrorColor(aField)
+{
+    aField.style.background = BG_ERR_CLR;
+    aField.style.color = FG_ERR_CLR;
+}
+
+/**
+ * setNormalColor()
+ * ================
+ *
+ * Method to Set the NORMAL color in a field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ */
+function setNormalColor(oElement)
+{
+    oElement.style.background = BG_DEF_CLR;
+    oElement.style.color = FG_DEF_CLR;
+}
+
+/**
+ * mandatoryCheck()
+ * ================
+ *
+ * Method to check that value has been entered or not
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Field> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <String> <Optinal> - <Tab Name>
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - Value is entered , FALSE - Value is not entered>
+ *
+ */
+function mandatoryCheck(aField, astrVisibleTab)
+{
+    var lstrValue = aField.value;
+    if( lstrValue == null || (trimString(lstrValue)).length == 0){
+        showError("FE0001",FE0001,  aField ,null, astrVisibleTab);
+        return false;
+    }
+    return true;
+}
+
+
+/**
+ * mandatoryCheckNoSpaces()
+ * ================
+ *
+ * Method to check that value has been entered or not,remove spaces if present
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Field> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <String> <Optinal> - <Tab Name>
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - Value is entered , FALSE - Value is not entered>
+ *
+ */
+function mandatoryCheckNoSpaces(aField, astrVisibleTab)
+{
+    var lstrValue = aField.value;
+    if( lstrValue == null || (trimString(lstrValue)).length == 0){
+        showError("FE0001",FE0001,  aField, null, astrVisibleTab);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * isComboSelected()
+ * ================
+ *
+ * Method to check if value has been selected in combo bos or not
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Field> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <String> <OPTIONAL>
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <TRUE - Value is selected , FALSE - Value is not selected>
+ *
+ */
+
+function isComboSelected(aField, astrVisibleTab)
+{
+    var lstrValue = aField.value;
+    if( lstrValue == null || lstrValue == ""){
+        showError("FE0001",FE0001,  aField, null, astrVisibleTab);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * hideMask_Number()
+ * ================
+ *
+ * Method to remove the number format from the field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Number Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+function hideMask_Number(aField)
+{
+    lstrValue = aField.value;
+    re = new RegExp(",","g");
+    aField.value = lstrValue.replace(re,"");
+    aField.select();
+}
+
+
+/**
+ * putMask_Number()
+ * ================
+ *
+ * Method to put the number format to the field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Number Field> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <Number of Digits before decimal> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter3> - <Number of Digits after decimal>
+ *
+ * Return value
+ * ------------
+ *
+ */
+function putMask_Number(aField, aintDigits, aintDecimals)
+{
+   var lreComma = new RegExp(",","g");
+
+    lstrValue = aField.value;
+   lstrValue = lstrValue.replace(lreComma,"");
+
+    // Curtailing Blank spaces from the begining and end of the entered text
+    lstrValue = trimString(lstrValue);
+
+    if( lstrValue == null || lstrValue.length == 0 ){
+       aField.value = lstrValue;
+       return;
+    }
+    var posNeg=lstrValue.indexOf('-');
+
+    // Get the number of digits that can be there before period (.)
+    lintLen = aintDigits;
+    // Get the number of digits that can be there after period (.)
+    lDeciLen = aintDecimals;
+
+    allVal = lstrValue.split(".")
+
+    if(posNeg != 0) {
+        intVal = allVal[0];
+    } else {
+        intVal = allVal[0].substring(1,allVal[0].length);
+    }
+
+    floatVal = allVal[1];
+
+   var i = intVal.length;
+
+   while(i >= 1) {
+
+      if(intVal.indexOf("0",0) == 0 ) {
+         intVal = intVal.substring(1);
+      }
+      i = i-1;
+   }
+
+    if(intVal==null || intVal.length==0 ){
+        intVal = "0";
+    }
+
+    if(allVal.length > 1){
+        // Validating Float
+        if(!validateFloat(lstrValue,lintLen,lDeciLen,true)){
+            return;
+        }
+    }else{
+        // Validating Integer
+        if(!isInteger(intVal)){
+            return;
+        }
+    }
+    if(intVal.length > lintLen) {
+        intVal = intVal.substring(0,lintLen);
+    }
+    if(allVal.length > 1){
+        if(floatVal.length > lDeciLen) {
+            floatVal = floatVal.substring(0,lDeciLen);
+        } else if(floatVal.length < lDeciLen) {
+            temp = floatVal.length;
+            for(i = 0;i<(lDeciLen - temp);i++) {
+                floatVal = floatVal + "0";
+            }
+        }
+    }else{
+        floatVal = "";
+        for(i = 0;i<lDeciLen ;i++) {
+            floatVal = floatVal + "0";
+        }
+    }
+    remString = intVal;
+    finalString = "";
+    if(lintLen > 3) {
+        while(remString.length > 3)
+        {
+
+            finalString = "," + remString.substring(remString.length-3) +  finalString;
+            remString = remString.substring(0,remString.length-3);
+        }
+    }
+    finalString = remString + finalString ;
+    finalString = finalString + "." + floatVal;
+    aField.value = ((posNeg == 0 && finalString != 0)?'-':'') + finalString;
+}
+
+
+
+/**
+ * get_Number_WithOut_Mask()
+ * ================
+ *
+ * Method to remove the number format from the field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Number Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * The number without the mask
+ */
+function get_Number_WithOut_Mask(aField)
+{
+    lstrValue = aField.value;
+    re = new RegExp(",","g");
+    return lstrValue.replace(re,"");
+}
+
+
+
+
+/**
+ * putMask_Number_Value()
+ * ================
+ *
+ * Method to put the number format to the field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Number Value> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <Number of Digits before decimal> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter3> - <Number of Digits after decimal>
+ *
+ * Return value
+ * ------------
+ *
+ */
+function putMask_Number_Value(aValue, aintDigits, aintDecimals)
+{
+    lstrValue = ""+aValue;
+    re = new RegExp(",","g");
+    lstrValue = lstrValue.replace(re,"");
+
+    // Curtailing Blank spaces from the begining and end of the entered text
+    lstrValue = trimString(lstrValue);
+
+    if( lstrValue == null || lstrValue.length == 0 ){
+       return;
+    }
+    var posNeg=lstrValue.indexOf('-');
+
+    // Get the number of digits that can be there before period (.)
+    lintLen = aintDigits;
+    // Get the number of digits that can be there after period (.)
+    lDeciLen = aintDecimals;
+
+    allVal = lstrValue.split(".")
+
+    if(posNeg != 0) {
+        intVal = allVal[0];
+    } else {
+        intVal = allVal[0].substring(1,allVal[0].length);
+    }
+
+    floatVal = allVal[1];
+
+   var i = intVal.length;
+
+   while(i >= 1) {
+
+      if(intVal.indexOf("0",0) == 0 ) {
+         intVal = intVal.substring(1);
+      }
+      i = i-1;
+   }
+
+    if(intVal==null || intVal.length==0 ){
+        intVal = "0";
+    }
+
+    if(allVal.length > 1){
+        // Validating Float
+        if(!validateFloat(lstrValue,lintLen,lDeciLen,true)){
+            return;
+        }
+    }else{
+        // Validating Integer
+        if(!isInteger(intVal)){
+            return;
+        }
+    }
+    if(intVal.length > lintLen) {
+        intVal = intVal.substring(0,lintLen);
+    }
+    if(allVal.length > 1){
+        if(floatVal.length > lDeciLen) {
+            floatVal = floatVal.substring(0,lDeciLen);
+        } else if(floatVal.length < lDeciLen) {
+            temp = floatVal.length;
+            for(i = 0;i<(lDeciLen - temp);i++) {
+                floatVal = floatVal + "0";
+            }
+        }
+    }else{
+        floatVal = "";
+        for(i = 0;i<lDeciLen ;i++) {
+            floatVal = floatVal + "0";
+        }
+    }
+    remString = intVal;
+    finalString = "";
+    if(lintLen > 3) {
+        while(remString.length > 3)
+        {
+
+            finalString = "," + remString.substring(remString.length-3) +  finalString;
+            remString = remString.substring(0,remString.length-3);
+        }
+    }
+    finalString = remString + finalString ;
+    finalString = finalString + "." + floatVal;
+    return ((posNeg == 0 && finalString != 0)?'-':'') + finalString;
+}
+
+
+////////////////////////////////// STRING FUNCTIONS- BEGIN /////////////////////////////////////
+
+/**
+ * trimString()
+ * ================
+ *
+ * Method to remove the left and right curtailing spaces
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <String> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <String> - <Resulted String >
+ */
+function trimString(astrValue)
+{
+  var lstrValue = astrValue;
+
+  lstrValue=leftTrimString(lstrValue);
+  lstrValue=rightTrimString(lstrValue);
+  return lstrValue;
+}
+
+
+/**
+ * leftTrimString()
+ * ================
+ *
+ * Method to Trim the blank spaces on the left side of the string
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <String> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <String> - <Resulted String >
+ */
+function leftTrimString(astrValue)
+{
+  var lstrValue = astrValue;
+
+  lstrValue=lstrValue.replace(/^\s*(.*)/, "$1");
+  return lstrValue;
+}
+
+
+/**
+ * rightTrimString()
+ * ================
+ *
+ * Trim the blank spaces on the right side of the string
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <String> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <String> - <Resulted String >
+ */
+function rightTrimString(astrValue)
+{
+  var lstrValue = astrValue;
+
+  lstrValue=lstrValue.replace(/(.*?)\s*$/, "$1");
+  return lstrValue;
+}
+
+
+/**
+ * isEmpty()
+ * ================
+ *
+ * Check whether string s is empty.
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <String>
+ *
+ * Return value
+ * ------------
+ * <Boolean> - <True if empty else FALSE>
+ */
+function isEmpty(lstrValue)
+{
+    lstrValue=leftTrimString(lstrValue);
+    lstrValue=rightTrimString(lstrValue);
+
+    return ((lstrValue == null) || (lstrValue.length == 0))
+}
+////////////////////////////////// STRING FUNCTIONS- END /////////////////////////////////////
+
+////////////////////////////////// MASK FUNCTIONS- BEGIN /////////////////////////////////////
+
+/**
+ * putMask_YearMonthDate()
+ * ================
+ *
+ * Put the Mask 'YYYY/MM' on a Date field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Date Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ */
+function putMask_YearMonthDate(oElement)
+{
+    var lstrValue = oElement.value;
+    if(lstrValue == "" || !isInteger(lstrValue))
+    return;
+
+    re = new RegExp("/","g");
+    lstrValue = lstrValue.replace(re,"");
+    if (lstrValue.length == 6) {
+        partOne = lstrValue.substring(0,4);
+        partTwo = lstrValue.substring(4);
+        oElement.value = partOne + "/" +partTwo;
+    }
+}
+
+
+/**
+ * hideMask_YearMonthDate()
+ * ================
+ *
+ * Remove the Mask 'YYYY/MM' from a Date field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Date Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ */
+function hideMask_YearMonthDate(oElement)
+{
+    var lstrValue = oElement.value;
+
+    re = new RegExp("/","g");
+    oElement.value = lstrValue.replace(re,"");
+    oElement.select();
+}
+
+
+/**
+ * hideMask_Date()
+ * ================
+ *
+ * Method to remove the Date Mask
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Date Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ */
+function hideMask_Date(oElement)
+{
+    var lstrValue = oElement.value;
+
+    re = new RegExp("/","g");
+    oElement.value = lstrValue.replace(re,"");
+    oElement.select();
+}
+
+
+/**
+ * putMask_Date()
+ * ================
+ *
+ * Method to Put the Date Mask
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Date Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ */
+function putMask_Date(oElement)
+{
+    var lstrValue = oElement.value;
+    if(lstrValue == "" || !isValidDate(lstrValue))
+    return;
+
+    re = new RegExp("/","g");
+    lstrValue = lstrValue.replace(re,"");
+
+    lstrValue = lstrValue.toUpperCase();
+    if (lstrValue.length == 8) {
+        partOne = lstrValue.substring(0,2);
+        partTwo = lstrValue.substring(2,4);
+        partThree = lstrValue.substring(4);
+        oElement.value = partOne + "/" +partTwo + "/" +partThree;
+    }
+}
+
+/*
+* For scrolling of header section when the scroll bar of data section is scrolled.
+* called in onScroll event of Data section of the table.
+* NOTE: METHOD USED INTERNALLY.
+*/
+function divData()
+{
+    oElement = document.getElementById(headingDivisionID);
+    if(oElement != null) {
+        oElement .scrollLeft = event.srcElement.scrollLeft;
+    }
+}
+
+ function setScroll(len )
+ {
+         oElement = document.getElementById("DivData");
+        if(oElement != null) {
+            oElement .scrollLeft = event.srcElement.scrollLeft + len;
+        }
+ }
+
+
+////////////////////////////////// MASK FUNCTIONS- END /////////////////////////////////////
+/**
+ * openChildWindow()
+ * ================
+ *
+ * Function to open child screen
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <SCREEN_URL> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <WINDOW_OBJ> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter3> - <WIDTH>      <OPTIONAL>
+ * <Parameter4> - <HEIGHT>     <OPTIONAL>
+ *
+ * Return value - void
+ * ------------
+ */
+function openChildWindow(){
+//alert("open1--useragent"+navigator.userAgent);
+    var lstrWidth  = '750px';//set default width
+    var lstrHeight = '470px';//set default height
+    var lstrURL;
+    var lstrArgument;
+ 
+   lstrURL = openChildWindow.arguments[0];
+    if( lstrURL.indexOf("?") == -1 ) {
+        lstrURL = lstrURL + "?childFw=Y" ;
+    } else {
+        lstrURL = lstrURL + "&childFw=Y" ;
+    }
+    lstrURL  = encodeURI(lstrURL);
+    lstrArgument   = openChildWindow.arguments[1];
+ 
+    //set the width
+    if(openChildWindow.arguments[2] != null && openChildWindow.arguments[2].length > 0 ){
+        lstrWidth= openChildWindow.arguments[2];
+    }
+ 
+    //set the height
+    if(openChildWindow.arguments[3] != null && openChildWindow.arguments[3].length > 0 ){
+        lstrHeight= openChildWindow.arguments[3];
+        if( lstrHeight.length > 2 && 
+            lstrHeight.substring(lstrHeight.length - 2 , lstrHeight.length).toUpperCase()  == 'PX'
+          ) {
+            lstrHeight = lstrHeight.substring(0,lstrHeight.length - 2 );            
+        }
+        if( (lstrHeight - 0) <= 1000 ) {
+            lstrHeight = (lstrHeight - 0 + 20 ) ;
+        }
+        lstrHeight = lstrHeight + "PX";
+    }
+ 
+    // for appending the readonly flag of Parent Screen
+    if(document.getElementById('readOnlyFlg') != null && typeof(document.getElementById('readOnlyFlg'))!= 'undefined'){
+        if(lstrURL.indexOf('?') != -1 ){
+            lstrURL = lstrURL+ '&childScreen=true&readOnlyFlg='+document.getElementById('readOnlyFlg').value;
+        }else{
+            lstrURL = lstrURL+ '?childScreen=true&readOnlyFlg='+document.getElementById('readOnlyFlg').value;
+        }
+    }
+ 
+    //open model dialog
+    if (window.showModalDialog){
+    //alert("showModalDialog-->");
+                  if( window.event){
+                  //alert("Window.event-->");
+    try {
+    window.showModalDialog(lstrURL,lstrArgument, 'dialogHeight:' + lstrHeight + ';dialogWidth:' + lstrWidth + ';center:yes;status:no');
+    }
+    catch(error){
+    window.open(lstrURL, null,'left=300,modal=yes,alwaysRaised=yes', null);
+    }
+                  }else{//alert("Window.event--else-->");
+          var lstrTop=0;
+          var lstrLeft = 0;
+          var width =0;
+          var height =0;
+       try{
+          width = window.innerWidth;
+          height =window.innerHeight;
+          height = parseInt(height);
+          lstrHeight = parseInt(lstrHeight);
+          width = parseInt(width);
+          lstrWidth = parseInt(lstrWidth);
+ 
+          lstrTop = ( height - lstrHeight)/2;
+          lstrLeft= (width-lstrWidth)/2;
+        }catch(error){}
+          window.showModalDialog(lstrURL,lstrArgument, 'dialogHeight:' + lstrHeight + ';dialogWidth:' + lstrWidth + ';dialogLeft:' + lstrLeft + ';dialogTop:' + lstrTop +';');
+      }
+    }else{//alert("showModalDialog--else-->");
+        window.open(lstrURL, null,'left=300,modal=yes,alwaysRaised=yes,width='+lstrWidth+',height='+lstrHeight, null);
+    }
+    // Set Error Flag to true so that Buttons are not disabled of parent
+    isErrFlg = true;
+
+}
+
+function getDisplayMonth(iMonth) {
+
+    // pass in an month as an integer
+    // return the month string
+
+    var monthArray = new Array("January","Febuary","March","April","May","June","July","August","September","October","November","December");
+
+    return monthArray[iMonth];
+}
+
+function getDisplayDate() {
+
+    // uses getDisplayMonth()
+    // returns passed Date formatted nicely
+    // Month day, Year  mmmm dd, yyyy
+
+    theDate = new Date();
+
+    // split into day, month, year
+    iDay = theDate.getDate();
+    iMonth = theDate.getMonth();
+    iYear = theDate.getFullYear();
+
+    sDisplayDate = iDay +  " " + getDisplayMonth(iMonth) + " " + iYear;
+
+    return sDisplayDate;
+}
+
+
+
+
+/**
+ * checkNoDataToSave_()
+ * ================
+ *
+ * Function to check if there is any data in the table to Save
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value - <TRUE - if data in the table or FALSE - if no data in the table>
+ * ------------
+ */
+function checkNoDataToSave_()
+{
+   var table =  document.getElementById(arguments[0]);
+   var objStatus = document.getElementById('value[' + 0 + '].status');
+   numrows = table.rows.length;
+   var count = 0;
+   if(numrows <= 0)
+   {
+      return false;
+   }
+   else if(objStatus == null)
+   {
+      return false;
+   }
+   else
+   {
+      for(i=0;;i++)
+      {
+         var lobjStatus = document.getElementById('value[' + i + '].status');
+         if(lobjStatus == null) {
+            break;
+         }
+
+         var lstrStatus = lobjStatus.value;
+
+         if(lstrStatus == HIDE)
+         {
+            continue;
+         }
+         count++;
+         break;
+      }
+   }
+   if(count == 0)
+   {
+      return false;
+   }
+
+   return true;
+}
+
+
+
+/**
+ * checkNoChangesToSave_()
+ * ================
+ *
+ * Function to check if there are any changes to be saved
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters
+ * ----------
+ *
+ * Return value - <TRUE - if chages made or FALSE - if no changes>
+ * ------------
+ */
+function checkNoChangesToSave_()
+{
+    var count = 0;
+    for(i=0;;i++)
+    {
+        var str = 'value[' + i + '].status';
+        var obj = document.getElementById(str);
+        if(obj == null)
+        {
+            break;
+        }
+        var lstrStatus = obj.value;
+
+        if(lstrStatus == HIDE || lstrStatus == '')
+        {
+            continue;
+        }
+        count++;
+        break;
+    }
+    if(count == 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+
+
+/**
+ * updateRowColor()
+ * ================
+ *
+ * Function to update the color of the rows in the table
+ * To be called from ADD button
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters
+ * ----------
+ *
+ * Return value
+ * ------------
+ */
+function updateRowColor()
+{
+    // Re-arrange the colors
+    for(j=0,k=0;;j++)
+    {
+        var str = 'value[' + j + '].status';
+        var obj = document.getElementById(str);
+        if(obj == null)
+        {
+            break;
+        }
+        if(obj.value != HIDE)
+        {
+            var SelectedRow = document.getElementById('row' + j);
+            SelectedRow.className = (k%2==0?"firstRow":"secondRow");
+            k++;
+        }
+    }
+}
+
+
+
+
+/**
+ * isSelected()
+ * ================
+ *
+ * Function to check if any checkbox is selected or not
+ * Assumes that the checkbox column in the table has been defined by the name 'selected'
+ *
+ * Parameters - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ * ----------
+ *
+ * Return value - <TRUE if selected else FALSE>
+ * ------------
+ */
+function isSelected() {
+    var table =  document.getElementById(arguments[0]);
+    var numrows = table.rows.length;
+    if(numrows <= 0) {
+        return false;
+    }
+    var chk = 0;
+    for(i=0;;i++){
+        var str = 'value[' + i + '].selected';
+        var obj = document.getElementById(str);
+        if(obj == null) {
+            break;
+        }
+        if(obj.checked) {
+            chk=1;
+            break;
+        }
+    }
+
+    if(chk==1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+
+/**
+ * delRow()
+ * ================
+ *
+ * Function to delete the row in table
+ * Assumes that the checkbox column in the table has been defined by the name 'selected'
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ * ----------
+ *
+ * Return value
+ * ------------
+ */
+function delRow() {
+    // Changed for the TKM Requirement that if
+    // 2nd  parameter is passed 0 cannot delete except ADD
+    // else normal delete operation
+    var chk = 0;
+    var delChk = 1;
+    if(arguments.length==2)
+    { 
+      delChk=arguments[1];
+    }
+
+    if(delChk==0)
+    {
+      for(i=0;;i++){
+        var str = 'value[' + i + '].selected';
+        var obj = document.getElementById(str);
+        if(obj == null) {
+            break;
+        }
+        if(obj.checked) {
+            chk=1;
+            var str1 = document.getElementById('value[' + i + '].status').value;
+            if(str1 == HIDE) {
+                continue;
+            }
+            if(str1 != ADD) {
+                showError("FE2168",FE2168);
+                return false;
+            } 
+        }
+      }
+    }
+    
+    for(i=0;;i++){
+        var str = 'value[' + i + '].selected';
+        var obj = document.getElementById(str);
+        if(obj == null) {
+            break;
+        }
+        if(obj.checked) {
+            chk=1;
+            var str1 = document.getElementById('value[' + i + '].status').value;
+
+            if(str1 == HIDE) {
+                continue;
+            }
+            var name = "value["+i+"].status";
+            if(str1 == ADD) {
+
+                document.getElementById(name).value = HIDE;
+                document.getElementById(arguments[0]).rows[i].cells[0].innerHTML =
+                    "<div style='width:46px'>"+HIDE+"</div>";
+                var SelectedRow = document.getElementById('row' + i);
+                SelectedRow.style.display = "none";
+
+
+            } else if(str1 == DEL) {
+                document.getElementById(name).value = '';
+                document.getElementById(arguments[0]).rows[i].cells[0].innerHTML =
+                    "<div style='width:46px'></div>";
+
+
+            } else {
+
+                document.getElementById(name).value = DEL;
+            document.getElementById(arguments[0]).rows[i].cells[0].setAttribute("align","CENTER");
+                document.getElementById(arguments[0]).rows[i].cells[0].innerHTML =
+                    "<div style='width:46px'>"+DEL+"</div>";
+            }
+            obj.checked=false;
+
+        }
+    }
+
+    updateRowColor();
+
+}
+
+
+
+/**
+ * checkDuplicacy()
+ * ================
+ *
+ * Function to check duplicacy in table
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters 1 - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 2 - Array of Column Names to be checked <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 3 - Concatenated value of the PK <MANDATORY MUST BE PASSED BY USER>
+ * ----------
+ *
+ * Return value - <TRUE if duplicate rows else FALSE>
+ * ------------
+ */
+function checkDuplicacy()
+{
+    var table =  document.getElementById(arguments[0]);
+    var numRows = table.rows.length;
+    if (numRows <= 0)
+    {
+        return false;
+    }
+
+    var PKColumns = arguments[1];
+    var numOfPKColumns = PKColumns.length;
+
+    var inputValue = arguments[2];
+
+    var concat = '';
+
+    for (i=0;i< numRows ;i++ )
+    {
+        concat = '';
+        if (document.getElementById('value[' + i + '].status').value == HIDE || document.getElementById('value[' + i + '].status').value == DEL)
+        {
+            continue;
+        }
+        else
+        {
+            for(j=0; j < numOfPKColumns - 1; j++)
+            {
+                var str = 'value[' + i + '].' + PKColumns[j+1];
+                var obj = document.getElementById(str);
+                concat = concat + obj.value;
+            }
+
+            if (concat == inputValue)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+
+
+}
+
+/**
+ * checkDuplicacyTable()
+ * ================
+ *
+ * Function to check duplicacy in table
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters 1 - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 2 - Array of Column Names to be checked <MANDATORY MUST BE PASSED BY USER>
+ * ----------
+ *
+ * Return value - <TRUE if duplicate rows else FALSE>
+ * ------------
+
+
+function  checkDuplicacyTable()
+{
+    var table =  document.getElementById(arguments[0]);
+    var numRows = table.rows.length;
+    if (numRows <= 0)
+    {
+        return false;
+    }
+
+   var PKColumns = arguments[1];
+    var numOfPKColumns = PKColumns.length;
+
+    var concat = '';
+   var inputValue = '';
+    for (i=0;i< numRows ;i++ )
+    {
+        concat = '';
+        if (document.getElementById('value[' + i + '].status').value == HIDE || document.getElementById('value[' + i + '].status').value == DEL)
+        {
+            continue;
+        }
+        else
+        {
+         // Picking the value of row in first loop
+         for(j=0; j < numOfPKColumns; j++)
+            {
+                var str = 'value[' + i + '].' + PKColumns[j];
+                var obj = document.getElementById(str);
+                concat = concat + trimString(obj.value);
+            }
+
+         for(k=i+1; k < numRows; k++) {
+            if (document.getElementById('value[' + k + '].status').value == HIDE || document.getElementById('value[' + k + '].status').value == DEL)
+            {
+               continue;
+            }
+            inputValue = '';
+
+            // Picking the value of row in second loop
+            for(j=0; j < numOfPKColumns ; j++)
+            {
+               var str = 'value[' + k + '].' + PKColumns[j];
+               var obj = document.getElementById(str);
+               inputValue = inputValue + trimString(obj.value);
+            }
+            if (concat == inputValue)
+            {
+               var str = 'value[' + k + '].' + PKColumns[0];
+               var obj = document.getElementById(str);
+               // Set Error
+               setErrorColor(obj);
+               // Set Focue
+               obj.focus();
+               return true;
+            }
+
+         }
+        }
+    }
+   return false;
+}
+*/
+
+function  checkDuplicacyTable()
+{
+   var table =  document.getElementById(arguments[0]);
+   var numRows = table.rows.length;
+   if (numRows <= 0)
+   {
+      return false;
+   }
+
+   var PKColumns = arguments[1];
+   var VOName = arguments[2];   
+   var numOfPKColumns = PKColumns.length;
+   var concatRowPK = '~';
+   var concatAllRowsPK = '';
+   var inputValue = '';
+   
+   if(VOName == null ){
+	   VOName = 'value';
+   }
+
+   for (i=numRows-1;i >= 0;i-- )
+   {
+      concatRowPK = '~';
+      if (document.getElementById( VOName + '[' + i + '].status').value == HIDE || 
+          document.getElementById( VOName + '[' + i + '].status').value == DEL)
+      {
+         continue;
+      }
+      else
+      {
+         // Picking the value of row in first loop
+         for(j=0; j < numOfPKColumns; j++)
+         {
+            var str = VOName + '[' + i + '].' + PKColumns[j];
+            var obj = document.getElementById(str);
+            concatRowPK = concatRowPK + trimString(obj.value.toUpperCase()) + '~';
+         }
+
+         if (concatAllRowsPK.indexOf(concatRowPK) == -1) {
+                concatAllRowsPK = concatAllRowsPK + '~~' + concatRowPK;
+         } else {
+            return true;
+         }
+      } // end else
+   } // end for loop
+   return false;
+}
+
+/**
+ * checkDuplicacyTableColorChange()
+ * ================
+ *
+ * Function to check duplicacy in table and change the color row to red
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters 1 - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 2 - Array of Column Names to be checked <MANDATORY MUST BE PASSED BY USER>
+  * Return value - <TRUE if duplicate rows else FALSE>
+ *             */
+
+function  checkDuplicacyTableColorChange() {
+   var table =  document.getElementById(arguments[0]);
+   var numRows = table.rows.length;
+   var isDuplicate = false;
+   if (numRows <= 0)
+   {
+      return false;
+   }
+
+   var PKColumns = arguments[1];
+   var numOfPKColumns = PKColumns.length;
+   var concatRowPK = '~';
+   var  arrTest= new Array(numRows);
+   if(numRows>1)
+   {
+   for (i=0;i <numRows ;i++ )
+   {
+      concatRowPK = '~';
+      if (document.getElementById('value[' + i + '].status').value == HIDE || document.getElementById('value[' + i + '].status').value == DEL)
+      {
+         continue;
+      }  // end if
+      else
+      {
+         // Picking the value of row in first loop
+         for(j=0; j < numOfPKColumns; j++)
+         {
+            var str = 'value[' + i + '].' + PKColumns[j];
+            var obj = document.getElementById(str);
+            concatRowPK = concatRowPK + obj.value + '~';
+         }
+           //Check if key exists in the array
+         if (concatRowPK in arrTest) {
+            var v =   parseInt(arrTest[concatRowPK]);
+            document.getElementById("row"+v).className ="redRow";
+            document.getElementById("row"+i).className ="redRow";
+            isDuplicate = true;
+         } else {
+            //if key is not added in array then add
+             arrTest[concatRowPK] = i;
+
+         }   // end else
+         } // end else
+      }     // end for loop
+   }   // end if
+   // if the duplicate parts exists then return true
+   if(isDuplicate)
+   {
+   return true;
+   }
+   return false;
+}//end of checkDuplicacyTableColorChange function
+
+/**
+ * checkDuplicacyTableColorChange()
+ * ================
+ *
+ * Function to check duplicacy in table and change the color row to red
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters 1 - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 2 - Array of Column Names to be checked <MANDATORY MUST BE PASSED BY USER>
+  * Return value - <TRUE if duplicate rows else FALSE>
+ *             */
+
+function  checkDuplicacyDataColorChange() {
+   var table =  document.getElementById(arguments[0]);
+   var numRows = table.rows.length;
+   var isDuplicate = false;
+   if (numRows <= 0)
+   {
+      return false;
+   }
+
+   var PKColumns = arguments[1];
+   var numOfPKColumns = PKColumns.length;
+   var concatRowPK = '~';
+   var  arrTest= new Array(numRows);
+   if(numRows>1)
+   {
+   for (i=0;i <numRows ;i++ )
+   {
+      concatRowPK = '~';
+      if (document.getElementById('value[' + i + '].status').value == HIDE || document.getElementById('value[' + i + '].status').value == DEL)
+      {
+         continue;
+      }  // end if
+      else
+      {
+         // Picking the value of row in first loop
+         for(j=0; j < numOfPKColumns; j++)
+         {
+            var str = 'value[' + i + '].' + PKColumns[j];
+            var obj = document.getElementById(str);
+            concatRowPK = concatRowPK + obj.value + '~';
+         }
+           //Check if key exists in the array
+         if (concatRowPK in arrTest) {
+            var v =   parseInt(arrTest[concatRowPK]);
+            document.getElementById("row"+v).className ="blueRow";
+            document.getElementById("row"+i).className ="blueRow";
+            isDuplicate = true;
+         } else {
+            //if key is not added in array then add
+             arrTest[concatRowPK] = i;
+
+         }   // end else
+         } // end else
+      }     // end for loop
+   }   // end if
+   // if the duplicate parts exists then return true
+   if(isDuplicate)
+   {
+   return true;
+   }
+   return false;
+}//end of checkDuplicacyDataColorChange function
+
+/**
+ * checkPKChanged()
+ * ================
+ *
+ * Function to check if PK is changed
+ *
+ * Parameters 1 - <ROW ID> <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 2 - Array of Column Names to be checked <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 3 - Concatenated value of the PK <MANDATORY MUST BE PASSED BY USER>
+ * ----------
+ *
+ * Return value - <TRUE if PK changed else FALSE>
+ * ------------
+ */
+function checkPKChanged() {
+    var rowID = arguments[0];
+    var PKColumns = arguments[1];
+    var inputValue = arguments[2];
+
+    var numOfPKColumns = PKColumns.length;
+    var concat = '';
+
+    for (i = 0; i < numOfPKColumns; i++)
+    {
+        concat = concat + document.getElementById('value[' + rowID + '].' + PKColumns[i]).value;
+    }
+
+    if(concat != inputValue)
+    {
+        return true;
+    }
+    return false;
+}
+
+
+/**
+ * hideMask_PartNumber()
+ * ================
+ *
+ * Method to remove the part number format from the field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Part Number Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+function hideMask_PartNumber(aField)
+{
+    var lobjFrcFw = handlePartFranchise( '1', aField, '' , arguments[1]);
+    var lstrFrcLen ;
+    if( lobjFrcFw != null ) {
+       lstrFrcLen = lobjFrcFw.value.length;
+    } else {
+       lstrFrcLen = 0
+    }
+    lstrValue = aField.value.substring(lstrFrcLen);
+    re = new RegExp("-","g");
+    aField.value = lstrValue.replace(re,"");
+    aField.select();
+}
+
+function handlePartFranchise()
+{
+	var lstrFieldName = arguments[1].name ;
+    var lintIndexBrk  = lstrFieldName.indexOf('[');
+    var lintLastIndexBrk  = lstrFieldName.indexOf(']');
+    var lstrCurrRow   = '';
+    var nameFrCdFw  ;
+    var table ;
+    var lstrFranchise = arguments[2];
+    // Franchise is not passed
+    if( lstrFranchise == null ) {
+        lstrFranchise = '';
+    }
+    var refFrCdFw ;
+    var rowFw
+    // Get Current Row
+    if( lintIndexBrk != -1 ) {
+        lstrCurrRow   = lstrFieldName.substring(lintIndexBrk + 1,lintLastIndexBrk) ;
+        if( arguments[3] != null ) {
+            table = document.getElementById(arguments[3]);
+            nameFrCdFw = "value["+lstrCurrRow+"]." + arguments[3] + "frmFwFrcCd";
+        } else {
+            table = document.getElementById("DataTable");
+            nameFrCdFw = "value["+lstrCurrRow+"].frmFwFrcCd";
+        }
+       //var rowFw   = table.rows(lstrCurrRow-0);
+       var browser = navigator.userAgent;
+       //alert("navigator.userAgent-->"+navigator.userAgent);
+       if(browser.toLowerCase().indexOf('safari') > 0 || browser.toLowerCase().indexOf('firefox') >0){
+         rowFw   = table.rows[lstrCurrRow-0];
+       } else {
+	     rowFw   = table.rows(lstrCurrRow-0);
+       }
+       var numcols = rowFw.cells.length
+        refFrCdFw   = document.getElementById(nameFrCdFw);
+        // if Object doesn't exists
+        if( refFrCdFw == null ) {
+            var cellFrCdFw = rowFw.insertCell(numcols);
+            cellFrCdFw.innerHTML = '<TD><input type="hidden" name="' +  nameFrCdFw +'" value="' + lstrFranchise + '"></TD>';
+        }
+    } else {
+        refFrCdFw =  document.forms[0].frmFwFrcCd ;
+    }
+    if( arguments[0] == '0' && refFrCdFw != null ) {
+        refFrCdFw.value = lstrFranchise ;
+    }
+
+    return refFrCdFw ;
+
+}
+
+/**
+ * putMask_PartNumber()
+ * ================
+ *
+ * Method to put the part number format to the field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Part Number Field> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <Format Mask for Field> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter3> - <Franchise for Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+function putMask_PartNumber(aField, aMask, aFranchise){
+    var lstrValue   = aField.value;
+    var finalString = '';
+    var lintIndex   = -1;
+    var lintReplaceIndex = -1;
+    var lstrFormatMask = aMask;
+    //handlePartFranchise( '0', aField, aFranchise, arguments[3]);
+     handlePartFranchise( '0', aField, aFranchise);
+	if(validatePartNo(aField)) {
+        lstrValue = trimString(lstrValue);
+        lstrValue = lstrValue.toUpperCase();
+
+        if( aFranchise != null && aFranchise.length > 0 )
+        {
+            lstrValue = lstrValue.substring(1);
+        }
+        re = new RegExp("-","g");
+        lstrValue = lstrValue.replace(re,'');
+
+        finalString = lstrValue;
+        if(lstrFormatMask != null && lstrFormatMask.length >0 ){
+            lstrFormatMask = trimString(aMask.toUpperCase());
+
+            while((lintIndex = lstrFormatMask.indexOf("-")) > -1){
+                lintReplaceIndex = lintReplaceIndex + lintIndex + 1;
+                if(lintReplaceIndex < finalString.length){
+                    finalString = finalString.substring(0,lintReplaceIndex) +
+                    '-' +
+                    finalString.substring(lintReplaceIndex);
+                }else{
+                    break;
+                }
+                lstrFormatMask = lstrFormatMask.substring(lintIndex +1);
+            }
+        }
+        if( aFranchise != null && aFranchise.length > 0 )
+        {
+            finalString = aFranchise + '-' + finalString;
+        }
+
+        aField.value = finalString;
+    }
+}
+
+/**
+ * validatePartNo()
+ * ================
+ *
+ * Method to validate the part number
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Part Number Field> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+function validatePartNo(aField)
+{
+   var lstrValue = aField.value;
+   var lchrTemp;
+
+    re = new RegExp("-","g");
+    lstrValue = lstrValue.replace(re,"");
+
+/*   for(i=0;i<lstrValue.length;i++) {
+
+       lchrTemp = lstrValue.charAt(i);
+            if (!(  (lchrTemp >= 'A' && lchrTemp <= 'Z')
+                  || (lchrTemp >= 'a' && lchrTemp <= 'z')
+                  || (lchrTemp >= '0' && lchrTemp <= '9'))) {
+                return false;
+            }
+   }*/
+
+   return true;
+}//End of validatePartNo
+
+
+/**
+ * putMask_Integer()
+ * ================
+ *
+ * Method to put the number format to the field
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <Number Field> <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <Number of Digits before decimal> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+function putMask_Integer(aField, aintDigits)
+{
+   intVal = aField.value;
+
+   re = new RegExp(",","g");
+   intVal = intVal.replace(re,"");
+
+   lintLen = aintDigits;
+    // Curtailing Blank spaces from the begining and end of the entered text
+    intVal = trimString(intVal);
+
+    if( intVal == null || intVal.length == 0 ){
+       aField.value = intVal;
+       return;
+    }
+    var posNeg=intVal.indexOf('-');
+
+    // Validating Integer
+    if(!isInteger(intVal)){
+        return;
+    }
+    if(intVal.length > lintLen) {
+        intVal = intVal.substring(0,lintLen);
+    }
+
+   remString = intVal;
+
+   var i = remString.length;
+
+   while(i > 1) {
+
+      if(remString.indexOf("0",0) == 0 ) {
+         remString = remString.substring(1);
+      }
+      i = i-1;
+   }
+
+    finalString = "";
+
+   if(lintLen > 3) {
+        while(remString.length > 3)
+        {
+
+            finalString = "," + remString.substring(remString.length-3) +  finalString;
+            remString = remString.substring(0,remString.length-3);
+        }
+    }
+    finalString = remString + finalString ;
+    aField.value = ((posNeg == 0 && finalString != 0)?'-':'') + finalString;
+}
+
+/**
+ * clearTable()
+ * ================
+ *
+ * Method to put the clear data from table in case validations fail on a crtiteria
+ *
+ * Parameters
+ * ----------
+ *Parameters - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+   function clearTable(aTable) {
+      var myTable = document.getElementById(aTable);
+      if(myTable.rows.length == 0) {
+         return;
+      }
+      for(var i=myTable.rows.length-1; i >= 0; i--) {
+         myTable.deleteRow(i);
+      }
+   }
+
+
+/**
+ * setDisable()
+ * ================
+ *
+ * Method to disable the field
+ *
+ * Parameters
+ * ----------
+ *Parameters - <Field ID> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+   function setDisable(aField) {
+      aField.disabled = true;
+      aField.style.backgroundColor = "#EBEEEA";
+   }
+
+/**
+ * setEnable()
+ * ================
+ *
+ * Method to enable the field
+ *
+ * Parameters
+ * ----------
+ *Parameters - <Field ID> <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ *
+ */
+   function setEnable(aField) {
+      aField.disabled = false;
+      setNormalColor(aField);
+   }
+
+   /**
+    * validatePageNo
+    * ================
+    *
+    * Method to validate the page no.
+    *
+    * Parameters
+    * ----------
+    *Parameters - <objPageNo-Page No. Object> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value (true/false)
+    * ------------
+    *
+    */
+   function validatePageNo(objPageNo) {
+      // No data to go
+      if (!checkNoDataToSave_('DataTable')) {
+         return false;
+      }
+      // do processing to go to desired page
+      var lstrPageNo = objPageNo.value;
+      //Check mandatory input
+      if (!mandatoryCheck(objPageNo)) {
+         return false;
+      }
+      //If not valid number
+      if (!isInteger(lstrPageNo)) {
+         showError("FE0003", FE0003, objPageNo);
+         return false;
+      }
+     //Cannot be zero
+     if (eval(lstrPageNo) == 0 ) {
+         showError("FE0011", FE0011, objPageNo);
+        return false;
+     }
+     objPageNo.value = lstrPageNo;
+     return true;
+   }
+
+   /**
+    * validatePage_NoStatus
+    * ================
+    *
+    * Method to validate the page no of search screen having no status column.
+    *
+    * Parameters
+    * ----------
+    *Parameters - <objPageNo-Page No. Object> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value (true/false)
+    * ------------
+    *
+    */
+   function validatePage_NoStatus(objPageNo) {
+      // do processing to go to desired page
+      var lstrPageNo = objPageNo.value;
+
+      //Check mandatory input
+      if (!mandatoryCheck(objPageNo)) {
+         return false;
+      }
+      //If not valid number
+      if (!isInteger(lstrPageNo)) {
+         showError("FE0003", FE0003, objPageNo);
+         return false;
+      }
+     //Cannot be zero
+     if (eval(lstrPageNo) == 0 ) {
+         showError("FE0011", FE0011, objPageNo);
+        return false;
+     }
+     objPageNo.value = lstrPageNo;
+     return true;
+   }
+
+   /**
+    * isValidDateTime
+    * ================
+    *
+    * Method to validate the date Time
+    *
+    * Parameters
+    * ----------
+    *Parameters - <DateTime Object's Value> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value (true/false)
+    * ------------
+    *
+    */
+   function isValidDateTime(dtTmStr) {
+      re = new RegExp("/","g");
+      dtTmStr = dtTmStr.replace(re,"");
+
+      re = new RegExp(":","g");
+      dtTmStr = dtTmStr.replace(re,"");
+
+      if(dtTmStr.length != 15) {
+         return false;
+      }
+
+      // Take the Date time part in sepearte variables.
+      dtStr = dtTmStr.substring(0,8);
+      tmStr = dtTmStr.substring(9);
+
+      if(!isValidDate(dtStr)) {
+         return false;
+      }
+
+      if(dtTmStr.charAt(8) != " ") {
+         return false;
+      }
+
+      if(!isValidTime(tmStr)) {
+         return false;
+      }
+      return true
+   }
+
+   /**
+    * isValidTime
+    * ================
+    *
+    * Method to validate the Time
+    *
+    * Parameters
+    * ----------
+    * Parameters - <Time value> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value (true/false)
+    * ------------
+    *
+    */
+   function isValidTime(aTimeStr) {
+      var lstrValue = aTimeStr;
+      re = new RegExp(":","g");
+      aTimeStr = lstrValue.replace(re,"");
+
+      if(!isInteger(aTimeStr)){
+         return false;
+      }
+
+      if(aTimeStr.length < 4){
+         return false;
+      }
+
+      var strHour  =aTimeStr.substring(0,2);
+      var strMinute=aTimeStr.substring(2,4);
+      var strSecond=aTimeStr.substring(4);
+      hour    = parseInt(strHour);
+      minute  = parseInt(strMinute);
+      second  = parseInt(strSecond);
+      if (hour<0 || hour>23){
+         return false
+      }
+      if (minute < 0 || minute > 59){
+         return false
+      }
+      if (second < 0 || second > 59){
+         return false
+      }
+      return true;
+    }
+
+   /**
+    * hideMask_DateTime()
+    * ================
+    *
+    * Method to remove the Date-Time Mask
+    *
+    * Parameters
+    * ----------
+    * <Parameter1> - <DateTime Field> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value
+    * ------------
+    */
+   function hideMask_DateTime(oElement)
+   {
+      var lstrValue = oElement.value;
+
+      re = new RegExp("/","g");
+      lstrValue = lstrValue.replace(re,"");
+
+      re = new RegExp(":","g");
+      oElement.value = lstrValue.replace(re,"");
+      oElement.select();
+   }
+
+
+   /**
+    * putMask_DateTime()
+    * ================
+    *
+    * Method to Put the DateTime Mask
+    *
+    * Parameters
+    * ----------
+    * <Parameter1> - <DateTime Field> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value
+    * ------------
+    */
+   function putMask_DateTime(oElement)
+   {
+      var lstrValue = oElement.value;
+      if(lstrValue == "" || !isValidDateTime(lstrValue))
+         return;
+
+      re = new RegExp("/","g");
+      lstrValue = lstrValue.replace(re,"");
+
+      re = new RegExp(":","g");
+      lstrValue = lstrValue.replace(re,"");
+
+      lstrValue = lstrValue.toUpperCase();
+
+      if (lstrValue.length == 15) {
+         strDay    = lstrValue.substring(0,2);
+         strMonth  = lstrValue.substring(2,4);
+         strYear   = lstrValue.substring(4,8);
+         strHour   = lstrValue.substring(9,11);
+         strMinute = lstrValue.substring(11,13);
+         strSecond = lstrValue.substring(13);
+
+         oElement.value =
+            strDay + "/" +strMonth + "/" +strYear + " " + strHour + ":" + strMinute + ":" + strSecond;
+      }
+   }
+
+/**
+ * compareDateTime()
+ * ================
+ *
+ * Method to compare the From and To dates
+ *
+ * Parameters
+ * ----------
+ * <Parameter1> - <From Date> : the date to be in DD/MM/YYYY HH24:MI:SS format <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <To   Date> : the date to be in DD/MM/YYYY HH24:MI:SS format <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <Number> -   0 if the dates are same
+ *              -1 if the first one is an earlier date
+ *              1 if the first one is a later date
+ */
+   function compareDateTime (value1, value2) {
+      var date1, date2;
+      var month1, month2;
+      var year1, year2;
+      re = new RegExp("/","g");
+      value1 = value1.replace(re,"");
+      value2 = value2.replace(re,"");
+
+      re = new RegExp(":","g");
+      value1 = value1.replace(re,"");
+      value2 = value2.replace(re,"");
+
+
+      date1= value1.substring (0, 2);
+      month1 = value1.substring (2, 4);
+      year1 = value1.substring (4, 8);
+      hour1   = value1.substring (9, 11);
+      minute1   = value1.substring (11, 13);
+      second1 = value1.substring (13, 15);
+
+      date2= value2.substring (0, 2);
+      month2 = value2.substring (2, 4);
+      year2 = value2.substring (4, 8);
+      hour2   = value2.substring (9, 11);
+      minute2   = value2.substring (11, 13);
+      second2 = value2.substring (13, 15);
+
+
+      if (year1 > year2) return 1;
+      else if (year1 < year2) return -1;
+      else if (month1 > month2) return 1;
+      else if (month1 < month2) return -1;
+      else if (date1 > date2) return 1;
+      else if (date1 < date2) return -1;
+      else if (hour1 > hour2) return 1;
+      else if (hour1 < hour2) return -1;
+      else if (minute1 > minute2) return 1;
+      else if (minute1 < minute2) return -1;
+      else if (second1 > second2) return 1;
+      else if (second1 < second2) return -1;
+      else return 0;
+   }
+
+   function updateStatus(arow) {
+      //get the status of the selected row
+      var lobjStatus = document.getElementById('value[' + arow + '].status');
+      var lstrstatus = lobjStatus.value;
+      if( ! updEnbDsb ) {
+          if(lstrstatus == '') {
+             lobjStatus.value = UPD;
+             //Set status to upd
+             document.getElementById("DataTable").rows[arow].cells[0].innerHTML =
+                   "<div style='width:46px'>"+UPD+"</div>";
+          }
+      }
+   }
+
+   /**
+    * putMask_Time()
+    * ================
+    *
+    * Method to Put the Time Mask (HH24:MI)
+    *
+    * Parameters
+    * ----------
+    * <Parameter1> - <Time Field> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value
+    * ------------
+    */
+
+   function putMask_Time(oElement)
+   {
+      var lstrValue = oElement.value;
+      if(lstrValue == "" || !isValidTime(lstrValue))
+         return;
+      re = new RegExp(":","g");
+      lstrValue = lstrValue.replace(re,"");
+
+      lstrValue = lstrValue.toUpperCase();
+
+      if (lstrValue.length == 4) {
+         strHour   = lstrValue.substring(0,2);
+         strMinute = lstrValue.substring(2,4);
+         oElement.value =
+            strHour + ":" + strMinute ;
+      }
+     }
+
+   /**
+    * hideMask_Time()
+    * ================
+    *
+    * Method to hide the Time Mask (HH24:MI will be converted to HH24MI)
+    *
+    * Parameters
+    * ----------
+    * <Parameter1> - <Time Field> <MANDATORY MUST BE PASSED BY USER>
+    *
+    * Return value
+    * ------------
+    */
+     function hideMask_Time(oElement)
+   {
+      var lstrValue = oElement.value;
+      re = new RegExp(":","g");
+      oElement.value = lstrValue.replace(re,"");
+      oElement.select();
+   }
+
+
+   /**
+    * populateBranch()
+    * ================
+    *
+    * Method to populate Branch Combo on the basis of selected Dealer
+    *
+    * Parameters
+    * ----------
+    * None
+    *
+    * Return value
+    * ------------
+    */
+
+ function populateBranch()
+ {
+    var lstrDlrCode = document.forms[0].dealer.value;
+    var lstrBlankFlag=arguments[0] ;
+    // dealerBranch - a hidden combo
+    comboDealerBranch = eval(document.forms[0].dealerBranch);
+    comboBranch = eval(document.forms[0].branch);
+    for(lintI=0; lintI < comboBranch.length; lintI++)
+    {
+        document.forms[0].branch.options[lintI] = null;
+        lintI = -1;
+    }
+
+    //Enter default record
+    if(lstrBlankFlag != null && lstrBlankFlag!="" && lstrBlankFlag=="YES" ){
+       document.forms[0].branch.options[document.forms[0].branch.options.length] = new Option(" ", "");
+    }else{
+        document.forms[0].branch.options[document.forms[0].branch.options.length] = new Option(document.AppJsp.allLabel.value, "");
+    }
+    for(lintI=0; lintI < comboDealerBranch.length; lintI++)
+    {
+        var opt= document.forms[0].dealerBranch[lintI].text;
+        var value= document.forms[0].dealerBranch[lintI].value;
+
+        var lintPos = value.indexOf("~");
+        if (lintPos > -1)
+        {
+            var brcCode = value.substring(0, lintPos);
+            var dlrCode = value.substring(lintPos+1);
+            if(dlrCode == lstrDlrCode || dlrCode == '')
+            {
+                with(document.forms[0].branch)
+                {
+                    options[options.length] = new Option(opt, brcCode);
+                }
+            }
+        }
+        /*else
+        {
+            document.forms[0].branch.options[document.forms[0].branch.options.length] = new Option(document.AppJsp.allLabel.value, "");
+        }*/
+    }
+ }
+
+//function to close screen
+function closeWindow() {
+      if(checkNoChangesToSave_()) {
+         if(!showQuestion("FW0004", FW0004)) {
+             return false;
+         }
+     }
+     window.close();
+     return false;
+ }
+
+    function changeUpper(afield) {
+        afield.value = trimString(afield.value.toUpperCase());
+    }
+
+/**
+ * checkDuplicacyTable_1()
+ * ================
+ *
+ * Function to check duplicacy in table
+ * Assumes that the status column in the table has been defined by the name 'status'
+ *
+ * Parameters 1 - <Table ID> <MANDATORY MUST BE PASSED BY USER>
+ * Parameters 2 - Array of Column Names to be checked <MANDATORY MUST BE PASSED BY USER>
+ * ----------
+ *
+ * Return value - <TRUE if duplicate rows else FALSE>
+ * ------------
+ */
+
+function  checkDuplicacyTable_1() {
+    var table =  document.getElementById(arguments[0]);
+    var numRows = table.rows.length;
+    if (numRows <= 0){
+        return false;
+    }
+    var PKColumns = arguments[1];
+    var numOfPKColumns = PKColumns.length;
+    var tableList = new Array();
+    var checkList = new Array();
+    var tableCounter = -1;
+    var checkCounter = -1;
+    var concat = '';
+    for (i=0;i< numRows ;i++ ){
+        concat = '';
+        if (document.getElementById('value[' + i + '].status').value == HIDE || document.getElementById('value[' + i + '].status').value == DEL){
+            continue;
+        }else{
+            // Picking the value of row in first loop
+            for(j=0; j < numOfPKColumns; j++){
+                var str = 'value[' + i + '].' + PKColumns[j];
+                var obj = document.getElementById(str);
+                concat = concat + obj.value;
+            }
+            if(document.getElementById('value[' + i + '].status').value == ADD || document.getElementById('value[' + i + '].status').value == UPD){
+                checkCounter = checkCounter +1;
+                checkList[checkCounter] = concat;
+            }else {
+                tableCounter = tableCounter + 1 ;
+                tableList[tableCounter] = concat ;
+            }
+        }
+    }
+    for (i=0; i<= checkCounter; i++){
+        for(k=i+1; k<= checkCounter ; k++){
+            if(checkList[i] == checkList[k]){
+                return true;
+            }
+        }
+        for(k=0; k<= tableCounter ; k++){
+            if(checkList[i]== tableList[k]){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+   /**
+    * populateCombo()
+    * ================
+    *
+    * Method to populate Child Combo on the basis of selected Parent value
+    *
+    * Parameters
+    * ----------
+    * None
+    *
+    * Return value
+    * ------------
+    */
+ //Changed by Jatin to show 'All' in english in case of populate combo
+ //from TMT report screens,aintFlag==99 will add 'All' in combo
+ function populateCombo(aobjParentCmb,
+                        aobjChildCmb,aobjHiddenCmb,aarrstrParentCode, aintFlag,aintType)
+ {
+    // dealerBranch - a hidden combo
+    comboHidden = eval(aobjHiddenCmb);
+    comboChild = eval(aobjChildCmb);
+    //If the value passed is 1 then take the Object as a Text Field else Combo
+    if(aintType ==1)
+    {
+      aobjChildCmb.value='';
+    } else {
+      for(lintI=0; lintI < comboChild.length; lintI++)
+      {
+        aobjChildCmb.options[lintI] = null;
+        lintI = -1;
+      }
+    }
+    //Enter default record
+    //Changed for Adding Select
+    if(aintType == 1)
+    {
+    } else {
+    if(aintFlag == 0) {
+        comboChild.options[comboChild.options.length]= new Option(SELECT, "");
+    } else if(aintFlag == 1) {
+        comboChild.options[comboChild.options.length]= new Option("", "");
+    } else if(aintFlag == 2) {
+    }else if(aintFlag == 99) {
+    	comboChild.options[comboChild.options.length]= new Option(ALL, "");
+    } else {
+        comboChild.options[comboChild.options.length]= new Option(document.AppJsp.allLabel.value, "");
+    } 
+    }
+
+    for(lintCtr=0; lintCtr < aarrstrParentCode.length; lintCtr++)
+    {
+        for(lintI=0; lintI < comboHidden.length; lintI++)
+        {
+            var opt= aobjHiddenCmb[lintI].text;
+            var value= aobjHiddenCmb[lintI].value;
+            var lintPos = value.indexOf("~");
+            if (lintPos > -1) {
+                var childCode = value.substring(0, lintPos);
+                var parentCode = value.substring(lintPos+1);
+                if(parentCode == aarrstrParentCode[lintCtr] || parentCode == '')
+                {
+                    if(aintType==1)
+                    {
+                      aobjChildCmb.value = opt;
+                      break;
+                    } else {
+                      with(aobjChildCmb)
+                      {                      	
+                         options[options.length] = new Option(opt, childCode);
+                      }
+                    }
+                }
+            }
+           /* else
+            {
+                if(lintCtr == 0) {
+                    aobjChildCmb.options[aobjChildCmb.options.length] = new Option();
+                }
+            }*/
+        }
+    }
+ }
+
+
+/**
+    * setToFiveMul()
+    * ================
+    *
+    * Method to set the time value as a multiple of roundno
+    *
+    * Parameters
+    * ----------
+    * Parameter1   Time field <MANDATORY>
+    * Parameter 2  Value by which the time is to be incremented.<MANDATORY>
+    *
+    * Return value
+    * ------------
+    */
+ function setToFiveMul(aobjField,roundno) {
+    if(!isValidTime(aobjField.value)){
+      return;
+    }
+   putMask_Time(aobjField);
+   var lstrTimeVal = aobjField.value;
+   var lstrHrVal;
+   var lstrMinVal;
+   //Replace : from time
+   re = new RegExp(":","g");
+   lstrTimeVal = lstrTimeVal.replace(re,"");
+
+   lstrHrVal = lstrTimeVal.substring(0,2);
+   lstrMinVal = lstrTimeVal.substring(2,4);
+
+    lstrMinVal = multipleNo(roundno,lstrMinVal);
+
+    if(lstrMinVal ==  60)
+        {
+        lstrHrVal = eval(lstrHrVal)+1;
+
+        lstrMinVal = '00';
+
+        aobjField.value = lstrHrVal + lstrMinVal;
+        if(aobjField.value.length == 3)
+            {
+            aobjField.value = '0'+aobjField.value;
+            }
+
+        if(lstrHrVal == 24)
+            {
+                lstrHrVal = '00';
+
+                aobjField.value = lstrHrVal + lstrMinVal;
+
+                putMask_Time(aobjField);
+            }
+            putMask_Time(aobjField);
+        }
+         if(lstrMinVal == '5')
+                 {
+             lstrMinVal = '05';
+
+                 }
+
+                 aobjField.value = lstrHrVal+lstrMinVal;
+
+                 putMask_Time(aobjField);
+}
+
+
+//convert to a multiple of the parameter passed
+    function multipleNo(multipleNo, FieldValue) {
+        //fieldValue = objFieldValue.value;
+            if(FieldValue % multipleNo == 0)
+        {
+            FieldValue = FieldValue;
+            return(FieldValue);
+        }
+    else
+        {
+
+            lstrDiv = FieldValue / multipleNo;
+            FieldValue = multipleNo * (Math.ceil(lstrDiv) );
+            return(FieldValue);
+        }
+    }
+
+/**
+    * timeIncrement()
+    * ================
+    *
+    * Method to Increment the time value
+    *
+    * Parameters
+    * ----------
+    * Parameter   Time field <MANDATORY>
+    *
+    * Return value
+    * ------------
+    */
+function timeIncrement(aobjField) {
+
+   var lstrTimeValue = aobjField.value;
+
+   re = new RegExp(":","g");
+   lstrTimeValue = lstrTimeValue.replace(re,"");
+
+   lstrHrValue = lstrTimeValue.substring(0,2);
+   lstrMinValue = lstrTimeValue.substring(2,4);
+
+   if(lstrMinValue == '00') {
+      lstrMinValue = '05';
+   } else {
+      lstrMinValue = eval(lstrMinValue) + 5;lstrMinValue = lstrMinValue.toString();
+   }
+      if(lstrMinValue.length == 1)
+      {
+         lstrMinValue = '0'+lstrMinValue;
+      }
+    if(lstrMinValue ==  60)
+        {
+        lstrHrValue = eval(lstrHrValue)+1;
+
+        lstrMinValue = '00';
+
+        aobjField.value = lstrHrValue + lstrMinValue;
+        if(aobjField.value.length == 3)
+            {
+            aobjField.value = '0'+aobjField.value;
+            }
+
+        if(lstrHrValue == 24)
+            {
+                lstrHrValue = '00';
+
+                aobjField.value = lstrHrValue + lstrMinValue;
+
+                putMask_Time(aobjField);
+            }
+            putMask_Time(aobjField);
+        } else {
+               aobjField.value = lstrHrValue + lstrMinValue;
+               if(aobjField.value.length == 3)
+               {
+                  aobjField.value = '0'+aobjField.value;
+               }
+               putMask_Time(aobjField);
+        }
+         }
+
+
+/**
+    * timeDecrement()
+    * ================
+    *
+    * Method to Decrement the time value
+    *
+    * Parameters
+    * ----------
+    * Parameter   Time field <MANDATORY>
+    *
+    * Return value
+    * ------------
+    */
+function timeDecrement(aobjField) {
+
+   var lstrTimeValue = aobjField.value;
+
+   re = new RegExp(":","g");
+   lstrTimeValue = lstrTimeValue.replace(re,"");
+
+   lstrHrValue = lstrTimeValue.substring(0,2);
+   lstrMinValue = lstrTimeValue.substring(2,4);
+
+   if(lstrMinValue == '00') {
+      lstrMinValue = '55';
+   } else {
+      lstrMinValue = eval(lstrMinValue) - 5;lstrMinValue = lstrMinValue.toString();
+   }
+      if(lstrMinValue.length == 1)
+     {
+         lstrMinValue = '0'+lstrMinValue;
+      }
+    if(lstrMinValue ==  55)
+        {
+        lstrHrValue = eval(lstrHrValue)-1;
+
+        lstrMinValue = '55';
+
+        aobjField.value = lstrHrValue + lstrMinValue;
+        if(aobjField.value.length == 3)
+            {
+            aobjField.value = '0'+aobjField.value;
+            }
+
+        if(lstrHrValue == -1)
+            {
+                lstrHrValue = '23';
+
+                aobjField.value = lstrHrValue + lstrMinValue;
+
+                putMask_Time(aobjField);
+            }
+            putMask_Time(aobjField);
+        } else {
+               aobjField.value = lstrHrValue + lstrMinValue;
+               if(aobjField.value.length == 3)
+               {
+                  aobjField.value = '0'+aobjField.value;
+               }
+               putMask_Time(aobjField);
+        }
+         }
+
+function setFocusOnComp()
+{
+    // Get the Passed Component Reference
+    var lobjComp = document.getElementById(arguments[0]);
+    // Set the focus on the component
+    if( ! lobjComp.disabled ) {
+        lobjComp.focus();
+    }
+}
+
+
+//to put mask on Bill no.
+function putMask_BillNo(aField)
+ {
+  var lstrValue = aField.value;
+  var finalString = '';
+
+    if(lstrValue.length>=8 ){  // Curtailing Blank spaces from the begining and end of the entered text
+      lstrValue = trimString(lstrValue);
+      lstrValue = lstrValue.toUpperCase();
+
+     finalString = lstrValue.substring(0,4) + "-" + lstrValue.substring(4) ;
+
+      aField.value = finalString;
+   }
+ }//end of function putMask_BillNo
+
+//to hide mask for Bill No.
+function hideMask_BillNumber(aField)
+ {
+    lstrValue = aField.value;
+    re = new RegExp("-","g");
+    aField.value = lstrValue.replace(re,"");
+    aField.select();
+ }//end of function hideMask_BillNo
+
+
+
+ /**
+  * initRequest()
+  * Initialize  request for XMLHTTP request for getPartDetails function
+  *
+  * Parameters
+  * ----------
+  * Returns
+  * -----------
+  * Returns the component of XMLHTTP request
+  */
+function initRequest(url) {
+    if (window.XMLHttpRequest) {
+        return new XMLHttpRequest();
+    } else if (window.ActiveXObject) {
+        isIE = true;
+        return new ActiveXObject("Microsoft.XMLHTTP");
+    }
+}
+
+
+ /**
+    * getPartDetails()
+    * ================
+    *
+    * Method to Get Franchise, Format Mask,
+    * Part Name and Part Price for Passed Part No.
+    *
+    * Parameters
+    * ----------
+    * Parameter 1  Old Part No.
+    * Parameter 2  New Part No.
+    * Parameter 3  Part Cost
+    *
+    * Return value
+    * ------------
+    * Returns and Array which has following information
+    * Index 0     Franchise Code
+    * Index 1     Format Mask
+    * Index 2     Part Name
+    * Index 3     Part Price
+    * Index 4     Part No with formatmask
+    */
+function getPartDetails(){
+    var lstrPartNo = arguments[1].toUpperCase();
+    var lstrPartCostFlg = '';
+    if(arguments[2] != null) {
+        lstrPartCostFlg = arguments[2].toUpperCase();
+    }
+
+    var url = document.AppJsp.ajaxServlet.value + '/getpartdetail' + '?partno=' +
+        escape(lstrPartNo)+'&partCost=' + lstrPartCostFlg;
+    var req = initRequest(url);
+
+    var lstrarrPartDtl =  new Array(7);
+
+    // Passed Franchise Code
+    lstrarrPartDtl[0] = '';
+    // Part Franchise Mask
+    lstrarrPartDtl[1] = '';
+    // Part Name
+    lstrarrPartDtl[2] = '';
+    // Part Price
+    lstrarrPartDtl[3] = '';
+    //Part No with Franchise Code
+    lstrarrPartDtl[4] = lstrPartNo;
+    lstrarrPartDtl[5] = '';
+    lstrarrPartDtl[6] = '';
+    req.onreadystatechange =
+            function() {
+                if (req.readyState == 4) {
+                    if (req.status == 200) {
+                        lstrarrPartDtl = fetchPartDetails(req.responseXML, lstrPartNo);
+                    } else if (req.status == 204){
+                        //showError('Error: Some Error in file reading');
+                    }
+                }
+            };
+    req.open("GET", url, true);
+    req.send(null);
+
+    //pause for 50 miliseconds
+    pause(200);
+    return lstrarrPartDtl;
+}
+
+/*
+* This function will not return until (at least)
+* the specified number of milliseconds have passed.
+* It uses a modal dialog.
+*/
+function pause(numberMillis) {
+    var dialogScript =
+    'window.setTimeout(' +
+    ' function () { window.close(); }, ' + numberMillis + ');';
+    var result =
+    // For IE5.
+    window.showModalDialog(
+    'javascript:document.writeln(' +
+    '"<script>' + dialogScript + '<' + '/script>")');
+
+    /* For NN6, but it requires a trusted script.
+    openDialog(
+    'javascript:document.writeln(' +
+    '"<script>' + dialogScript + '<' + '/script>"',
+    'pauseDialog', 'modal=1,width=10,height=10');
+    */
+}
+
+/**
+    * fetchPartDetails()
+    * ================
+    *
+    * Method to read the return string from AJEX and get the Part details
+    *
+    * Parameters
+    * ----------
+    * Parameter 1  responseXML  XMLHTTP request object
+    *
+    * Return value
+    * ------------
+    * Returns and Array which has following information
+    * Index 0     Franchise Code
+    * Index 1     Format Mask
+    * Index 2     Part Name
+    * Index 3     Part Price
+    * Index 4     Part No with formatmask
+    */
+function fetchPartDetails(responseXML, astrPartNo){
+    var lobjParts;
+    var lobjPart;
+    var lstrPartNo;
+    var lstrPartName;
+    var lstrFranchise;
+    var lstrFormatMask;
+    var lstrPrice;
+    var lstrCost;
+    var lstrMinCost;
+    var lstrarrPartDtl = new Array(7);
+
+    //Get the Parts node
+    lobjParts = responseXML.getElementsByTagName("parts")[0];
+    //If there is no part in parts node
+    if (lobjParts.childNodes.length <= 0) {
+        // Passed Franchise Code
+        lstrarrPartDtl[0] = '';
+        // Part Franchise Mask
+        lstrarrPartDtl[1] = '';
+        // Part Name
+        lstrarrPartDtl[2] = '';
+        // Part Price
+        lstrarrPartDtl[3] = '';
+        //Part No with Franchise Code
+        lstrarrPartDtl[4] = astrPartNo;
+        // Part Cost
+        lstrarrPartDtl[5] = '';
+        // Min. Unit Cost
+        lstrarrPartDtl[6] = '';
+    }else{
+        lobjPart = lobjParts.childNodes[0];
+        if(lobjPart != null){
+            lstrPartNo      = lobjPart.getElementsByTagName("partNo")[0].childNodes[0].nodeValue;
+            lstrPartName    = lobjPart.getElementsByTagName("partName")[0].childNodes[0].nodeValue;
+            lstrFranchise   = lobjPart.getElementsByTagName("franchise")[0].childNodes[0].nodeValue;
+            lstrFormatMask  = lobjPart.getElementsByTagName("formatMask")[0].childNodes[0].nodeValue;
+            lstrPrice       = lobjPart.getElementsByTagName("unitPrice")[0].childNodes[0].nodeValue;
+            lstrCost        = lobjPart.getElementsByTagName("unitCost")[0].childNodes[0].nodeValue;
+            lstrMinCost        = lobjPart.getElementsByTagName("minUnitCost")[0].childNodes[0].nodeValue;
+
+
+            // Passed Franchise Code
+            lstrarrPartDtl[0] = lstrFranchise;
+            // Part Franchise Mask
+            lstrarrPartDtl[1] = lstrFormatMask;
+            // Part Name
+            lstrarrPartDtl[2] = lstrPartName;
+            // Part Price
+            lstrarrPartDtl[3] = lstrPrice;
+            //Part No with Franchise Code
+            lstrarrPartDtl[4] = lstrFranchise + '-' + lstrPartNo;
+            //Part Cost
+            lstrarrPartDtl[5] = lstrCost;
+            //Part Min. Cost
+            lstrarrPartDtl[6] = lstrMinCost;
+        }
+    }
+    return lstrarrPartDtl;
+}
+
+/**
+  * selectAll()
+  * =============
+  *
+  * To select/deselect all the rows in a table
+  *
+  * astrTable : The table object which is to be operated on (MANDATORY)
+  * aobjSelectAll: Name of the select All checkbox on the table(MANDATORY)
+  * return value
+  */
+    function selectAll(astrTable, aobjSelectAll) {
+        var lstrSelected;
+        var lobjSelected;
+        var lobjStatus;
+        var lintCount;
+        var lobjTable   = document.getElementById(astrTable);
+        var lintNumRows = lobjTable.rows.length;
+        for (lintCount=0;lintCount < lintNumRows;lintCount++) {
+            lobjStatus= document.getElementById("value[" + lintCount + "].status");
+            if(lobjStatus.value != "HIDE"){
+                lstrSelected = "value[" + lintCount + "].selected";
+                lobjSelected = document.getElementById(lstrSelected);
+                if( ! lobjSelected.disabled ) {
+                    lobjSelected.checked = aobjSelectAll.checked;
+                }
+            }
+        }
+    }
+
+/**
+  * changeSelectAll()
+  * ===================
+  *
+  * To deselect the select all checkbox on the table
+  *
+  * aobjClicked  : The clicked checkbox
+  * astrSelectAll: Name of the select All checkbox on the table
+  * return
+  */
+    function changeSelectAll(aobjClicked,astrSelectAll){
+        var objSelectAll=document.getElementById(astrSelectAll);
+        if(!aobjClicked.checked){
+            objSelectAll.checked = false;
+        }
+    }
+
+
+//function to validate email Id
+//returns true if valid email - ID else false value is returned
+function isValidEmailId(aobjEmailId, astrVisibleTab, astrMulFlag){
+
+    var re = /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/g;
+    var lstrEmails = new Array();
+
+    if(astrMulFlag != null && astrMulFlag == 'Y'){
+       lstrEmails = aobjEmailId.value.split(",");
+    }else{
+       lstrEmails[0] = aobjEmailId.value ;
+    }
+
+    for(lintCounter = 0; lintCounter < lstrEmails.length; lintCounter ++){
+        //if email id is valid email id
+        if( lstrEmails[lintCounter].search(re) == -1 ){
+            showError("FE0079", FE0079, aobjEmailId, null, astrVisibleTab);
+            return false;
+        }
+    }
+    return true;
+}
+
+//Added by Dharmveer for EPC File upload on 10/09/2008
+function uploadEPCFile(astrFilePath, aobjFileData) {
+    var lstrData;
+    lstrData = "";
+	try {
+        objFSO = new ActiveXObject("Scripting.FileSystemObject");
+        if (objFSO.FileExists(astrFilePath)) {
+            lstrData = objFSO.OpenTextFile(astrFilePath, 1,false,-2).ReadAll();                      
+        } else {
+    	    showError("FE0901",FE0901);
+    	    return false;
+        }
+        aobjFileData.value = lstrData;
+    }
+    catch(e){
+        //Consume JS error or show to alert as per requirement
+        showError("FE0904",FE0904);
+        return false;
+    }
+    return true;
+}
+
+//function for delete EPC uploaded file
+function deleteFile(objFilePath)
+{
+    var myObject;
+    try {
+       myObject = new ActiveXObject("Scripting.FileSystemObject");
+       if(myObject.FileExists(objFilePath))
+       { 
+           var f = myObject.GetFile(objFilePath);
+           f.Delete();
+       }
+    }
+    catch(e){
+        //Consume JS error or show to alert as per requirement
+        showError("FE0904",FE0904);
+        return false;
+    }
+}
+/*
+ * Added for TKM Initial Changes
+ * function to validate Alpha Numeric
+ * Parmeters Required for the function
+ * ------------------------------------
+ * Parameter 1 : Object for which validation is required
+ * Parameter 2 : "Y" is passed when need to check if value is Alphanumeric else "N"
+ * Parameter 3 : "Y" is passed when need to check if value contains 
+                 more than 1 space else "N"
+*  Parameter 4 : Tab Name where object is present
+ * returns true if valid Alpha Numeric else false value is returned
+ */
+
+/*function isValidAlphaNumeric(){
+
+    var lstrValue = trimString(arguments[0].value);
+    var lstrChkAlphaNumeric = arguments[1];
+    var lstrChkSpace = arguments[2];   
+    var larMsg = new Array(1);  
+    //If need to check only single 
+	if (lstrChkAlphaNumeric=="Y" && lstrChkSpace =="N" && !lstrValue.match(/^[a-zA-Z0-9\s]+$/))
+	{
+	    larMsg[0]="Alpha Numeric";
+	    showError("FE2034",FE2034,arguments[0],larMsg);
+		return false;
+	}
+	else if (lstrChkAlphaNumeric=="N"  && lstrChkSpace=="Y" && lstrValue.indexOf('  ')!=-1)
+	{
+	    larMsg[0]="Single Space";
+	    showError("FE2034",FE2034,arguments[0],larMsg);
+		return false;
+	}
+    else if ( (lstrChkAlphaNumeric=="Y"  && !lstrValue.match(/^[a-zA-Z0-9\s]+$/)) 
+                        || (lstrChkSpace=="Y"   && lstrValue.indexOf('  ')!=-1))
+	{
+	    larMsg[0]="Alpha Numeric & Single Space";
+	    showError("FE2034",FE2034,arguments[0],larMsg);
+		return false;
+	}
+    return true;
+}*/
+function isValidAlphaNumeric(){
+
+    var lstrValue = trimString(arguments[0].value);
+    var lstrChkAlphaNumeric = arguments[1];
+    var lstrChkSpace        = arguments[2];   
+    var lstrVisibleTab      = arguments[3];   
+    var lstrMsgFiller       = new Array(1);
+    
+    var re;
+    var lstrPattern = "^[";
+
+    if(lstrChkAlphaNumeric == "Y"){
+       lstrPattern += "a-zA-Z0-9"; 
+       lstrMsgFiller[0] = "alpha numeric characters are"
+    }
+
+    if(lstrChkSpace == "Y"){
+       lstrPattern += "\\s"; 
+       lstrMsgFiller[0] = "alpha numeric characters with atmost single space between words are" 
+       
+       if(lstrValue.indexOf("  ") != -1) {
+	       showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+		   return false;
+       }
+    }    
+    
+    lstrPattern += "]+$";
+    
+    re = new RegExp(lstrPattern);
+
+    if(!re.test(lstrValue)){
+	    showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+		return false;
+    };
+
+    return true;        
+ }
+
+/*
+ * Added for TKM Initial Changes
+ * function to empty the  combo
+ * Parmeters Required for the function
+ * ------------------------------------
+ * Parameter 1 : Object of Combo which needs to be emptied
+ * Parameter 2 : Flag to tell what default value is needed
+ */
+
+function emptyCombo(aobjCmb,aintFlag)
+{  
+   for(i=0; i < aobjCmb.length; i++){
+            aobjCmb.options[i] = null;
+            i = -1;
+    }
+    
+    if(aintFlag == 0) {
+        aobjCmb.options[0]= new Option(SELECT, "");
+    } else if(aintFlag == 1) {
+        aobjCmb.options[0]= new Option("", "");
+    } else if(aintFlag == 2) {
+    }else if(aintFlag == 99) {
+    	aobjCmb.options[0]= new Option(ALL, "");
+    } else {
+        aobjCmb.options[0]= new Option(ALL, "");
+    } 
+}
+
+// http://social.msdn.microsoft.com/forums/en-US/iewebdevelopment/thread/cbdba1e1-ca42-4f29-b929-927567ef7231/
+function showDropDownTooltip(){
+	if(!e){
+		var e = window.event;
+	}
+	var obj = e.srcElement;
+    var tooltip = document.getElementById('ie6SelectTooltip');
+
+	if((obj.options != undefined) && (obj.options.selectedIndex > -1)){
+        	tooltip.innerHTML = obj.options[obj.options.selectedIndex].text;
+			mouseX=e.pageX?e.pageX:e.clientX;
+	        mouseY=e.pageY?e.pageY:e.clientY;
+            tooltip.style.left= mouseX + 20;
+            tooltip.style.top=mouseY + 20;        	
+        	tooltip.style.display = 'block';
+	}
+}
+
+function showTextTooltip(){
+	if(!e){
+		var e = window.event;
+	}
+	var obj = e.srcElement;
+    var tooltip = document.getElementById('ie6SelectTooltip');
+    if(obj.value!=''){
+    	tooltip.innerHTML = obj.value;
+		mouseX=e.pageX?e.pageX:e.clientX;
+		mouseY=e.pageY?e.pageY:e.clientY;
+    	tooltip.style.left= mouseX + 20;
+    	tooltip.style.top=mouseY + 20;        	
+    	tooltip.style.display = 'block';
+	}
+}
+
+
+function hideDropDownTooltip(){
+	var tooltip = document.getElementById('ie6SelectTooltip');
+    tooltip.innerHTML = '';
+    tooltip.style.display = 'none';
+}
+
+function isValidAddressDtls(){
+    var lstrValue = trimString(arguments[0].value);
+	var lstrVisibleTab      = arguments[1];     
+    var lstrMsgFiller       = new Array(1);
+    var re;
+    var lstrPattern = "^[a-zA-Z0-9.()/\\s-]+$";
+
+       lstrMsgFiller[0] = "alpha numeric characters with atmost single space between words and special characters \"., (, ),/\" are" 
+       if(lstrValue.indexOf("  ") != -1) {
+	       showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+		   return false;
+       }
+
+    re = new RegExp(lstrPattern);
+
+    if(!re.test(lstrValue)){
+	    showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+		return false;
+    };
+    return true;        
+ }
+ 
+function isValidListSubListDtl(){
+    var lstrValue = trimString(arguments[0].value);
+	var lstrVisibleTab      = arguments[1];       
+    var lstrMsgFiller       = new Array(1);
+    
+    lstrMsgFiller[0] = "alpha numeric characters with atmost single space between words and special characters \"., (, ), +, -, /, <, >, = \" are" 
+    
+    var re;
+    var lstrPattern = "^[a-zA-Z0-9.()<=>+-/\\s]+$";
+
+    if(lstrValue.indexOf("  ") != -1) {
+        showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+	    return false;
+    }
+
+    re = new RegExp(lstrPattern);
+
+    if(!re.test(lstrValue)){
+	    showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+		return false;
+    };
+
+    return true;        
+ }
+ 
+ /* 
+ * Incident No: UT2-CMST-0910-0015
+ *
+ * This method checks for a-zA-Z0-9.&()
+ *
+ * Added by Varadaraj Muni - 28-12-2009
+ */
+ function isValidDealerCompanyName(){
+    var lstrValue 		= trimString(arguments[0].value);
+    var lstrMsgFiller   = new Array(1);    
+    lstrMsgFiller[0] 	= "alpha numeric characters with atmost single space between words and special characters \".,&,(,) \" are" 
+    
+    var re;
+    var lstrPattern = "^[a-zA-Z0-9.()&\\s]+$";
+
+    if(lstrValue.indexOf("  ") != -1) {
+        showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+	    return false;
+    }
+
+    re = new RegExp(lstrPattern);
+
+    if(!re.test(lstrValue)){
+	    showError("FE2034",FE2034,arguments[0],lstrMsgFiller);
+		return false;
+    };
+
+    return true;        
+ }
+ 
+ /* 
+ * Incident No: UT2-CMST-0910-0015
+ *
+ * This method checks for a-zA-Z0-9.
+ *
+ * Added by Varadaraj Muni - 28-12-2009
+ */
+ function isValidCorporateName(){
+    var lstrValue 		= trimString(arguments[0].value);
+    var lstrVisibleTab  = arguments[1];
+    var lstrMsgFiller   = new Array(1);    
+    lstrMsgFiller[0] 	= "alpha numeric characters with atmost single space between words and special characters \".\" are" 
+    
+    var re;
+    var lstrPattern = "^[a-zA-Z0-9.\\s]+$";
+
+    if(lstrValue.indexOf("  ") != -1) {
+        showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+	    return false;
+    }
+
+    re = new RegExp(lstrPattern);
+
+    if(!re.test(lstrValue)){
+	    showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+		return false;
+    };
+
+    return true;        
+ } 
+ 
+ /*  
+ * Based on Rashmi-san request
+ * Added by Varadaraj Muni - 10-03-2010
+ */
+ function isValidCustomerFirstName(){
+    var lstrValue 		= trimString(arguments[0].value);
+    var lstrVisibleTab  = arguments[1];
+    var lstrMsgFiller   = new Array(1);    
+    lstrMsgFiller[0] 	= "alpha numeric characters with atmost single space between words and special characters \".,hyphen\" are" 
+    
+    var re;
+    var lstrPattern = "^[a-zA-Z0-9.\\s-]+$";
+
+    if(lstrValue.indexOf("  ") != -1) {
+        showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+	    return false;
+    }
+
+    re = new RegExp(lstrPattern);
+
+    if(!re.test(lstrValue)){
+	    showError("FE2034",FE2034,arguments[0],lstrMsgFiller,lstrVisibleTab);
+		return false;
+    };
+
+    return true;        
+ } 
+ 
+ /**
+ * compareDatesRolloutMonth()
+ * ================
+ * Changed by Varadaraj Muni - 22/04/2010
+ * Method to compare the From and To dates
+ * Based on BU request on Rollout month user should be allowed to set the calendar from 1st onwards.
+ * To achieve this requirement i have removed date wise check and kept only month and year check
+ * Parameters
+ * ----------
+ * <Parameter1> - <From Date> : the date to be in DD/MM/YYYY format <MANDATORY MUST BE PASSED BY USER>
+ * <Parameter2> - <To   Date> : the date to be in DD/MM/YYYY format <MANDATORY MUST BE PASSED BY USER>
+ *
+ * Return value
+ * ------------
+ * <Number> -   0 if the dates are same
+ *              -1 if the first one is an earlier date
+ *              1 if the first one is a later date
+ */
+function compareDatesRolloutMonth (value1, value2) {
+   var month1, month2;
+   var year1, year2;
+   re = new RegExp("/","g");
+   value1 = value1.replace(re,"");
+   value2 = value2.replace(re,"");
+  
+   month1 = value1.substring (2, 4);
+   year1 = value1.substring (4, 8);
+
+   month2 = value2.substring (2, 4);
+   year2 = value2.substring (4, 8);
+
+   if (year1 > year2) return 1;
+   else if (year1 < year2) return -1;
+   else if (month1 > month2) return 1;
+   else if (month1 < month2) return -1;
+   else return 0;
+}
+
+//--- Phase2---
+function  checkNewPartTableColorChange() {
+
+   var table =  document.getElementById(arguments[0]);
+   var numRows = table.rows.length;
+   var isNewPartExist=false;
+   if (numRows <= 0)
+   {
+      return false;
+   }
+
+   var  arrTest= new Array(numRows);
+   if(numRows > 0)
+   {
+   for (i=0;i <numRows ;i++ )
+    {
+      concatRowPK = '~';
+      if (document.getElementById('value[' + i + '].newPartNo').value != null && document.getElementById('value[' + i + '].newPartNo').value != '')
+		{
+            document.getElementById("row"+i).className ="redRow";
+			isNewPartExist=true;
+		}  // end if
+     } // end else
+	}
+   // if new parts exists then return true
+   if(isNewPartExist)
+   {
+   return true;
+   }
+   return false;
+}//end of checkNewPartTableColorChange function
+//---end of Phase2--
+
+//changes added by sachin on 12/03/2015 for tkm tablet access 
+function  resetElementIds(){
+     try{
+      var browser = navigator.userAgent;
+      if(browser.toLowerCase().indexOf('safari') > 0 || browser.toLowerCase().indexOf('firefox') >0){
+        var inputElement = document.getElementsByTagName("input");
+			for (var i=0; i<inputElement.length; i++) {
+				if((inputElement[i].getAttribute('name') != null && inputElement[i].getAttribute('id') == null)) {
+                 inputElement[i].setAttribute('id',inputElement[i].getAttribute('name'));
+         }
+     }
+		}
+	} catch(error) {
+ }
+
+  try{
+      var browser = navigator.userAgent;
+     if(browser.toLowerCase().indexOf('safari') > 0 || browser.toLowerCase().indexOf('firefox') >0){
+        var inputElement = document.getElementsByTagName("select");
+         for (var i=0; i<inputElement.length; i++){
+				if((inputElement[i].getAttribute('name') != null && inputElement[i].getAttribute('id') == null)) {
+                 inputElement[i].setAttribute('id',inputElement[i].getAttribute('name'));
+         }
+     }
+		}
+ }catch(error){
+}
+
+   try{
+      var browser = navigator.userAgent;
+     if(browser.toLowerCase().indexOf('safari') > 0 || browser.toLowerCase().indexOf('firefox') >0){
+        var inputElement = document.getElementsByTagName("table");
+         for (var i=0; i<inputElement.length; i++){
+             if((inputElement[i].getAttribute('name') != null && inputElement[i].getAttribute('id') == null)){
+					inputElement[i].setAttribute('id',inputElement[i].getAttribute('name'));
+				}
+         }
+     }
+ }catch(error){
+		//alert('RKB5'+error);
+ }
+}
+//Added by Akarsh for opening CTDMS screens.
+function openCTDMSWindow(){
+var width = 1024,height=700;
+var ctdmsURL;
+var ctmsWin;
+var x = screen.width>800?(screen.width-width)/2:0;
+var y = screen.height>600?(screen.height-54-height)/2:0;
+var win1;
+ctdmsURL = arguments[0];
+win1 = window.open(ctdmsURL, "CTDMS_TOPSERV", 'width='+width+',height='+height+',left='+x+',top='+y+',scrollbars=yes,resizeable=no,toolbar=no,titlebar=no,status=yes,max=yes',false, target='_blank');
+	V1 = new Object();
+	V1.window = win1;
+	V1.name = windowName;
+	childs[childs.length] = V1;
+	win1.focus();
+	return win1;
+}
+
+//changes end by sachin on 12/03/2015 for tkm tablet access 
+/*START - BP Kaizen Changes */
+function incrementVal(aField){
+	if(aField != null && aField.value != ''){
+		aField.value = get_Number_WithOut_Mask(aField);
+		intVal = aField.value;
+		intVal = trimString(intVal);
+		
+		
+		
+		 if (!validateFloat(intVal,5,'false')) {
+			 //showError("FE0002", FE0002,lobjProcTime,null,null);
+			 return false;
+		 }
+									 
+		if (isNaN(intVal)){
+			intVal = '';return false;
+		}
+		
+		intVal = (Math.ceil(intVal/15))*15;
+		
+		aField.value = intVal;
+		
+		if(intVal > 99990){
+			aField.value = 99990;
+		}
+		
+	}
+	
+	return false;
+}
+/*END - BP Kaizen Changes */							  
