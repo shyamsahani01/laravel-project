@@ -22,7 +22,7 @@ class BagController extends Controller
 
   public function check_db(Request $request){
     if(Auth::user()->emrDB == 'Sitapura') {
-      $this->emrDB = "EmrSeetapura";
+      $this->emrDB = "EmrSitapura";
       $this->emrDBName = "Sitapura";
     }
   }
@@ -84,9 +84,10 @@ class BagController extends Controller
             ->select(DB::raw("Bag.*, CONCAT(BOdTc, '/', BOdYy, '/', BOdChr, '/', BOdNo) order_no, CONCAT(BYy, '/', BChr, '/', BNo) bag_no,
                               DsgMst.DmCd, DsgMst.DmCtg, DsgMst.DmTcTyp") )
             // ->whereRaw("CONCAT(BYy, '/', BChr, '/', BNo) = '$request->bag_no'")
-            ->where("Bag.BYy", $request->BYy)
-            ->where("Bag.BChr", $request->BChr)
-            ->where("Bag.BNo", $request->BNo)
+            // ->where("Bag.BYy", $request->BYy)
+            // ->where("Bag.BChr", $request->BChr)
+            // ->where("Bag.BNo", $request->BNo)
+            ->where("Bag.BIdNo", $request->BIdNo)
             ->leftJoin("DsgMst", "DsgMst.DmCd" ,"Bag.BOdDmCd")
             // ->leftJoin('OrdMst', function ($join) {
             //     $join->on('OrdMst.OmTc', 'Bag.BOdTc')
@@ -108,11 +109,12 @@ class BagController extends Controller
             ->table("OrdMst")
             ->select(DB::raw("OrdMst.*, CONCAT(OmTc, '/', OmYy, '/', OmChr, '/', OmNo) order_no, CustMst.CmName") )
             ->leftJoin("CustMst", "CustMst.CmCd", "OrdMst.OmCmCd")
-            ->where("OrdMst.OmTc", $bag_details->BOdTc)
-            ->where("OrdMst.OmYy", $bag_details->BOdYy)
-            ->where("OrdMst.OmChr", $bag_details->BOdChr)
-            ->where("OrdMst.OmNo", $bag_details->BOdNo)
-            ->where("OrdMst.OmCoCd", $bag_details->BCoCd)
+            // ->where("OrdMst.OmTc", $bag_details->BOdTc)
+            // ->where("OrdMst.OmYy", $bag_details->BOdYy)
+            // ->where("OrdMst.OmChr", $bag_details->BOdChr)
+            // ->where("OrdMst.OmNo", $bag_details->BOdNo)
+            // ->where("OrdMst.OmCoCd", $bag_details->BCoCd)
+            ->where("OrdMst.OmIdNo", $bag_details->BOmIdNo)
             // ->whereRaw("CONCAT(OmTc, '/', OmYy, '/', OmChr, '/', OmNo) =  '$bag_details->order_no'")
             ->first();
 
@@ -126,6 +128,7 @@ class BagController extends Controller
             ->where("OrdDsg.OdNo", $bag_details->BOdNo)
             ->where("OrdDsg.OdSr", $bag_details->BOdSr)
             ->where("OrdDsg.OdCoCd", $bag_details->BCoCd)
+            // ->where("OrdDsg.OdIdNo", $bag_details->BOdIdNo)
             ->first();
 
     $bag_orders_bom_details = DB::connection($this->emrDB)
@@ -141,28 +144,56 @@ class BagController extends Controller
             ->orderBy("OrSrNo", "ASC")
             ->get();
 
-    // $design_bom_details = DB::connection($this->emrDB)
-    //         ->table("DsgRm")
-    //         ->select("DsgRm.*", "RmMst.RmDesc")
-    //         ->where("DrCd", $request->design_code)
-    //         ->leftJoin("RmMst", "RmMst.RmCd", "DsgRm.DrRmCd")
-    //         ->orderBy("DrSr", "ASC")
+    $bag_transaction_details = DB::connection($this->emrDB)
+                                  ->table("Txnd")
+                                  ->select(DB::raw("Txnd.*, CONCAT(TdBYy, '/', TdBChr, '/', TdBNo) bag_no, CONCAT(TdTc, '/', TdYy, '/', TdChr, '/', TdNo) voucher_no") )
+                                  // ->where("TdBYy", $request->BYy)
+                                  // ->where("TdBChr", $request->BChr)
+                                  // ->where("TdBNo", $request->BNo)
+                                  // ->where("Txnd.TdCoCd", $request->company_code)
+                                  ->where("Txnd.TdBIdNo", $request->BIdNo)
+                                  ->orderBy("TdIdNo", "ASC")
+                                  ->get();
+
+    $fg_bag_list = DB::connection($this->emrDB)
+            ->table("Fgd")
+            ->select(DB::raw("Fgd.*, CONCAT(FdTc, '/', FdYy, '/', FdChr, '/', FdNo) voucher_no, Fg.FgFrBLoc, Fg.FgToBLoc") )
+            ->leftJoin("Fg", "Fgd.FdFgIdNo", "=", "Fg.FgIdNo")
+            // ->where("Fgd.FdBYy", $request->BYy)
+            // ->where("Fgd.FdBChr", $request->BChr)
+            // ->where("Fgd.FdBNo", $request->BNo)
+            // ->where("Fgd.FdCoCd", $request->company_code)
+            ->where("Fgd.FdBIdNo", $request->BIdNo)
+            ->orderBy("FdSr", "ASC")
+            ->get();
+
+    // $fg_bag_list = DB::connection($this->emrDB)
+    //         ->table("Fgd")
+    //         ->select(DB::raw("Fgd.*, CONCAT(FdTc, '/', FdYy, '/', FdChr, '/', FdNo) voucher_no, Fg.FgFrBLoc, Fg.FgToBLoc") )
+    //         ->leftJoin("Fg", "Fgd.FdFgIdNo", "=", "Fg.FgIdNo")
+    //         // ->where("Fgd.FdBYy", $request->BYy)
+    //         // ->where("Fgd.FdBChr", $request->BChr)
+    //         // ->where("Fgd.FdBNo", $request->BNo)
+    //         // ->where("Fgd.FdCoCd", $request->company_code)
+    //         ->where("Fgd.FdBIdNo", $request->BIdNo)
+    //         ->orderBy("FdSr", "ASC")
     //         ->get();
-    //
-    // $design_lab_details = DB::connection($this->emrDB)
-    //         ->table("DsgLab")
-    //         ->select("DsgLab.*")
-    //         ->where("DlDmIdNo", $design_details->DmIdNo)
-    //         ->orderBy("DlSr", "ASC")
-    //         ->get();
-    //
-    // $design_analysis_details = DB::connection($this->emrDB)
-    //         ->table("DsgAna")
-    //         ->select(DB::Raw("DsgAna.*,
-    //                         (SELECT TOP 1 PDesc FROM Param WHERE PSCd = DsgAna.DaAnaCd ) AS description ") )
-    //         ->where("DaDmIdNo", $design_details->DmIdNo)
-    //         ->orderBy("DaAnaSr", "ASC")
-    //         ->get();
+
+    $fg_bm_bag_list = DB::connection($this->emrDB)
+            ->table("Fmd")
+            ->select(DB::raw("Fmd.*, CONCAT(FmdTc, '/', FmdYy, '/', FmdChr, '/', FmdNo) voucher_no") )
+            // ->where("Fmd.FmdBYy", $request->BYy)
+            // ->where("Fmd.FmdBChr", $request->BChr)
+            // ->where("Fmd.FmdBNo", $request->BNo)
+            // ->where("Fmd.FmdCoCd", $request->company_code)
+            ->where("Fmd.FmdBYy", $bag_details->BYy)
+            ->where("Fmd.FmdBChr", $bag_details->BChr)
+            ->where("Fmd.FmdBNo", $bag_details->BNo)
+            ->where("Fmd.FmdCoCd", $bag_details->BCoCd)
+            // ->where("Fmd.FmdBIdNo", $request->BIdNo)
+            ->orderBy("FmdSr", "ASC")
+            ->get();
+
 
 
       $data['title'] = $title;
@@ -170,9 +201,9 @@ class BagController extends Controller
       $data['bag_orders_details'] = $bag_orders_details;
       $data['bag_orders_design_details'] = $bag_orders_design_details;
       $data['bag_orders_bom_details'] = $bag_orders_bom_details;
-      // $data['design_bom_details'] = $design_bom_details;
-      // $data['design_lab_details'] = $design_lab_details;
-      // $data['design_analysis_details'] = $design_analysis_details;
+      $data['bag_transaction_details'] = $bag_transaction_details;
+      $data['fg_bag_list'] = $fg_bag_list;
+      $data['fg_bm_bag_list'] = $fg_bm_bag_list;
 
       // Helper::LoginIpandTime($request->getClientIp());
       return view('admin.emporer.bag.view', $data );
@@ -205,10 +236,10 @@ class BagController extends Controller
     }
 
     if(!empty($request->from_location)){
-        $query->where('TFrBLoc', "like", "%".$request->design_code."%");
+        $query->where('TFrBLoc', "like", "%".$request->from_location."%");
     }
     if(!empty($request->to_location)){
-        $query->where('TLsLoc', "like", "%".$request->design_code."%");
+        $query->where('TLsLoc', "like", "%".$request->to_location."%");
     }
     if(!empty($request->transaction_type)){
         $query->where('TTc', "like", "%".$request->transaction_type."%");

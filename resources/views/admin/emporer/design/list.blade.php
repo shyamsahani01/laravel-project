@@ -8,6 +8,7 @@ $str .= 'show='.request()->show;
 $str .= '&design_start_date='.request()->design_start_date;
 $str .= '&design_end_date='.request()->design_end_date;
 $str .= '&category='.request()->category;
+$str .= '&designer_code='.request()->designer_code;
 $str .= '&description='.request()->description;
 $str .= '&design_code='.request()->design_code;
 $showurl = url("/emporer/design/list?$str");
@@ -63,6 +64,13 @@ use App\Library\WebHelper;
                                       <input name="design_code" type="text" autocomplete="off" placeholder="Design Code" class="form-control" value="{{ request()->design_code }}">
                                   </div>
 
+                                  <div class="col-md-2 col-sm-12  form-group">
+                                      <label class="design1-form1">Designer Code</label>
+                                      <select name="designer_code" id="designer_code" class="form-control select2-lib-dropdown-designer_code "> <?php if(isset(request()->designer_code)) { echo  '
+                                        <option value="'.request()->designer_code.'" Selected >'.request()->designer_code.'</option>'; } ?>
+                                      </select>
+                                  </div>
+
 
                                 </div>
                             </div>
@@ -70,7 +78,7 @@ use App\Library\WebHelper;
                     </div>
                     <div class="shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 20px !important;">
                       <div class="card-body">
-                        <table id="datatable" class="table table-striped table-bordered" style="width:100%">
+                        <table  class="table table-striped table-bordered" style="width:100%">
                            <thead>
                               <tr style="text-align:center;text-shadow: 1px 1px 1px lightgrey, 3px 3px 5px lightgrey;">
                                  <th>S No.</th>
@@ -79,7 +87,8 @@ use App\Library\WebHelper;
                                  <th>Description</th>
                                  <th>Design Category</th>
                                  <th>Karat</th>
-                                 <th>Design By</th>
+                                 <th>Design Uploaded By</th>
+                                 <th>Designer Name</th>
                                  <th>Design Date</th>
                               </tr>
                            </thead>
@@ -99,6 +108,7 @@ use App\Library\WebHelper;
                                    <td  style="text-align: center;" >{{ $data->DmCtg }}</td>
                                    <td  style="text-align: center;" >{{ $data->DmKt }}</td>
                                    <td  style="text-align: center;" >{{ $data->DmDsgBy }}</td>
+                                   <td  style="text-align: center;" >{{ $data->designer_name }}</td>
                                    <td  style="text-align: center;" >{{ date("D, d-m-Y", strtotime($data->DmDsgDt)) }}</td>
                               </tr>
                               @endforeach
@@ -138,9 +148,6 @@ use App\Library\WebHelper;
     $("#filter_form").trigger("submit");
 }
 
-
-
-
 function category_select2() {
     $(".select2-lib-dropdown-category").select2({
       placeholder: "Category",
@@ -162,10 +169,35 @@ function category_select2() {
     })
 }
 
+function designer_code_select2() {
+    $(".select2-lib-dropdown-designer_code").select2({
+      placeholder: "Designer Code",
+      allowClear: true,
+      ajax: {
+        url: '/get-emr-parmeters',
+        data: function (params) {
+          var query = {
+            search: params.term,
+            type: 'emr-designer_code',
+          }
+          return query;
+        },
+        dataType: 'json',
+        processResults: function (data) {
+            return data;
+        }
+      }
+    })
+}
+
+
+
 $(document).ready(function(){
   category_select2();
+  designer_code_select2();
   // zoomImages()
 });
+
 
 
 

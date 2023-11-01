@@ -21,7 +21,7 @@ class FGreportsController extends Controller
     setlocale(LC_MONETARY, 'en_IN');
 
     $this->EmrDB = DB::connection('Emr');
-    $this->EmrSeetapuraDB = DB::connection('EmrSeetapura');
+    $this->EmrSitapuraDB = DB::connection('EmrSitapura');
     $this->erpnextDB = DB::connection('erpnext');
   }
 
@@ -58,7 +58,7 @@ class FGreportsController extends Controller
 
 
 
-    $query1 = $this->EmrSeetapuraDB->table('Fgd');
+    $query1 = $this->EmrSitapuraDB->table('Fgd');
     $query1->select(DB::raw("sum(FdQty) quantity,
                           sum(FdGrWt) weight,
                           FdDt") )
@@ -422,7 +422,7 @@ class FGreportsController extends Controller
                       WHERE ( OdKt = 'S999' OR OdKt = 'S925'   )
                               AND FdCoCd = 'PJ'
                               and fddt = '$auto_start_date'";
-    $fg_data = $this->EmrSeetapuraDB->select($query_string);
+    $fg_data = $this->EmrSitapuraDB->select($query_string);
 
 
     return view('admin.fgreports.unit1.details',compact('title', 'employee_data', 'fg_data'));
@@ -721,7 +721,7 @@ class FGreportsController extends Controller
     $title = 'Unit 2 Finish Goods Reports';
 
 
-    $query1 = $this->EmrSeetapuraDB->table('Fgd');
+    $query1 = $this->EmrSitapuraDB->table('Fgd');
     $query1->select("FdDt")->distinct()->groupBy("FdDt");
 
 
@@ -765,7 +765,7 @@ class FGreportsController extends Controller
                           WHERE ( OdKt = 'S999' OR OdKt = 'S925' OR OdKt LIKE '%kt%'   )
                                   AND FdCoCd = 'PJ2'
                                   and fddt = '$auto_start_date' ";
-        $fg_data_temp = $this->EmrSeetapuraDB->select($query_string);
+        $fg_data_temp = $this->EmrSitapuraDB->select($query_string);
 
         $qty_silver = 0;
         $wt_silver = 0;
@@ -1062,7 +1062,7 @@ class FGreportsController extends Controller
                       WHERE ( OdKt = 'S999' OR OdKt = 'S925' OR OdKt LIKE '%kt%'   )
                               AND FdCoCd = 'PJ2'
                               and fddt = '$auto_start_date'";
-    $fg_data = $this->EmrSeetapuraDB->select($query_string);
+    $fg_data = $this->EmrSitapuraDB->select($query_string);
 
 
     return view('admin.fgreports.unit2.details',compact('title', 'employee_data', 'fg_data'));

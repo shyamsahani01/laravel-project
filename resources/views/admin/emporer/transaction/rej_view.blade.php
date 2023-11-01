@@ -160,7 +160,7 @@
                                                        @foreach($transaction_bag_list as $key => $data)
                                                             <tr  style="text-align: center;">
                                                               <td>{{ $data->TdSr  }}</td>
-                                                              <td><a href="/emporer/bag/bagDetails?BYy={{ $data->TdBYy}}&BChr={{ $data->TdBChr}}&BNo={{ $data->TdBNo}}&company_code={{ $data->TdCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
+                                                              <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->TdBIdNo}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
                                                               <td>@if($data->TdBDc == "C"){{ 'I' }}@elseif($data->TdBDc == "D"){{ 'R' }}@endif</td>
                                                               <td>{{ round($data->TdBQty, 4)  }}</td>
                                                               <td>{{ round($data->TdPtQty, 4)  }}</td>

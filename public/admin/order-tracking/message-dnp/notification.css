@@ -1,0 +1,210 @@
+:root {
+  --success_color: rgb(0, 140, 10);
+  --success_bg_color: rgb(240, 255, 240);
+
+  --danger_color: rgb(255, 70, 0);
+  --danger_bg_color: rgb(255, 220, 220);
+
+  --primary_color: rgb(0, 110, 255);
+  --primary_bg_color: rgb(220, 240, 255);
+
+  --warning_color: rgb(255, 150, 0);
+  --warning_bg_color: rgb(255, 240, 220);
+
+  --info_color: rgb(0, 140, 170);
+  --info_bg_color: rgb(220, 250, 255);
+
+  --secondary_color: rgb(170, 0, 255);
+  --secondary_bg_color: rgb(250, 220, 255);
+
+  --dark_color: rgb(40, 40, 40);
+  --dark_bg_color: rgb(210, 210, 210);
+
+  --rainbow: linear-gradient(90deg, rgba(255, 0, 99, 1) 0%, rgba(255, 132, 0, 1) 10%, rgba(241, 255, 0, 1) 20%, rgba(82, 255, 0, 1) 30%, rgba(0, 255, 136, 1) 40%, rgba(0, 185, 255, 1) 50%, rgba(0, 5, 255, 1) 60%, rgba(175, 0, 255, 1) 70%, rgba(255, 0, 232, 1) 80%, rgba(255, 0, 138, 1) 90%, rgba(255, 0, 0, 1) 100%);
+}
+
+.hb-notification-container {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 280px;
+  margin: 16px;
+}
+
+.hb-notification-container[data-position^='top-'] {
+  top: 0;
+}
+
+.hb-notification-container[data-position^='bottom-'] {
+  bottom: 0;
+}
+
+.hb-notification-container[data-position$='-right'] {
+  right: 0;
+}
+
+.hb-notification-container[data-position$='-left'] {
+  left: 0;
+}
+
+.hb-notification-container[data-position$='-center'] {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.hb-notification {
+  box-sizing: border-box;
+  position: relative;
+  background: #fff;
+  color: #757575;
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: sans-serif;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 350ms cubic-bezier(.68, -.55, .265, 1.55);
+  /* line-height: 0 !important; */
+  height: auto;
+  word-wrap: break-word;
+  word-break: normal;
+  box-shadow: 1px 1px 3px 0px #ffffff58, -1px -1px 5px 0px #ffffff36;
+}
+
+.hb-notification-container[data-position$='-right'] .hb-notification {
+  transform: translateX(110%);
+}
+
+.hb-notification-container[data-position$='-left'] .hb-notification {
+  transform: translateX(-110%);
+}
+
+.hb-notification-container[data-position='top-center'] .hb-notification {
+  transform: translateY(-100vh);
+}
+
+.hb-notification-container[data-position='bottom-center'] .hb-notification {
+  transform: translateY(100vh);
+}
+
+.hb-notification-container .hb-notification.show {
+  transform: translate(0, 0);
+}
+
+.hb-notification.hb_progress::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: calc(100% * var(--progress));
+  height: 5px;
+  border-radius: 5px;
+}
+
+.hb-notification.can-close::after {
+  content: '\00D7';
+  /* content: '*'; */
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  text-align: center;
+  font-size: 20px;
+  line-height: 1;
+  top: 0px;
+  right: 0px;
+  font-size: 22px;
+  /* color: #fff;
+  background: rgb(251, 0, 0);
+  border-radius: 50% 20% 50% 50%; */
+}
+
+/* custom progressbar */
+
+.hb-notification.hb_progress[data-progressbar='default']::before {
+  background: #ff0063;
+  background: linear-gradient(90deg, rgba(255, 0, 99, 1) 0%, rgba(255, 132, 0, 1) 10%, rgba(241, 255, 0, 1) 20%, rgba(82, 255, 0, 1) 30%, rgba(0, 255, 136, 1) 40%, rgba(0, 185, 255, 1) 50%, rgba(0, 5, 255, 1) 60%, rgba(175, 0, 255, 1) 70%, rgba(255, 0, 232, 1) 80%, rgba(255, 0, 138, 1) 90%, rgba(255, 0, 0, 1) 100%)
+}
+
+.hb-notification.hb_progress[data-progressbar='success']::before {
+  background: var(--success_color);
+}
+
+.hb-notification.hb_progress[data-progressbar='danger']::before {
+  background: var(--danger_color);
+}
+
+.hb-notification.hb_progress[data-progressbar='primary']::before {
+  background: var(--primary_color);
+}
+
+.hb-notification.hb_progress[data-progressbar='secondary']::before {
+  background: var(--secondary_color);
+}
+
+.hb-notification.hb_progress[data-progressbar='warning']::before {
+  background: var(--warning_color);
+}
+
+.hb-notification.hb_progress[data-progressbar='dark']::before {
+  background: var(--dark_color);
+}
+
+.hb-notification.hb_progress[data-progressbar='info']::before {
+  background: var(--info_color);
+}
+
+.hb-notification[data-notification-type='default'] {
+  border: 1px solid gray;
+}
+
+.hb-notification[data-notification-type='primary'] {
+  color: var(--primary_color);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+  background: var(--primary_bg_color);
+  border: 1px solid var(--primary_color);
+}
+
+.hb-notification[data-notification-type='success'] {
+  color: var(--success_color);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+  background: var(--success_bg_color);
+  border: 1px solid var(--success_color);
+}
+
+.hb-notification[data-notification-type='danger'] {
+  color: var(--danger_color);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+  background: var(--danger_bg_color);
+  border: 1px solid var(--danger_color);
+}
+
+.hb-notification[data-notification-type='warning'] {
+  color: var(--warning_color);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+  background: var(--warning_bg_color);
+  border: 1px solid var(--warning_color);
+}
+
+.hb-notification[data-notification-type='info'] {
+  color: var(--info_color);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+  background: var(--info_bg_color);
+  border: 1px solid var(--info_color);
+}
+
+.hb-notification[data-notification-type='secondary'] {
+  color: var(--secondary_color);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+  background: var(--secondary_bg_color);
+  border: 1px solid var(--secondary_color);
+}
+
+.hb-notification[data-notification-type='dark'] {
+  color: var(--dark_color);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+  background: var(--dark_bg_color);
+  border: 1px solid var(--dark_color);
+}

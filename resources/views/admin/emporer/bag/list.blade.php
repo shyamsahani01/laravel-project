@@ -67,7 +67,7 @@ use App\Library\WebHelper;
                     </div>
                     <div class="shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 20px !important;">
                       <div class="card-body">
-                        <table id="datatable" class="table table-striped table-bordered" style="width:100%">
+                        <table  class="table table-striped table-bordered" style="width:100%">
                            <thead>
                               <tr style="text-align:center;text-shadow: 1px 1px 1px lightgrey, 3px 3px 5px lightgrey;">
                                  <th>S No.</th>
@@ -92,7 +92,7 @@ use App\Library\WebHelper;
                               <tr>
                                  <td  style="text-align: center;">{{ $bag_data->firstItem() +  $key }}</td>
                                  <!-- <td><a href="/emporer/bag/bagDetails?bag_no={{ $data->bag_no}}&company_code={{ $data->BCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no }} </a></td> -->
-                                 <td><a href="/emporer/bag/bagDetails?BYy={{ $data->BYy}}&BChr={{ $data->BChr}}&BNo={{ $data->BNo}}&company_code={{ $data->BCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no }} </a></td>
+                                 <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->BIdNo}}"  style="color: green; font-weight:bold">{{ $data->bag_no }} </a></td>
                                  <td>{{ $data->BCoCd  }}</td>
                                  <td><a href="/emporer/orders/ordersDetails?order_no={{ $data->order_no}}&company_code={{ $data->BCoCd}}"  style="color: green;">{{ $data->order_no  }} </a></td>
                                  <td><a href="/emporer/design/designDetails?design_code={{ $data->BOdDmCd}}"  style="color: green;">{{ $data->BOdDmCd  }} </a></td>

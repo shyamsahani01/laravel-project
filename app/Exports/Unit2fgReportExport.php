@@ -14,13 +14,13 @@ class Unit2fgReportExport implements FromView
     public function __construct($request)
     {
         $this->request = $request;
-        $this->EmrSeetapuraDB = DB::connection('EmrSeetapura');
+        $this->EmrSitapuraDB = DB::connection('EmrSitapura');
         $this->erpnextDB = DB::connection('erpnext');
     }
 
     public function view(): View
     {
-      $query1 = $this->EmrSeetapuraDB->table('Fgd');
+      $query1 = $this->EmrSitapuraDB->table('Fgd');
       $query1->select("FdDt")->distinct()->groupBy("FdDt");
 
 
@@ -64,7 +64,7 @@ class Unit2fgReportExport implements FromView
                             WHERE ( OdKt = 'S999' OR OdKt = 'S925' OR OdKt LIKE '%kt%'   )
                                     AND FdCoCd = 'PJ2'
                                     and fddt = '$auto_start_date' ";
-          $fg_data_temp = $this->EmrSeetapuraDB->select($query_string);
+          $fg_data_temp = $this->EmrSitapuraDB->select($query_string);
 
           $qty_silver = 0;
           $wt_silver = 0;

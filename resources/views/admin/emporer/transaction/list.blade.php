@@ -11,7 +11,7 @@ $str .= '&from_location='.request()->from_location;
 $str .= '&to_location='.request()->to_location;
 $str .= '&transaction_type='.request()->transaction_type;
 $str .= '&voucher_no='.request()->voucher_no;
-$showurl = url("/emporer/bag/list?$str");
+$showurl = url("/emporer/transaction/list?$str");
 @endphp
 
 @php
@@ -66,23 +66,12 @@ use App\Library\WebHelper;
                                       <input name="voucher_no" type="text" autocomplete="off" placeholder="Voucher No." class="form-control" value="{{ request()->voucher_no }}">
                                   </div>
                                 </div>
-                                <!-- <div class="row">
-                                  <div class="col-md-2 col-sm-12  form-group">
-                                      <label class="design1-form1">Transaction Type</label>
-                                      <input name="transaction_type" type="text" autocomplete="off" placeholder="Transaction Type" class="form-control" value="{{ request()->transaction_type }}">
-                                  </div>
-                                  <div class="col-md-2 col-sm-12  form-group">
-                                      <label class="design1-form1">Voucher No.</label>
-                                      <input name="voucher_no" type="text" autocomplete="off" placeholder="Voucher No." class="form-control" value="{{ request()->voucher_no }}">
-                                  </div>
-
-                                </div> -->
                             </div>
                           </form>
                     </div>
                     <div class="shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 20px !important;">
                       <div class="card-body">
-                        <table id="datatable" class="table table-striped table-bordered" style="width:100%">
+                        <table class="table table-striped table-bordered" style="width:100%">
                            <thead>
                               <tr style="text-align:center;text-shadow: 1px 1px 1px lightgrey, 3px 3px 5px lightgrey;">
                                  <th>S No.</th>

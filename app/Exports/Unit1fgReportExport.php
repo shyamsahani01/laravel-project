@@ -14,13 +14,13 @@ class Unit1fgReportExport implements FromView
     public function __construct($request)
     {
         $this->request = $request;
-        $this->EmrSeetapuraDB = DB::connection('EmrSeetapura');
+        $this->EmrSitapuraDB = DB::connection('EmrSitapura');
         $this->erpnextDB = DB::connection('erpnext');
     }
 
     public function view(): View
     {
-      $query1 = $this->EmrSeetapuraDB->table('Fgd');
+      $query1 = $this->EmrSitapuraDB->table('Fgd');
       $query1->select(DB::raw("sum(FdQty) quantity,
                             sum(FdGrWt) weight,
                             FdDt") )

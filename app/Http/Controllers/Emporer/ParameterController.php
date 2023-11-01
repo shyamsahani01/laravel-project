@@ -22,7 +22,7 @@ class ParameterController extends Controller
 
   public function check_db(Request $request){
     if(Auth::user()->emrDB == 'Sitapura') {
-      $this->emrDB = "EmrSeetapura";
+      $this->emrDB = "EmrSitapura";
       $this->emrDBName = "Sitapura";
     }
   }
@@ -84,13 +84,15 @@ class ParameterController extends Controller
       $query = DB::connection($this->emrDB)
                   ->table('Param')
                   ->select(DB::raw("PMCd as id, CONCAT(PMCd, ' (', PDesc , ')' ) as text") )
+                  // ->select(DB::raw("PMCd as id, PMCd as text") )
                   ->where('PTyp', "DMCTG")
                   ->orderBy('PMCd', "ASC")
                   ->limit(50);
 
         if(!empty($request->search)){
-              $query->where('PMCd', 'like' , "%". $request->search ."%");
-              $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
+              // $query->where('PMCd', 'like' , "%". $request->search ."%");
+              $query->whereRaw("( PMCd LIKE '%$request->search%' OR  PDesc LIKE '%$request->search%') ");
+              // $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
           }
 
       $results = $query->get();
@@ -134,6 +136,27 @@ class ParameterController extends Controller
       return json_encode(["results"=>$results]);
     }
 
+
+    if($request->type == "emr-designer_code" ) {
+      $query = DB::connection($this->emrDB)
+                  ->table('Param')
+                  ->select(DB::raw("PSCd as id, CONCAT(PSCd, ' (', PDesc , ')' ) as text") )
+                  ->where('PMCd', "2")
+                  ->where('PTyp', "DAANACD")
+                  ->orderBy('PMCd', "ASC")
+                  ->limit(150);
+
+        if(!empty($request->search)){
+              // $query->where('PSCd', 'like' , "%". $request->search ."%");
+              // $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
+              $query->whereRaw("( PMCd LIKE '%$request->search%' OR  PDesc LIKE '%$request->search%') ");
+          }
+
+      $results = $query->get();
+
+      return json_encode(["results"=>$results]);
+    }
+
     if($request->type == "emr-parameter_type" ) {
       $query = DB::connection($this->emrDB)
                   ->table('Param')
@@ -144,8 +167,9 @@ class ParameterController extends Controller
                   ->limit(50);
 
         if(!empty($request->search)){
-              $query->where('PMCd', 'like' , "%". $request->search ."%");
-              $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
+              // $query->where('PMCd', 'like' , "%". $request->search ."%");
+              $query->whereRaw("( PMCd LIKE '%$request->search%' OR  PDesc LIKE '%$request->search%') ");
+              // $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
           }
 
       $results = $query->get();
@@ -163,8 +187,9 @@ class ParameterController extends Controller
                   ->limit(200);
 
         if(!empty($request->search)){
-              $query->where('PMCd', 'like' , "%". $request->search ."%");
-              $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
+              // $query->where('PMCd', 'like' , "%". $request->search ."%");
+              // $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
+              $query->whereRaw("( PMCd LIKE '%$request->search%' OR  PDesc LIKE '%$request->search%') ");
         }
         if(!empty($request->parameter_type)){
               $query->where('PTyp',  $request->parameter_type );
@@ -184,8 +209,9 @@ class ParameterController extends Controller
                   ->limit(200);
 
       if(!empty($request->search)){
-            $query->where('PSCd', 'like', '%' . $request->search. '%');
-            $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
+            // $query->where('PSCd', 'like', '%' . $request->search. '%');
+            // $query->orWhere('PDesc', 'like' , "%". $request->search ."%");
+            $query->whereRaw("( PMCd LIKE '%$request->search%' OR  PDesc LIKE '%$request->search%') ");
       }
       if(!empty($request->parameter_type)){
             $query->where('PTyp',  $request->parameter_type );
@@ -357,6 +383,23 @@ class ParameterController extends Controller
       }
       else {
         $this->jsonResponse("Description DAANACD 3 not found.", false);
+      }
+    }
+
+    if($request->data_type == "location_type" ) {
+      $data = DB::connection($this->emrDB)
+                  ->table('Param')
+                  ->select("PDesc")
+                  ->where("PMCd", $request->data)
+                  ->where("PTyp", "LOCTYP")
+                  ->orderBy("ModDt", "ASC")
+                  ->first();
+
+      if(isset($data->PDesc)) {
+        $this->jsonResponse("Description LOCTYP is found.", true, $data);
+      }
+      else {
+        $this->jsonResponse("Description LOCTYP  not found.", false);
       }
     }
 

@@ -14,7 +14,7 @@ class TestExport implements FromView
     public function __construct($request)
     {
         $this->request = $request;
-        // $this->EmrSeetapuraDB = DB::connection('EmrSeetapura');
+        // $this->EmrSitapuraDB = DB::connection('EmrSitapura');
         // $this->erpnextDB = DB::connection('erpnext');
     }
 

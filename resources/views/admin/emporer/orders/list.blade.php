@@ -74,7 +74,7 @@ $showurl = url('/emporer/orders/list?show='.request()->show.'&order_start_date='
                     </div>
                     <div class="shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 20px !important;">
                       <div class="card-body">
-                        <table id="datatable" class="table table-striped table-bordered" style="width:100%">
+                        <table  class="table table-striped table-bordered" style="width:100%">
                            <thead>
                               <tr style="text-align:center;text-shadow: 1px 1px 1px lightgrey, 3px 3px 5px lightgrey;">
                                  <th>S No.</th>
@@ -138,8 +138,6 @@ $showurl = url('/emporer/orders/list?show='.request()->show.'&order_start_date='
 }
 
 
-
-
 function customer_code_select2() {
     $(".select2-lib-dropdown-customer_code").select2({
       placeholder: "Customer Code",
@@ -186,11 +184,6 @@ $(document).ready(function(){
   customer_code_select2();
   customer_name_select2();
 });
-
-
-
-
-
 
 
 </script>

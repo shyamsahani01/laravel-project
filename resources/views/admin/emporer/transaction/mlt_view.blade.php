@@ -183,7 +183,7 @@
                                                             <tr  style="text-align: center;">
                                                               <td><i class="fa fa-plus" style="color: green; font-weight:bold" onclick="toggleInnerTable({{ $data->TdSr  }}, this)"> ({{ $temp_data_array[$data->TdSr] }}) </i></td>
                                                               <td>{{ $data->TdSr  }}</td>
-                                                              <td><a href="/emporer/bag/bagDetails?BYy={{ $data->TdBYy}}&BChr={{ $data->TdBChr}}&BNo={{ $data->TdBNo}}&company_code={{ $data->TdCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
+                                                              <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->TdBIdNo}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
                                                               <td>{{ round($data->TdRjQty, 4)  }}</td>
                                                               <td>{{ round($data->TdRjPtQty, 4)  }}</td>
                                                               <td>{{ round($data->TdBGrWt, 4)  }}</td>
@@ -213,7 +213,8 @@
                                                                       <th>Stock Rate</th>
                                                                       <th>Quantity</th>
                                                                       <th>Raw Material Weight</th>
-                                                                      <th>Broken / Missing</th>
+                                                                      <!-- <th>Broken / Missing</th> -->
+                                                                      <th>Location Type</th>
                                                                       <th>To Location</th>
                                                                       <th>By Location</th>
                                                                       <th>By Worker</th>
@@ -239,7 +240,8 @@
                                                                      <td>{{ round($data->TdRmStkRt, 4)  }}</td>
                                                                      <td>{{ round($data->TdRmQty, 4)  }}</td>
                                                                      <td>{{ round($data->TdRmWt, 4)  }}</td>
-                                                                     <td>**</td>
+                                                                     <!-- <td>**</td> -->
+                                                                     <td class="parameter-desc" onclick="getParameterDescription('{{ $data->TdToRmLocTyp  }}', 'table', this, 'location_type')">{{ $data->TdToRmLocTyp  }}</td>
                                                                      <td>{{ $data->TdToRmLoc  }}</td>
                                                                      <td>{{ $data->TdByLoc  }}</td>
                                                                      <td>{{ $data->TdByWrk  }}</td>

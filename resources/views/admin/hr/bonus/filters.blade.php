@@ -19,6 +19,7 @@
             <div class="col-md-4 col-sm-12  form-group">
                <select name="company" class="form-control">
                   <option value="">Select Company</option>
+                  <option value="PINKCITY COLORSTONES PVT. LTD." @if(request()->company == 'PINKCITY COLORSTONES PVT. LTD.') Selected @endif>PINKCITY COLORSTONES PVT. LTD.</option>
                   <option value="Pinkcity Jewelhouse Private Ltd-Mahapura" @if(request()->company == 'Pinkcity Jewelhouse Private Ltd-Mahapura') Selected @endif>Pinkcity Jewelhouse Private Ltd-Mahapura</option>
                   <option value="Pinkcity Jewelhouse Private Limited- Unit 1" @if(request()->company == 'Pinkcity Jewelhouse Private Limited- Unit 1') Selected @endif>Pinkcity Jewelhouse Private Limited- Unit 1</option>
                   <option value="Pinkcity Jewelhouse Private Limited-Unit 2" @if(request()->company == 'Pinkcity Jewelhouse Private Limited-Unit 2') Selected @endif>Pinkcity Jewelhouse Private Limited-Unit 2</option>

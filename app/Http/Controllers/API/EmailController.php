@@ -24,6 +24,11 @@ class EmailController extends Controller
   public function planningEmails(Request $request)
   {
 
+    // $a = ["hi"=>"10", "hi1"=>20, "hi2"=>30];
+    //
+    // $b = (object) $a;
+    // $b->hi
+
     $mail = new PHPMailer(true);     // Passing `true` enables exceptions
 
     try {

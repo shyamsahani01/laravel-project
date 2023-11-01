@@ -167,7 +167,10 @@ use App\Library\WebHelper;
                                              <a class="nav-link" id="emp4-tab" data-toggle="tab" href="#emp4" role="tab" aria-controls="emp4" aria-selected="false" style="font-weight: 550;color: black;">Lab Details</a>
                                          </li>
                                          <li class="nav-item">
-                                             <a class="nav-link" id="emp5-tab" data-toggle="tab" href="#emp5" role="tab" aria-controls="emp4" aria-selected="false" style="font-weight: 550;color: black;">Analysis</a>
+                                             <a class="nav-link" id="emp5-tab" data-toggle="tab" href="#emp5" role="tab" aria-controls="emp5" aria-selected="false" style="font-weight: 550;color: black;">Analysis</a>
+                                         </li>
+                                         <li class="nav-item">
+                                             <a class="nav-link" id="emp6-tab" data-toggle="tab" href="#emp6" role="tab" aria-controls="emp6" aria-selected="false" style="font-weight: 550;color: black;">FG Bag List</a>
                                          </li>
                                      </ul>
                                      <div class="tab-content" id="myTabContent">
@@ -577,6 +580,58 @@ use App\Library\WebHelper;
                                              </div>
                                          </div>
 
+                                         <div class="tab-pane fade" id="emp6" role="tabpanel" aria-labelledby="emp6tab">
+                                             <div class="x_title">
+                                                 <div class="clearfix"></div>
+                                             </div>
+                                             <div class="table-responsive">
+                                               <table id="new-datatable-5" class="table table-striped table-bordered" style="">
+                                                  <thead>
+                                                     <tr style="text-align: center;">
+                                                       <th>Action</th>
+                                                       <th>S.NO.</th>
+                                                       <th>FG Voucher No.</th>
+                                                       <th>Bag No.</th>
+                                                       <th>Suffix</th>
+                                                       <th>Size</th>
+                                                       <th>Quantity</th>
+                                                       <th>Gross Weight</th>
+                                                       <th>Order No.</th>
+                                                       <th>Company</th>
+                                                       <th>User (Modified)</th>
+                                                       <th>Date (Modified)</th>
+                                                     </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                     @if (count($fg_bag_list) > 0)
+                                                     @php $count = 1;  @endphp
+                                                     @foreach($fg_bag_list as $key => $data)
+                                                          <tr  style="text-align: center;">
+                                                            <td><button class="btn btn-info" onclick="getFGRaw('{{ $data->FdIdNo}}', '{{ $data->bag_no}}',  this)"> Info </button></td>
+                                                            <td>{{ $count++  }}</td>
+                                                            <td><a  target="_blank" href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FdTc}}&FgYy={{ $data->FdYy}}&FgChr={{ $data->FdChr}}&FgNo={{ $data->FdNo}}&company_code={{ $data->FdCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->FdSr}}</td>
+                                                            <!-- <td><a href="/emporer/bag/bagDetails?BYy={{ $data->FdBYy}}&BChr={{ $data->FdBChr}}&BNo={{ $data->FdBNo}}&company_code={{ $data->FdCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a>/{{ $data->FdPrdOdSr  }}</td> -->
+                                                            <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->FdBIdNo}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
+                                                            <td>{{ $data->FdSfx  }}</td>
+                                                            <td>{{ $data->FdDmSz  }}</td>
+                                                            <td>{{ round($data->FdQty, 4)  }}</td>
+                                                            <td>{{ round($data->FdGrWt, 4)  }}</td>
+                                                            <td style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmTc={{ $data->FdPrdOdTc}}&OmYy={{ $data->FdPrdOdYy}}&OmChr={{ $data->FdPrdOdChr}}&OmNo={{ $data->FdPrdOdNo}}&company_code={{ $data->FdCoCd}}"  style="color: green;">{{ $data->order_no }}</a></td>
+                                                            <td>{{ $data->FdCoCd  }}</td>
+                                                            <td>{{ $data->ModUsr  }}</td>
+                                                            <td>{{ date('D, d-m-Y', strtotime($data->ModDt) ) . ' ' . $data->ModTime }}</td>
+                                                           </tr>
+                                                     @endforeach
+                                                  @else
+                                                    <tr>
+                                                      <td colspan="17" class="text-center text-danger"><h3><b>No Record Found</b></h3></td>
+                                                     </tr>
+                                                  @endif
+                                                  </tbody>
+                                               </table>
+                                             </div>
+                                         </div>
+
 
 
                                      </div>
@@ -592,6 +647,110 @@ use App\Library\WebHelper;
          </div>
      </div>
  </div>
+
+
+
+
+  <!-- confirm Modal -->
+  <div class="modal fade bd-example-modal-xl" id="all_check_in_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl large-modal" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="all_check_in_modal_label" style="font-weight: bold; color: black;">Bag No . : </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <table id="table" class="table-bordered table-striped table table-responsive" >
+            <thead>
+              <tr style="text-align: center;">
+                <th>S.NO.</th>
+                <th>Raw Material From Location</th>
+                <th>Issue / Receive</th>
+                <th>Raw Material Category</th>
+                <th style="min-width: 100px;">Raw Material Sub Category</th>
+                <th>Raw Material Code</th>
+                <th>Lottery No.</th>
+                <th>Size </th>
+                <th>Breadth</th>
+                <th>Depth</th>
+                <th>Stock Rate</th>
+                <th>Quantity</th>
+                <th>Raw Material Weight</th>
+                <th>Location Type</th>
+                <th>Raw Material To Location</th>
+
+                <th>User (Modified)</th>
+                <th>Date (Modified)</th>
+              </tr>
+            </thead>
+            <tbody id="all_check_in_table_body">
+              <tr>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+              </tr>
+          </table>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script>
+
+  function getFGRaw(FdIdNo, bag_no, this_var) {
+    $("#all_check_in_modal_label").html("Bag No . - " + bag_no)
+    $("#all_check_in_table_body").html("")
+
+
+         $.ajax({
+               url: '{{  url("/emporer/get-fg-raw-material") }}',
+               cache: false,
+               headers: {
+                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  },
+               type: "get",
+               data: { "FdIdNo": FdIdNo },
+               dataType: "json",
+               beforeSend: function (obj) {
+                 $('#loader').removeClass('hidden')
+               },
+               success: function(obj){
+                 $('#loader').addClass('hidden')
+                  if(obj.status) {
+                     $("#all_check_in_table_body").html(obj.html_data)
+                     $("#all_check_in_modal").modal("show")
+
+                  }else {
+                     alert(obj.msg)
+                  }
+
+
+               },
+               error: function(obj){
+                 $('#loader').addClass('hidden')
+                  var error_msg = ""
+                  $.each(obj.responseJSON.errors, function (key, val) {
+                      error_msg +=  val[0] + "\n";
+                  });
+                  alert(error_msg)
+
+               },
+           });
+
+  }
+
+
+  </script>
 
 
 

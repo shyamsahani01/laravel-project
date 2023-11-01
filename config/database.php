@@ -66,6 +66,7 @@ return [
         'erpnext' => [
             'driver' => 'mysql',
             'host' => '10.200.20.160',
+            // 'host' => '10.200.20.161',
             'database' => '_1bd3e0294da19198',
             'username' => 'erpnextuser',
             'password' => 'Admin@123',
@@ -209,7 +210,7 @@ return [
             'prefix' => '',
            ),
 
-        'EmrSeetapura' => array(
+        'EmrSitapura' => array(
             'driver' => 'sqlsrv',
             'host' => '192.168.5.88', // Provide IP address here
             // 'host' => '192.168.5.108', // Provide IP address here

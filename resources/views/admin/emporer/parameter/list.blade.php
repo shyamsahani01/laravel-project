@@ -66,7 +66,6 @@ $showurl = url("/emporer/parameter/list?$str");
                                         <option value="">Select Status</option>
                                         <option value="Y" @if(request()->status == 'Y') Selected @endif> Y</option>
                                         <option value="N" @if(request()->status == 'N') Selected @endif> N</option>
-                                     </select>
                                       </select>
                                   </div>
                                 </div>
@@ -76,16 +75,7 @@ $showurl = url("/emporer/parameter/list?$str");
                     <div class="shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 20px !important;">
                       <div class="card-body">
 
-                        <div class="form-group pull-left showing" style="margin-top:37px;">
-                            <p class="text-sm text-gray-700 leading-5">
-                                <span class="font-medium">{{ $parameter_data->firstItem() }}</span>
-                               {!! __('to') !!}
-                                <span class="font-medium">{{ $parameter_data->total() }}</span>
-                                {!! __('results') !!}
-                            </p>
-                        </div>
-
-                        <table id="datatable" class="table table-striped table-bordered" style="width:100%">
+                        <table  class="table   table-bordered" style="width:100%">
                            <thead>
                               <tr style="text-align:center;text-shadow: 1px 1px 1px lightgrey, 3px 3px 5px lightgrey;">
                                  <th>S No.</th>
@@ -93,7 +83,9 @@ $showurl = url("/emporer/parameter/list?$str");
                                  <th>Category</th>
                                  <th>Sub Category</th>
                                  <th>Description</th>
+                                 <!-- <th style="max-width:250px">Description 2</th> -->
                                  <th>Value</th>
+                                 <th>Value 2</th>
                                  <th>Status</th>
                                  <th>User (Modified)</th>
                                  <th>Date (Modified)</th>
@@ -109,7 +101,9 @@ $showurl = url("/emporer/parameter/list?$str");
                                    <td>{{ $data->PMCd }}</td>
                                    <td>{{ $data->PSCd }}</td>
                                    <td>{{ $data->PDesc }}</td>
+                                   <!-- <td>{{ $data->PDesc225 }}</td> -->
                                    <td>{{ $data->PValue }}</td>
+                                   <td>{{ $data->PValue1 }}</td>
                                    <td>{{ $data->PValidYn }}</td>
                                    <td>{{ $data->ModUsr  }}</td>
                                    <td>{{ date('D, d-m-Y', strtotime($data->ModDt) ) . ' ' . $data->ModTime }}</td>

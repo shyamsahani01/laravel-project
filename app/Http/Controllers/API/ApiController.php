@@ -158,7 +158,7 @@ class ApiController extends Controller
 
 
           // $bag_data = DB::connection('Emr')
-          $bag_data = DB::connection('EmrSeetapura')
+          $bag_data = DB::connection('EmrSitapura')
                   ->table('Bag')
                   // ->where('BOdDmCd',  $request->emporer_bag_no )
                   ->where('BNo',  $emporer_bag_no )

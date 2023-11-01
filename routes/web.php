@@ -19,6 +19,8 @@ use App\Http\Controllers\Emporer\DesignController;
 use App\Http\Controllers\Emporer\OrdersController;
 use App\Http\Controllers\Emporer\BagController;
 use App\Http\Controllers\Emporer\ParameterController;
+use App\Http\Controllers\Emporer\FinishGoodController;
+use App\Http\Controllers\Emporer\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -296,6 +298,8 @@ Route::get('/emporer/design/designDetails', [DesignController::class, 'designDet
 Route::get('/emporer/orders/list', [OrdersController::class, 'list'])->name('emporer.orders.list');
 Route::get('/emporer/orders/ordersDetails', [OrdersController::class, 'ordersDetails'])->name('emporer.orders.ordersDetails');
 Route::get('/emporer/set-emrDB', [OrdersController::class, 'setEmrDB'])->name('setEmrDB');
+Route::get('/emporer/get-order-design-bag-details', [OrdersController::class, 'orderDesignsBagDetails'])->name('emporer.orders.orderDesignsBagDetails');
+
 
 Route::get('/emporer/bag/list', [BagController::class, 'list'])->name('emporer.bag.list');
 Route::get('/emporer/bag/bagDetails', [BagController::class, 'bagDetails'])->name('emporer.bag.bagDetails');
@@ -307,4 +311,17 @@ Route::get('/emporer/parameter/list', [ParameterController::class, 'list'])->nam
 Route::get('get-emr-parmeters', [ParameterController::class, 'getEmrParmeters'])->name('emporer.parameter.getEmrParmeters');
 Route::get('/emporer/get-parameter-description', [ParameterController::class, 'getParameterDescription'])->name('getParameterDescription');
 
+Route::get('/emporer/finish_good/list', [FinishGoodController::class, 'list'])->name('emporer.finish_good.list');
+Route::get('/emporer/finish_good/finishGoodDetails', [FinishGoodController::class, 'finishGoodDetails'])->name('emporer.finish_good.finishGoodDetails');
+Route::get('/emporer/get-fg-raw-material', [FinishGoodController::class, 'getFgRawMaterial'])->name('emporer.finish_good.getFgRawMaterial');
+Route::get('/emporer/finish_good_bm/list', [FinishGoodController::class, 'finishGoodBmList'])->name('emporer.finish_good_bm.list');
+Route::get('/emporer/finish_good_bm/finishGoodBmDetails', [FinishGoodController::class, 'finishGoodBmDetails'])->name('emporer.finish_good_bm.finishGoodBmDetails');
+
+Route::get('/emporer/report/what-is-where', [ReportController::class, 'whatIsWhere'])->name('emporer.report.whatIsWhere');
+Route::get('/emporer/report/what-is-where-order-data', [ReportController::class, 'whatIsWhereOrderData'])->name('emporer.report.whatIsWhereOrderData');
 });
+
+Route::get('/emporer/order-tracking', [OrdersController::class, 'orderTracking'])->name('emporer.orders.orderTracking');
+Route::get('/emporer/order-tracking-check-cust-order', [OrdersController::class, 'orderTrackingCheckCustOrder'])->name('emporer.orders.orderTrackingCheckCustOrder');
+Route::get('/emporer/order-tracking-order-designs', [OrdersController::class, 'orderTrackingDesigns'])->name('emporer.orders.orderTrackingDesigns');
+Route::get('/emporer/order-tracking-order-designs-details', [OrdersController::class, 'orderTrackingDesignsDetails'])->name('emporer.orders.orderTrackingDesignsDetails');

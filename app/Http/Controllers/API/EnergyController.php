@@ -59,8 +59,8 @@ class EnergyController extends Controller
                print_r($result);
 
                for($i=0; $i<count($result); $i++) {
-                if(isset($result[$i]->field1)) {
-                  if($result[$i]->field1 > 0) {
+                // if(isset($result[$i]->field1)) {
+                  if($result[$i]->field1 > 0 || $result[$i]->field2 > 0 || $result[$i]->field3 > 0 ||$result[$i]->field4 > 0 ||$result[$i]->field5 > 0 ||$result[$i]->field6 > 0  ) {
                     $this->localdesignDB->table('water')
                                         // ->upsert([
                                         //       "entry_id"=>$result[$i]->entry_id,
@@ -73,39 +73,77 @@ class EnergyController extends Controller
                                         //     ["entry_id", ],
                                         //     ["feild_1", "feild_2", "status"]
 
+                                          //   ->updateOrInsert([
+                                          //         "entry_id"=>$result[$i]->entry_id,
+                                          //         "entry_time"=>$result[$i]->created_at,
+                                          //         // "status"=>$result[$i]->status,
+                                          //       ],
+                                          //       [
+                                          //         "entry_id"=>$result[$i]->entry_id,
+                                          //         "entry_time"=>$result[$i]->created_at,
+                                          //         "feild_1"=>$result[$i]->field1,
+                                          //         "feild_2"=>$result[$i]->field2,
+                                          //         // "status"=>$result[$i]->status,
+                                          //       ]
+                                          // );
                                             ->updateOrInsert([
-                                                  "entry_id"=>$result[$i]->entry_id,
-                                                  "entry_time"=>$result[$i]->created_at,
-                                                  // "status"=>$result[$i]->status,
+                                                      "entry_id"=>$result[$i]->entry_id,
+                                                      "entry_time"=>$result[$i]->created_at,
+                                                      // "feild_1"=>isset($result[$i]->feild_1) ? $result[$i]->feild_1 : NULL,
+                                                      // "feild_2"=>isset($result[$i]->feild_2) ? $result[$i]->feild_2 : NULL,
+                                                      // "status"=>$result[$i]->status,
                                                 ],
                                                 [
                                                   "entry_id"=>$result[$i]->entry_id,
                                                   "entry_time"=>$result[$i]->created_at,
                                                   "feild_1"=>$result[$i]->field1,
                                                   "feild_2"=>$result[$i]->field2,
+                                                  "feild_3"=>isset($result[$i]->field3) ? $result[$i]->field3 : NULL,
+                                                  "feild_4"=>isset($result[$i]->field4) ? $result[$i]->field4 : NULL,
+                                                  "feild_5"=>isset($result[$i]->field5) ? $result[$i]->field5 : NULL,
+                                                  "entry_date_time"=>date("Y-m-d h:i:s", strtotime($result[$i]->created_at)),
                                                   // "status"=>$result[$i]->status,
                                                 ]
                                           );
                   }
-                }
-                if(isset($result[$i]->field2)) {
-                  if($result[$i]->field2 > 0) {
-                    $this->localdesignDB->table('water')
-                                            ->updateOrInsert([
-                                                  "entry_id"=>$result[$i]->entry_id,
-                                                  "entry_time"=>$result[$i]->created_at,
-                                                  // "status"=>$result[$i]->status,
-                                                ],
-                                                [
-                                                  "entry_id"=>$result[$i]->entry_id,
-                                                  "entry_time"=>$result[$i]->created_at,
-                                                  "feild_1"=>$result[$i]->field1,
-                                                  "feild_2"=>$result[$i]->field2,
-                                                  // "status"=>$result[$i]->status,
-                                                ]
-                                          );
-                  }
-                }
+                // }
+                // if(isset($result[$i]->field2)) {
+                //   if($result[$i]->field2 > 0) {
+                    // $this->localdesignDB->table('water')
+                    //                       //   ->updateOrInsert([
+                    //                       //         "entry_id"=>$result[$i]->entry_id,
+                    //                       //         "entry_time"=>$result[$i]->created_at,
+                    //                       //         // "status"=>$result[$i]->status,
+                    //                       //       ],
+                    //                       //       [
+                    //                       //         "entry_id"=>$result[$i]->entry_id,
+                    //                       //         "entry_time"=>$result[$i]->created_at,
+                    //                       //         "feild_1"=>$result[$i]->field1,
+                    //                       //         "feild_2"=>$result[$i]->field2,
+                    //                       //         // "status"=>$result[$i]->status,
+                    //                       //       ]
+                    //                       // );
+                    //                         ->updateOrInsert([
+                    //                               "entry_id"=>$result[$i]->entry_id,
+                    //                               "entry_time"=>$result[$i]->created_at,
+                    //                               // "feild_1"=>isset($result[$i]->feild_1) ? $result[$i]->feild_1 : NULL,
+                    //                               // "feild_2"=>isset($result[$i]->feild_2) ? $result[$i]->feild_2 : NULL,
+                    //                               // "status"=>$result[$i]->status,
+                    //                             ],
+                    //                             [
+                    //                               "entry_id"=>$result[$i]->entry_id,
+                    //                               "entry_time"=>$result[$i]->created_at,
+                    //                               "feild_1"=>$result[$i]->field1,
+                    //                               "feild_2"=>$result[$i]->field2,
+                    //                               "feild_3"=>isset($result[$i]->field3) ? $result[$i]->field3 : NULL,
+                    //                               "feild_4"=>isset($result[$i]->field4) ? $result[$i]->field4 : NULL,
+                    //                               "feild_5"=>isset($result[$i]->field5) ? $result[$i]->field5 : NULL,
+                    //                               "entry_date_time"=>date("Y-m-d h:i:s", strtotime($result[$i]->created_at)),
+                    //                               // "status"=>$result[$i]->status,
+                    //                             ]
+                    //                       );
+                //   }
+                // }
                }
              }
            }

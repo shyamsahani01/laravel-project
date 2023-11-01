@@ -6,6 +6,7 @@ use App\Library\WebHelper;
 @endphp
 
 
+
 <div class="main-panel">
 <div class="content">
 <div class="container-fluid">
@@ -291,10 +292,10 @@ use App\Library\WebHelper;
                                                        </div>
 
                                                        <div class="table-responsive">
-                                                         <table  class="table table-striped table-bordered" style="">
+                                                         <table id="design-table"  class="table table-striped table-bordered" style="">
                                                             <thead>
                                                                <tr style="text-align: center;">
-                                                                 <!-- <th>Button</th> -->
+                                                                 <th>Button</th>
                                                                  <th>S.NO.</th>
                                                                  <th>Design Code</th>
                                                                  <th>Design Image</th>
@@ -305,9 +306,12 @@ use App\Library\WebHelper;
                                                                  <th>Balance Qunatity</th>
                                                                  <th>Export Qunatity</th>
                                                                  <th>FG Qunatity</th>
+                                                                 <th>Calculated Price</th>
                                                                  <th>Sale Price</th>
                                                                  <th>Customer Price</th>
                                                                  <th>Karat</th>
+                                                                 <th>Production Sequence</th>
+                                                                 <th>Color</th>
                                                                  <th style="min-width: 200px;">Production Instruction</th>
                                                                  <th style="min-width: 200px;">Customer Instruction</th>
                                                                  <th style="min-width: 200px;">Stamp Instruction</th>
@@ -323,9 +327,11 @@ use App\Library\WebHelper;
                                                                @if (count($orders_design_details) > 0)
                                                                @php $count = 1 @endphp
                                                                @foreach($orders_design_details as $key => $data)
-                                                                    <tr  style="text-align: center;">
+                                                                    @php $count++; @endphp
+                                                                    <tr  style="text-align: center;" class="@if(($data->OdPrdQty - $data->OdExpQty)>0) table-danger @else table-success @endif">
+                                                                      <td><button class="btn btn-info" id="design_id-{{ $count }}" onclick="getDesignBag('{{ $data->OdIdNo}}', '{{ $data->OdDmCd}}', {{ $count }}, this)"> Info </button></td>
                                                                       <td>{{ $data->OdSr  }}</td>
-                                                                      <td><a href="/emporer/design/designDetails?design_code={{ $data->OdDmCd}}"  style="color: green;">{{ $data->OdDmCd  }}</td>
+                                                                      <td><a href="/emporer/design/designDetails?design_code={{ $data->OdDmCd}}"  style="color: green; font-weight:bold">{{ $data->OdDmCd  }}</td>
                                                                       <td style="text-align: center;" >
                                                                         @if (WebHelper::get_emr_design_file_location($data->DmCtg, $data->DmTcTyp, $data->DmCd) != "")
                                                                         <img id='design-{{ $data->OdSr  }}' src='{{ WebHelper::get_emr_design_file_location($data->DmCtg, $data->DmTcTyp, $data->DmCd)  }}' onclick=displayImage({{ $data->OdSr  }})  width='150' height='150'>
@@ -339,12 +345,15 @@ use App\Library\WebHelper;
                                                                       <td>{{ $data->OdDmSz  }}</td>
                                                                       <td>{{ $data->OdOrdQty  }}</td>
                                                                       <td>{{ $data->OdPrdQty  }}</td>
-                                                                      <td></td>
+                                                                      <td>{{ ($data->OdPrdQty - $data->OdExpQty)  }}</td>
                                                                       <td>{{ $data->OdExpQty  }}</td>
                                                                       <td>{{ $data->OdFgQty  }}</td>
+                                                                      <td>{{ round($data->OdCalcPrc, 4)  }}</td>
                                                                       <td>{{ round($data->OdSalPrc, 4)  }}</td>
                                                                       <td>{{ round($data->OdCstPrc, 4)  }}</td>
                                                                       <td>{{ $data->OdKt  }}</td>
+                                                                      <td>{{ $data->OdPrdSeq  }}</td>
+                                                                      <td>{{ $data->OdDmCol  }}</td>
                                                                       <td>{{ $data->OdDmPrdInst  }}</td>
                                                                       <td>{{ $data->OdCmPrdInst  }}</td>
                                                                       <td>{{ $data->OdCmStmpInst  }}</td>
@@ -373,16 +382,17 @@ use App\Library\WebHelper;
                                                            <div class="clearfix"></div>
                                                        </div>
                                                        <div class="table-responsive">
-                                                         <table  class="table table-striped table-bordered" style="">
+                                                         <table id="bag-table"  class="table table-striped table-bordered" style="">
                                                             <thead>
                                                                <tr style="text-align: center;">
                                                                  <th>S.NO.</th>
                                                                  <th>Bag No. </th>
-                                                                 <th>Bag Year</th>
+                                                                 <!-- <th>Bag Year</th>
                                                                  <th>Bag Character</th>
-                                                                 <th>Bag No.</th>
+                                                                 <th>Bag No.</th> -->
                                                                  <th>Order Serial No.</th>
                                                                  <th style="min-width: 125px;">Design Code</th>
+                                                                 <!-- <th>Design Image</th> -->
                                                                  <th>Suffix</th>
                                                                  <th>Size</th>
                                                                  <th>Open Quantity</th>
@@ -410,12 +420,14 @@ use App\Library\WebHelper;
                                                                     <tr  style="text-align: center;">
                                                                       <td>{{ $count++  }}</td>
                                                                       <!-- <td>{{ $data->BOdSr  }}</td> -->
-                                                                      <td><a href="/emporer/bag/bagDetails?BYy={{ $data->BYy}}&BChr={{ $data->BChr}}&BNo={{ $data->BNo}}&company_code={{ $data->BCoCd}}"  style="color: green;">{{ $data->bag_no }} </a></td>
-                                                                      <td>{{ $data->BYy  }}</td>
+                                                                      <!-- <td><a href="/emporer/bag/bagDetails?BYy={{ $data->BYy}}&BChr={{ $data->BChr}}&BNo={{ $data->BNo}}&company_code={{ $data->BCoCd}}"  style="color: green;">{{ $data->bag_no }} </a></td> -->
+                                                                      <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->BIdNo}}"  style="color: green;">{{ $data->bag_no }} </a></td>
+                                                                      <!-- <td>{{ $data->BYy  }}</td>
                                                                       <td>{{ $data->BChr  }}</td>
-                                                                      <td>{{ $data->BNo  }}</td>
+                                                                      <td>{{ $data->BNo  }}</td> -->
                                                                       <td>{{ $data->BOdSr  }}</td>
                                                                       <td><a href="/emporer/design/designDetails?design_code={{ $data->BOdDmCd}}"  style="color: green;">{{ $data->BOdDmCd  }}</td>
+
                                                                       <td>{{ $data->BOdSfx  }}</td>
                                                                       <td>{{ $data->BOdDmSz  }}</td>
                                                                       <td>{{ $data->BOpnQty  }}</td>
@@ -474,15 +486,188 @@ use App\Library\WebHelper;
 </div>
 
 
+  <!-- confirm Modal -->
+  <div class="modal fade bd-example-modal-lg" id="all_check_in_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg " role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="all_check_in_modal_label" style="font-weight: bold; color: black;">Bag No . : </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <table id="table" class="table-bordered table-striped table table-responsive" >
+            <thead>
+              <tr style="text-align: center;">
+                <th>S.NO.</th>
+                <th>Bag No. </th>
+                <th style="min-width: 125px;">Design Code</th>
+                <th>Open Quantity</th>
+                <th style="min-width: 125px;">Open Date</th>
+                <th>Open Location</th>
+                <th>Bag Location</th>
+                <th>Quantity</th>
+                <th>Gross Weight</th>
+                <!-- <th style="min-width: 125px;" >Received Date</th>
+                <th>User (Modified)</th> -->
+              </tr>
+            </thead>
+            <tbody id="all_check_in_table_body">
+              <tr>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+              </tr>
+          </table>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script>
+
+  function getDesignBag(OdIdNo, design_no, series, this_var) {
+    $("#all_check_in_modal_label").html("Design No . - " + design_no)
+    $("#all_check_in_table_body").html("")
+
+
+         $.ajax({
+               url: '{{  url("/emporer/get-order-design-bag-details") }}',
+               cache: false,
+               headers: {
+                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  },
+               type: "get",
+               data: { "OdIdNo": OdIdNo },
+               dataType: "json",
+               beforeSend: function (obj) {
+                 $('#loader').removeClass('hidden')
+               },
+               success: function(obj){
+                 console.log(obj)
+                 $('#loader').addClass('hidden')
+                  if(obj.status) {
+                     $("#all_check_in_table_body").html(obj.html_data)
+                     $("#all_check_in_modal").modal("show")
+
+                  }else {
+                     alert(obj.msg)
+                  }
+
+
+               },
+               error: function(obj){
+                 $('#loader').addClass('hidden')
+                  var error_msg = ""
+                  $.each(obj.responseJSON.errors, function (key, val) {
+                      error_msg +=  val[0] + "\n";
+                  });
+                  alert(error_msg)
+
+               },
+           });
+
+  }
+
+
+  </script>
+
 
 @include('admin.emporer.emporer_script')
 
+
 <script>
 
-
-
+$(function() {
+  $('#design-table').DataTable( {
+    ordering: true,
+    dom: 'Bfrtip',
+    "lengthMenu": [[-1, 25, 50], ["All", 25, 50]],     // page length options
+    buttons: [
+      {
+        extend: 'excel',
+        text: 'EXCEL',
+        filename: function(){
+                var d = new Date();
+                var n = d.getTime();
+                return 'design_details_' + n;
+            }
+      },
+      {
+        extend: 'csv',
+        text: 'CSV',
+        filename: function(){
+                var d = new Date();
+                var n = d.getTime();
+                return 'design_details_' + n;
+            }
+      },
+      {
+        extend: 'pdf',
+        text: 'PDF',
+        filename: function(){
+                var d = new Date();
+                var n = d.getTime();
+                return 'design_details_' + n;
+            }
+      },
+      'copy', 'pageLength']
+  } );
+  $('#bag-table').DataTable( {
+    ordering: true,
+    dom: 'Bfrtip',
+    // "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],     // page length options
+    "lengthMenu": [[-1, 25, 50], ["All", 25, 50]],   // page length options
+    // buttons: ['excel', 'csv', 'copy', 'pdf', 'pageLength']
+    buttons: [
+      {
+        extend: 'excel',
+        text: 'EXCEL',
+        filename: function(){
+                var d = new Date();
+                var n = d.getTime();
+                return 'bag_details_' + n;
+            }
+      },
+      {
+        extend: 'csv',
+        text: 'CSV',
+        filename: function(){
+                var d = new Date();
+                var n = d.getTime();
+                return 'bag_details_' + n;
+            }
+      },
+      {
+        extend: 'pdf',
+        text: 'PDF',
+        filename: function(){
+                var d = new Date();
+                var n = d.getTime();
+                return 'bag_details_' + n;
+            }
+      },
+      'copy', 'pageLength']
+  } );
+});
 
 </script>
+
+<style>
+.dt-buttons.btn-group {
+  margin-bottom: -50px;
+}
+</style>
+
 
 
 

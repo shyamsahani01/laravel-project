@@ -28,12 +28,15 @@
                        {{$newName}}
                      </a>
                      <div class="dropdown-menu dropdown-usermenu pull-right" style="top: 2px !important; left: 58px !important;">
+                        @if( auth()->user()->role == 'superadmin' || auth()->user()->role == 'reports' )
                         <a class="dropdown-item @if(auth()->user()->emrDB == 'Mahapura'){{ 'active' }}@endif"
                           @if(auth()->user()->emrDB != 'Mahapura') href="/emporer/set-emrDB?emrDB=Mahapura" @else href="javascript:void(0);" @endif
                            ><i class="fa fa-diamond pull-right"></i>Mahapura</a>
                         <a class="dropdown-item @if(auth()->user()->emrDB == 'Sitapura'){{ 'active' }} @endif"
                           @if(auth()->user()->emrDB != 'Sitapura') href="/emporer/set-emrDB?emrDB=Sitapura" @else href="javascript:void(0);" @endif
                           ><i class="fa fa-diamond pull-right"></i>Sitapura</a>
+                        <a class="dropdown-item " href="/emporer/order-tracking"><i class="fa fa-diamond pull-right"></i>Order Tracking</a>
+                        @endif
                         <a class="dropdown-item" href="{{ url('/logout') }}" ><i class="fa fa-sign-out pull-right"></i> Log Out  </a>
                      </div>
 

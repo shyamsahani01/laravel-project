@@ -22,7 +22,7 @@ class DesignController extends Controller
 
   public function check_db(Request $request){
     if(Auth::user()->emrDB == 'Sitapura') {
-      $this->emrDB = "EmrSeetapura";
+      $this->emrDB = "EmrSitapura";
       $this->emrDBName = "Sitapura";
     }
   }
@@ -34,7 +34,15 @@ class DesignController extends Controller
 
     $query = DB::connection($this->emrDB)
             ->table("DsgMst")
-            ->select("DsgMst.*");
+            ->select(DB::Raw("DsgMst.*, DsgAna.DaAnaCd designer_code, Param.PDesc as designer_name"))
+            ->leftJoin('DsgAna', function ($join) {
+                  $join->on('DsgAna.DaDmIdNo', '=', 'DsgMst.DmIdNo')
+                       ->where('DsgAna.DaAnaSr', '2');
+              })
+            ->leftJoin('Param', function ($join) {
+                  $join->on('Param.PSCd', '=', 'DsgAna.DaAnaCd')
+                       ->where('Param.PMCd', '2');
+              });;
 
       if(!empty($request->design_start_date)){
           $query->whereDate('DmDsgDt', ">=", $request->design_start_date)
@@ -57,6 +65,9 @@ class DesignController extends Controller
     }
     if(!empty($request->description)){
         $query->where('DmDesc', "like", "%".$request->description."%");
+    }
+    if(!empty($request->designer_code)){
+        $query->where('DsgAna.DaAnaCd', $request->designer_code);
     }
     if(!empty($request->category)){
         $query->where('DmCtg', "like", "%".$request->category."%");
@@ -111,12 +122,22 @@ class DesignController extends Controller
             ->orderBy("DaAnaSr", "ASC")
             ->get();
 
+    $fg_bag_list = DB::connection($this->emrDB)
+            ->table("Fgd")
+            ->select(DB::raw("Fgd.*, CONCAT(FdTc, '/', FdYy, '/', FdChr, '/', FdNo) voucher_no, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no, CONCAT(FdPrdOdTc, '/', FdPrdOdYy, '/', FdPrdOdChr, '/', FdPrdOdNo) order_no ") )
+            ->where("Fgd.FdDmCd", $request->design_code)
+            ->where("Fgd.FdTc", "FB")
+            ->orderBy("ModDt", "DESC")
+            ->limit(20)
+            ->get();
+
 
       $data['title'] = $title;
       $data['design_details'] = $design_details;
       $data['design_bom_details'] = $design_bom_details;
       $data['design_lab_details'] = $design_lab_details;
       $data['design_analysis_details'] = $design_analysis_details;
+      $data['fg_bag_list'] = $fg_bag_list;
 
       // Helper::LoginIpandTime($request->getClientIp());
       return view('admin.emporer.design.view', $data );

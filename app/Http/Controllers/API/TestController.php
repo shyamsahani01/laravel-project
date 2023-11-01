@@ -694,7 +694,7 @@ class TestController extends Controller
       //     print_r($data);
       //
       //     foreach ($data as $key => $value) {
-      //       // $data2 = DB::connection('EmrSeetapura')
+      //       // $data2 = DB::connection('EmrSitapura')
       //       $data2 = DB::connection('Emr')
       //               ->select("SELECT * FROM RmMst WHERE RmCd = '$value->name'");
       //               // echo "<pre>";

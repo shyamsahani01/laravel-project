@@ -34,6 +34,7 @@ $str .= 'show='.request()->show;
 $str .= '&design_start_date='.request()->design_start_date;
 $str .= '&design_end_date='.request()->design_end_date;
 $str .= '&category='.request()->category;
+$str .= '&designer_code='.request()->designer_code;
 $str .= '&description='.request()->description;
 $str .= '&design_code='.request()->design_code;
 $filter = $str;
@@ -76,6 +77,48 @@ $str .= '&category='.request()->category;
 $str .= '&sub_category='.request()->sub_category;
 $str .= '&description='.request()->description;
 $str .= '&status='.request()->status;
+$filter = $str;
+@endphp
+@endif
+
+@if(Request::segment(1) == 'emporer' && Request::segment(2) == 'finish_good' )
+@php
+$str = "";
+$str .= 'show='.request()->show;
+$str .= '&start_date='.request()->start_date;
+$str .= '&end_date='.request()->end_date;
+$str .= '&from_location='.request()->from_location;
+$str .= '&to_location='.request()->to_location;
+$str .= '&transaction_type='.request()->transaction_type;
+$str .= '&voucher_no='.request()->voucher_no;
+$filter = $str;
+@endphp
+@endif
+
+@if(Request::segment(1) == 'emporer' && Request::segment(2) == 'finish_good_bm' )
+@php
+$str = "";
+$str .= 'show='.request()->show;
+$str .= '&start_date='.request()->start_date;
+$str .= '&end_date='.request()->end_date;
+$str .= '&voucher_no='.request()->voucher_no;
+$filter = $str;
+@endphp
+@endif
+
+@if(Request::segment(1) == 'emporer' &&  Request::segment(2) == 'report' && Request::segment(3) == 'what-is-where' )
+@php
+$str = "";
+$str .= 'show='.request()->show;
+$str .= '&order_type='.request()->order_type;
+$str .= '&year='.request()->year;
+$str .= '&order_start_date='.request()->order_start_date;
+$str .= '&order_end_date='.request()->order_end_date;
+$str .= '&expected_order_start_date='.request()->expected_order_start_date;
+$str .= '&expected_order_end_date='.request()->expected_order_end_date;
+$str .= '&customer_code='.request()->customer_code;
+$str .= '&company_code='.request()->company_code;
+$str .= '&order_no='.request()->order_no;
 $filter = $str;
 @endphp
 @endif
