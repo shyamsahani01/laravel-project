@@ -65,6 +65,8 @@ use App\Library\WebHelper;
                             </div>
                           </form>
                     </div>
+
+                    
                     <div class="shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 20px !important;">
                       <div class="card-body">
                         <table  class="table table-striped table-bordered" style="width:100%">
@@ -94,7 +96,7 @@ use App\Library\WebHelper;
                                  <!-- <td><a href="/emporer/bag/bagDetails?bag_no={{ $data->bag_no}}&company_code={{ $data->BCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no }} </a></td> -->
                                  <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->BIdNo}}"  style="color: green; font-weight:bold">{{ $data->bag_no }} </a></td>
                                  <td>{{ $data->BCoCd  }}</td>
-                                 <td><a href="/emporer/orders/ordersDetails?order_no={{ $data->order_no}}&company_code={{ $data->BCoCd}}"  style="color: green;">{{ $data->order_no  }} </a></td>
+                                 <td><a href="/emporer/orders/ordersDetails?OmIdNo={{ $data->BOmIdNo}}"  style="color: green;">{{ $data->order_no  }} </a></td>
                                  <td><a href="/emporer/design/designDetails?design_code={{ $data->BOdDmCd}}"  style="color: green;">{{ $data->BOdDmCd  }} </a></td>
                                  <td>{{ $data->BOdDmSz  }}</td>
                                  <td>{{ date("D, d-m-Y",strtotime($data->BOpnDt)) }}</td>

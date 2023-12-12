@@ -44,7 +44,7 @@ function checkDigits($value='')
                            <div class="col-md-12 form-group order-form">
                              <label for="" class="col-sm-3 col-form-label bold-label">Order No.</label>
                              <div class="col-sm-9">
-                               <a href="/emporer/orders/ordersDetails?OmTc={{ $bag_details->BOdTc}}&OmYy={{ $bag_details->BOdYy}}&OmChr={{ $bag_details->BOdChr}}&OmNo={{ $bag_details->BOdNo}}&company_code={{ $bag_details->BCoCd}}"  >
+                               <a href="/emporer/orders/ordersDetails?OmIdNo={{ $bag_details->BOmIdNo}}"  >
                                  <input type="text" readonly class="form-control from-custom-style"  style="color: green;"  value="@if(isset($bag_details->order_no)){{ $bag_details->order_no }}@endif"  >
                                </a>
                              </div>
@@ -179,7 +179,7 @@ function checkDigits($value='')
                                                    <div class="col-md-4 form-group order-form">
                                                      <label for="" class="col-sm-3 col-form-label bold-label">Order No.</label>
                                                      <div class="col-sm-9">
-                                                       <a href="/emporer/orders/ordersDetails?OmTc={{ $bag_details->BOdTc}}&OmYy={{ $bag_details->BOdYy}}&OmChr={{ $bag_details->BOdChr}}&OmNo={{ $bag_details->BOdNo}}&company_code={{ $bag_details->BCoCd}}"  >
+                                                       <a href="/emporer/orders/ordersDetails?OmIdNo={{ $bag_details->BOmIdNo}}"  >
                                                          <input type="text" readonly class="form-control from-custom-style " style="color: green;" value="@if(isset($bag_details->order_no)){{ $bag_details->order_no }}@endif"  >
                                                        </a>
                                                      </div>
@@ -746,7 +746,8 @@ function checkDigits($value='')
                                                           <tr style="text-align: center;">
                                                             <td>{{ $count++  }}</td>
                                                             <td>{{ date('D, d-m-Y', strtotime($data->TdDt) )  }}</td>
-                                                            <td><a  target="_blank" href="/emporer/transaction/transactionDetails?TTc={{ $data->TdTc}}&TYy={{ $data->TdYy}}&TChr={{ $data->TdChr}}&TNo={{ $data->TdNo}}&company_code={{ $data->TdCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->TdSr}}</td>
+                                                            <!-- <td><a  target="_blank" href="/emporer/transaction/transactionDetails?TTc={{ $data->TdTc}}&TYy={{ $data->TdYy}}&TChr={{ $data->TdChr}}&TNo={{ $data->TdNo}}&company_code={{ $data->TdCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->TdSr}}</td> -->
+                                                            <td><a  target="_blank" href="/emporer/transaction/transactionDetails?TTc={{ $data->TdTc}}&TIdNo={{ $data->TdTIdNo}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->TdSr}}</td>
                                                             <td>{{ $data->TdFrBLoc  }} @php $last_issue_location = $data->TdFrBLoc  @endphp</td>
                                                             <td>{{ $data->TdWrk  }}</td>
                                                             <td>{{ checkDigits($data->TdBQty)  }}</td>
@@ -800,7 +801,7 @@ function checkDigits($value='')
                                                        <tr  style="text-align: center;">
                                                          <td>{{ $count++  }}</td>
                                                          <td>{{ date('D, d-m-Y', strtotime($data->FdDt) )  }}</td>
-                                                         <td><a  target="_blank" href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FdTc}}&FgYy={{ $data->FdYy}}&FgChr={{ $data->FdChr}}&FgNo={{ $data->FdNo}}&company_code={{ $data->FdCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->FdSr}}</td>
+                                                         <td><a  target="_blank" href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FdTc}}&FgIdNo={{ $data->FdFgIdNo}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->FdSr}}</td>
                                                          <td>@if($count_new == 1){{ $last_issue_location  }}@endif</td>
                                                          <td></td>
                                                          <td>{{ checkDigits($data->FdQty)  }}</td>
@@ -836,7 +837,7 @@ function checkDigits($value='')
                                                        <tr  style="text-align: center;">
                                                          <td>{{ $count++  }}</td>
                                                          <td>{{ date('D, d-m-Y', strtotime($data->ModDt) )  }}</td>
-                                                         <td><a target="_blank" href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FmdTc}}&FgYy={{ $data->FmdYy}}&FgChr={{ $data->FmdChr}}&FgNo={{ $data->FmdNo}}&company_code={{ $data->FmdCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->FmdSr}}</td>
+                                                         <td><a target="_blank" href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FmdTc}}&FmdFmIdNo={{ $data->FmdIdNo}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }}</a>/{{ $data->FmdSr}}</td>
                                                          <td>{{ $data->FmdFrFgSubLoc  }}</td>
                                                          <td></td>
                                                          <td></td>

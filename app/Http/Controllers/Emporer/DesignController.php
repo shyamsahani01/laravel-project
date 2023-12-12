@@ -124,7 +124,8 @@ class DesignController extends Controller
 
     $fg_bag_list = DB::connection($this->emrDB)
             ->table("Fgd")
-            ->select(DB::raw("Fgd.*, CONCAT(FdTc, '/', FdYy, '/', FdChr, '/', FdNo) voucher_no, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no, CONCAT(FdPrdOdTc, '/', FdPrdOdYy, '/', FdPrdOdChr, '/', FdPrdOdNo) order_no ") )
+            ->select(DB::raw("Fgd.*, Bag.BOmIdNo, CONCAT(FdTc, '/', FdYy, '/', FdChr, '/', FdNo) voucher_no, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no, CONCAT(FdPrdOdTc, '/', FdPrdOdYy, '/', FdPrdOdChr, '/', FdPrdOdNo) order_no ") )
+            ->leftJoin("Bag", "Bag.BIdNo", "Fgd.FdBIdNo")
             ->where("Fgd.FdDmCd", $request->design_code)
             ->where("Fgd.FdTc", "FB")
             ->orderBy("ModDt", "DESC")

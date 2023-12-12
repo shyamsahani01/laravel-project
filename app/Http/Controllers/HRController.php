@@ -997,8 +997,9 @@ class HRController extends Controller
                   ->select(DB::raw("SUM(tsd.amount) amount, tsc.name, tsc.type, tsc.salary_component_abbr") )
                   ->leftJoin('tabSalary Detail AS tsd', "tsd.abbr", "=", "tsc.salary_component_abbr")
                   ->leftJoin('tabSalary Slip AS tss', "tss.name", "=", "tsd.parent")
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
-                  ->where('te.occupation', '=', 'Worker')
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  // ->where('te.occupation', '=', 'Worker')
+                  ->where('tss.occupation', '=', 'Worker')
                   ->where('tss.docstatus', '<=', 1)
                   ->groupBy('tsc.name')
                   ->orderBy('tsc.type');
@@ -1021,8 +1022,9 @@ class HRController extends Controller
                   ->select(DB::raw("SUM(tsd.amount) amount, tsc.name, tsc.type, tsc.salary_component_abbr") )
                   ->leftJoin('tabSalary Detail AS tsd', "tsd.abbr", "=", "tsc.salary_component_abbr")
                   ->leftJoin('tabSalary Slip AS tss', "tss.name", "=", "tsd.parent")
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
-                  ->where('te.occupation', '=', 'Staff')
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  // ->where('te.occupation', '=', 'Staff')
+                  ->where('tss.occupation', '=', 'Staff')
                   ->where('tss.docstatus', '<=', 1)
                   ->groupBy('tsc.name')
                   ->orderBy('tsc.type');
@@ -1041,10 +1043,10 @@ class HRController extends Controller
 
       $query3 = DB::connection('erpnext')
                   ->table('tabSalary Slip AS tss')
-                  ->select(DB::raw("te.occupation, sum(tss.gross_monthly_salary) gross_monthly_salary, COUNT(te.employee) employee_count") )
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  ->select(DB::raw("tss.occupation, sum(tss.gross_monthly_salary) gross_monthly_salary, COUNT(tss.employee) employee_count") )
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
                   ->where('tss.docstatus', '<=', 1)
-                  ->groupBy('te.occupation');
+                  ->groupBy('tss.occupation');
 
         if(!empty($request->company)){
             $query3->where('tss.company',$request->company);
@@ -1150,8 +1152,9 @@ class HRController extends Controller
                   ->select(DB::raw("SUM(tsd.amount) amount, tsc.name, tsc.type, tsc.salary_component_abbr") )
                   ->leftJoin('tabSalary Detail AS tsd', "tsd.abbr", "=", "tsc.salary_component_abbr")
                   ->leftJoin('tabSalary Slip AS tss', "tss.name", "=", "tsd.parent")
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
-                  ->where('te.occupation_accounts', '=', 'Direct')
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  // ->where('te.occupation_accounts', '=', 'Direct')
+                  ->where('tss.occupation_accounts', '=', 'Direct')
                   ->where('tss.docstatus', '<=', 1)
                   ->groupBy('tsc.name')
                   ->orderBy('tsc.type');
@@ -1174,8 +1177,9 @@ class HRController extends Controller
                   ->select(DB::raw("SUM(tsd.amount) amount, tsc.name, tsc.type, tsc.salary_component_abbr") )
                   ->leftJoin('tabSalary Detail AS tsd', "tsd.abbr", "=", "tsc.salary_component_abbr")
                   ->leftJoin('tabSalary Slip AS tss', "tss.name", "=", "tsd.parent")
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
-                  ->where('te.occupation_accounts', '=', 'Indirect')
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  // ->where('te.occupation_accounts', '=', 'Indirect')
+                  ->where('tss.occupation_accounts', '=', 'Indirect')
                   ->where('tss.docstatus', '<=', 1)
                   ->groupBy('tsc.name')
                   ->orderBy('tsc.type');
@@ -1194,10 +1198,10 @@ class HRController extends Controller
 
       $query3 = DB::connection('erpnext')
                   ->table('tabSalary Slip AS tss')
-                  ->select(DB::raw("te.occupation_accounts, sum(tss.gross_monthly_salary) gross_monthly_salary, COUNT(te.employee) employee_count") )
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  ->select(DB::raw("tss.occupation_accounts, sum(tss.gross_monthly_salary) gross_monthly_salary, COUNT(tss.employee) employee_count") )
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
                   ->where('tss.docstatus', '<=', 1)
-                  ->groupBy('te.occupation_accounts');
+                  ->groupBy('tss.occupation_accounts');
 
         if(!empty($request->company)){
             $query3->where('tss.company',$request->company);

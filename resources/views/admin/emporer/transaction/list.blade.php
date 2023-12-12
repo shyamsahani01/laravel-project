@@ -91,8 +91,10 @@ use App\Library\WebHelper;
                               @foreach($bag_transaction_data as $key => $data)
                               <tr>
                                  <td  style="text-align: center;">{{ $bag_transaction_data->firstItem() +  $key }}</td>
-                                 <td><a
-                                   href="/emporer/transaction/transactionDetails?TTc={{ $data->TTc}}&TYy={{ $data->TYy}}&TChr={{ $data->TChr}}&TNo={{ $data->TNo}}&company_code={{ $data->TCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a></td>
+                                 <td>
+                                   <!-- <a href="/emporer/transaction/transactionDetails?TTc={{ $data->TTc}}&TYy={{ $data->TYy}}&TChr={{ $data->TChr}}&TNo={{ $data->TNo}}&company_code={{ $data->TCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a> -->
+                                   <a href="/emporer/transaction/transactionDetails?TTc={{ $data->TTc}}&TIdNo={{ $data->TIdNo}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a>
+                                 </td>
                                  <td>{{ $data->type  }}</td>
                                  <td>{{ $data->TCoCd  }}</td>
                                  <td>{{ date("D, d-m-Y",strtotime($data->TDt)) }}</td>

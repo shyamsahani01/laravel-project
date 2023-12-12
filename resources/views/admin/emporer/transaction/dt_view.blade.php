@@ -193,7 +193,7 @@
                                                               <td>{{ round($data->TdBGrWt, 4)  }}</td>
                                                               <td>{{ $data->TdFrBLoc  }}</td>
                                                               <!-- <td>{{ $data->TdToBLoc  }}</td> -->
-                                                              <td>{{ $data->TdWrk  }}</td>
+                                                              <td>{{ $data->TdWrk  }} ({{ $data->worker_name  }})</td>
                                                               <td>{{ $data->TdPrdYN  }}</td>
                                                               <td>{{ round($data->TdPDQty, 4)  }}</td>
                                                               <td>{{ $data->TdByLoc  }}</td>

@@ -616,7 +616,7 @@ use App\Library\WebHelper;
                                                             <td>{{ $data->FdDmSz  }}</td>
                                                             <td>{{ round($data->FdQty, 4)  }}</td>
                                                             <td>{{ round($data->FdGrWt, 4)  }}</td>
-                                                            <td style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmTc={{ $data->FdPrdOdTc}}&OmYy={{ $data->FdPrdOdYy}}&OmChr={{ $data->FdPrdOdChr}}&OmNo={{ $data->FdPrdOdNo}}&company_code={{ $data->FdCoCd}}"  style="color: green;">{{ $data->order_no }}</a></td>
+                                                            <td style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmIdNo={{ $data->BOmIdNo}}"  style="color: green;">{{ $data->order_no }}</a></td>
                                                             <td>{{ $data->FdCoCd  }}</td>
                                                             <td>{{ $data->ModUsr  }}</td>
                                                             <td>{{ date('D, d-m-Y', strtotime($data->ModDt) ) . ' ' . $data->ModTime }}</td>

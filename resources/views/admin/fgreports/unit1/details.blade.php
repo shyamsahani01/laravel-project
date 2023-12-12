@@ -116,11 +116,10 @@ use App\Library\AdminHelper;
               </div>
               <div class="card-body" style="margin-top: -20px;">
                   <div class="table-responsive">
-                    <table id="new-datatable-2" class="table table-striped table-bordered" style="">
+                    <!-- <table id="new-datatable-2" class="table table-striped table-bordered" style="">
                        <thead>
                           <tr style="text-align: center;">
                             <th>S.NO.</th>
-                            <!-- <th>Customer Code</th> -->
                             <th>Order Caret</th>
                             <th>Finish Good Value</th>
                             <th>Order No.</th>
@@ -130,25 +129,64 @@ use App\Library\AdminHelper;
                           </tr>
                        </thead>
                        <tbody>
-                        @if (count($fg_data) > 0)
-                          @php $count = 1 @endphp
-                          @foreach($fg_data as $key => $data)
+                        @ if (count($fg_data) > 0)
+                          @ php $count = 1 @endphp
+                          @ foreach($fg_data as $key => $data)
                                <tr  style="text-align: center;">
-                                 <td>{{ $count++  }}</td>
-                                 <!-- <td>{{ $data->odomcmcd  }}</td> -->
-                                 <td>{{ $data->odkt  }}</td>
-                                 <td>{{ round($data->FgValue, 2)  }}</td>
-                                 <td>{{ $data->fdprdodno  }}</td>
-                                 <td>{{ $data->fdprdodsr  }}</td>
-                                 <td>{{ round($data->fdqty, 0)  }}</td>
-                                 <td>{{ round($data->fdgrwt, 2)  }}</td>
+                                 <td> $count++  }}</td>
+                                 <td> $data->odkt  }}</td>
+                                 <td> round($data->FgValue, 2)  }}</td>
+                                 <td> $data->fdprdodno  }}</td>
+                                 <td> $data->fdprdodsr  }}</td>
+                                 <td> round($data->fdqty, 0)  }}</td>
+                                 <td> round($data->fdgrwt, 2)  }}</td>
                                 </tr>
-                          @endforeach
-                       @else
+                          @ endforeach
+                       @ else
                          <tr>
                            <td colspan="12" class="text-center text-danger"><h3><b>No Record Found</b></h3></td>
                           </tr>
-                       @endif
+                       @ endif
+                       </tbody>
+                    </table> -->
+
+                    <table  class="table table-striped table-bordered" style="width:100%">
+                       <thead>
+                          <tr style="text-align:center;text-shadow: 1px 1px 1px lightgrey, 3px 3px 5px lightgrey;">
+                             <th>S No.</th>
+                             <th>Voucher No.</th>
+                             <th>Voucher Type</th>
+                             <th>Company Code</th>
+                             <th>Date</th>
+                             <th>From Location</th>
+                             <th>To Location</th>
+                             <th>User (Modified)</th>
+                             <th>Date (Modified)</th>
+                          </tr>
+                       </thead>
+                       <tbody style="text-align:center;">
+                          @if (count($fg_data) > 0)
+                          @php $count = 1 @endphp
+                          @foreach($fg_data as $key => $data)
+                          <tr>
+                             <td  style="text-align: center;">{{ $count++ }}</td>
+                             <td><a href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FgTc}}&FgIdNo={{ $data->FgIdNo}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a></td>
+                             <td>{{ $data->type  }}</td>
+                             <td>{{ $data->FgCoCd  }}</td>
+                             <td>{{ date("D, d-m-Y",strtotime($data->FgDt)) }}</td>
+                             <td>{{ $data->FgFrBLoc  }}</td>
+                             <td>{{ $data->FgToBLoc  }}</td>
+                             <td>{{ $data->ModUsr  }}</td>
+                             <td>{{ date('D, d-m-Y', strtotime($data->ModDt) ) . ' ' . $data->ModTime }}</td>
+                          </tr>
+                          @endforeach
+                          @else
+                          <tr>
+                             <td colspan="11" class="text-center text-danger">
+                                <h3><b>No Record Found</b></h3>
+                             </td>
+                          </tr>
+                          @endif
                        </tbody>
                     </table>
                   </div>

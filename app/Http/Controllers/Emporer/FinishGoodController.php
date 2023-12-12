@@ -88,27 +88,39 @@ class FinishGoodController extends Controller
       $fg_details = DB::connection($this->emrDB)
               ->table("Fg")
               ->select(DB::raw("Fg.*, CONCAT(FgTc, '/', FgYy, '/', FgChr, '/', FgNo) voucher_no ") )
-              ->where("Fg.FgTc", $request->FgTc)
-              ->where("Fg.FgYy", $request->FgYy)
-              ->where("Fg.FgChr", $request->FgChr)
-              ->where("Fg.FgNo", $request->FgNo)
-              ->where("Fg.FgCoCd", $request->company_code)
+              // ->where("Fg.FgTc", $request->FgTc)
+              // ->where("Fg.FgYy", $request->FgYy)
+              // ->where("Fg.FgChr", $request->FgChr)
+              // ->where("Fg.FgNo", $request->FgNo)
+              // ->where("Fg.FgCoCd", $request->company_code)
+              ->where("Fg.FgIdNo", $request->FgIdNo)
               ->first();
 
       $fg_bag_list = DB::connection($this->emrDB)
               ->table("Fgd")
               ->select(DB::raw("Fgd.*, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no, CONCAT(FdPrdOdTc, '/', FdPrdOdYy, '/', FdPrdOdChr, '/', FdPrdOdNo) order_no") )
-              ->where("Fgd.FdTc", $request->FgTc)
-              ->where("Fgd.FdYy", $request->FgYy)
-              ->where("Fgd.FdChr", $request->FgChr)
-              ->where("Fgd.FdNo", $request->FgNo)
-              ->where("Fgd.FdCoCd", $request->company_code)
+              // ->where("Fgd.FdTc", $request->FgTc)
+              // ->where("Fgd.FdYy", $request->FgYy)
+              // ->where("Fgd.FdChr", $request->FgChr)
+              // ->where("Fgd.FdNo", $request->FgNo)
+              // ->where("Fgd.FdCoCd", $request->company_code)
+              ->where("Fgd.FdFgIdNo", $request->FgIdNo)
               ->orderBy("FdSr", "ASC")
+              ->get();
+
+
+      $fg_bag_raw_material_list = DB::connection($this->emrDB)
+              ->table("FgRm")
+              ->select(DB::raw("FgRm.*, FdBIdNo, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no") )
+              ->join("Fgd", "Fgd.FdIdNo", "FgRm.FrFdIdNo")
+              ->where("Fgd.FdFgIdNo", $request->FgIdNo)
+              ->orderBy("FdBIdNo", "ASC")
               ->get();
 
         $data['title'] = $title;
         $data['fg_details'] = $fg_details;
         $data['fg_bag_list'] = $fg_bag_list;
+        $data['fg_bag_raw_material_list'] = $fg_bag_raw_material_list;
         return view('admin.emporer.fg.fb_view', $data );
     }
     elseif($request->FgTc == "FWB") {
@@ -116,27 +128,38 @@ class FinishGoodController extends Controller
       $fg_details = DB::connection($this->emrDB)
               ->table("Fg")
               ->select(DB::raw("Fg.*, CONCAT(FgTc, '/', FgYy, '/', FgChr, '/', FgNo) voucher_no ") )
-              ->where("Fg.FgTc", $request->FgTc)
-              ->where("Fg.FgYy", $request->FgYy)
-              ->where("Fg.FgChr", $request->FgChr)
-              ->where("Fg.FgNo", $request->FgNo)
-              ->where("Fg.FgCoCd", $request->company_code)
+              // ->where("Fg.FgTc", $request->FgTc)
+              // ->where("Fg.FgYy", $request->FgYy)
+              // ->where("Fg.FgChr", $request->FgChr)
+              // ->where("Fg.FgNo", $request->FgNo)
+              // ->where("Fg.FgCoCd", $request->company_code)
+              ->where("Fg.FgIdNo", $request->FgIdNo)
               ->first();
 
       $fg_bag_list = DB::connection($this->emrDB)
               ->table("Fgd")
               ->select(DB::raw("Fgd.*, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no, CONCAT(FdPrdOdTc, '/', FdPrdOdYy, '/', FdPrdOdChr, '/', FdPrdOdNo) order_no") )
-              ->where("Fgd.FdTc", $request->FgTc)
-              ->where("Fgd.FdYy", $request->FgYy)
-              ->where("Fgd.FdChr", $request->FgChr)
-              ->where("Fgd.FdNo", $request->FgNo)
-              ->where("Fgd.FdCoCd", $request->company_code)
+              // ->where("Fgd.FdTc", $request->FgTc)
+              // ->where("Fgd.FdYy", $request->FgYy)
+              // ->where("Fgd.FdChr", $request->FgChr)
+              // ->where("Fgd.FdNo", $request->FgNo)
+              // ->where("Fgd.FdCoCd", $request->company_code)
+              ->where("Fgd.FdFgIdNo", $request->FgIdNo)
               ->orderBy("FdSr", "ASC")
+              ->get();
+
+      $fg_bag_raw_material_list = DB::connection($this->emrDB)
+              ->table("FgRm")
+              ->select(DB::raw("FgRm.*, FdBIdNo, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no") )
+              ->join("Fgd", "Fgd.FdIdNo", "FgRm.FrFdIdNo")
+              ->where("Fgd.FdFgIdNo", $request->FgIdNo)
+              ->orderBy("FdBIdNo", "ASC")
               ->get();
 
         $data['title'] = $title;
         $data['fg_details'] = $fg_details;
         $data['fg_bag_list'] = $fg_bag_list;
+        $data['fg_bag_raw_material_list'] = $fg_bag_raw_material_list;
         return view('admin.emporer.fg.fwb_view', $data );
     }
     else {
@@ -144,27 +167,39 @@ class FinishGoodController extends Controller
       $fg_details = DB::connection($this->emrDB)
               ->table("Fg")
               ->select(DB::raw("Fg.*, CONCAT(FgTc, '/', FgYy, '/', FgChr, '/', FgNo) voucher_no ") )
-              ->where("Fg.FgTc", $request->FgTc)
-              ->where("Fg.FgYy", $request->FgYy)
-              ->where("Fg.FgChr", $request->FgChr)
-              ->where("Fg.FgNo", $request->FgNo)
-              ->where("Fg.FgCoCd", $request->company_code)
+              // ->where("Fg.FgTc", $request->FgTc)
+              // ->where("Fg.FgYy", $request->FgYy)
+              // ->where("Fg.FgChr", $request->FgChr)
+              // ->where("Fg.FgNo", $request->FgNo)
+              // ->where("Fg.FgCoCd", $request->company_code)
+              ->where("Fg.FdBIdNo", $request->FgIdNo)
               ->first();
 
       $fg_bag_list = DB::connection($this->emrDB)
               ->table("Fgd")
               ->select(DB::raw("Fgd.*, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no, CONCAT(FdPrdOdTc, '/', FdPrdOdYy, '/', FdPrdOdChr, '/', FdPrdOdNo) order_no") )
-              ->where("Fgd.FdTc", $request->FgTc)
-              ->where("Fgd.FdYy", $request->FgYy)
-              ->where("Fgd.FdChr", $request->FgChr)
-              ->where("Fgd.FdNo", $request->FgNo)
-              ->where("Fgd.FdCoCd", $request->company_code)
+              // ->where("Fgd.FdTc", $request->FgTc)
+              // ->where("Fgd.FdYy", $request->FgYy)
+              // ->where("Fgd.FdChr", $request->FgChr)
+              // ->where("Fgd.FdNo", $request->FgNo)
+              // ->where("Fgd.FdCoCd", $request->company_code)
+              ->where("Fgd.FdFgIdNo", $request->FgIdNo)
               ->orderBy("FdSr", "ASC")
               ->get();
+
+        $fg_bag_raw_material_list = DB::connection($this->emrDB)
+                ->table("FgRm")
+                ->select(DB::raw("FgRm.*, FdBIdNo, CONCAT(FdBYy, '/', FdBChr, '/', FdBNo) bag_no") )
+                ->join("Fgd", "Fgd.FdIdNo", "FgRm.FrFdIdNo")
+                ->where("Fgd.FdFgIdNo", $request->FgIdNo)
+                ->orderBy("FdBIdNo", "ASC")
+                ->get();
 
         $data['title'] = $title;
         $data['fg_details'] = $fg_details;
         $data['fg_bag_list'] = $fg_bag_list;
+        $data['fg_bag_raw_material_list'] = $fg_bag_raw_material_list;
+
         return view('admin.emporer.fg.fwb_view', $data );
     }
 
@@ -273,11 +308,12 @@ class FinishGoodController extends Controller
       $fg_details = DB::connection($this->emrDB)
               ->table("Fm")
               ->select(DB::raw("Fm.*, CONCAT(FmTc, '/', FmYy, '/', FmChr, '/', FmNo) voucher_no ") )
-              ->where("Fm.FmTc", $request->FmTc)
-              ->where("Fm.FmYy", $request->FmYy)
-              ->where("Fm.FmChr", $request->FmChr)
-              ->where("Fm.FmNo", $request->FmNo)
-              ->where("Fm.FmCoCd", $request->company_code)
+              // ->where("Fm.FmTc", $request->FmTc)
+              // ->where("Fm.FmYy", $request->FmYy)
+              // ->where("Fm.FmChr", $request->FmChr)
+              // ->where("Fm.FmNo", $request->FmNo)
+              // ->where("Fm.FmCoCd", $request->company_code)
+              ->where("Fm.FmIdNo", $request->FmIdNo)
               ->first();
 
       $fg_bag_list = DB::connection($this->emrDB)
@@ -293,11 +329,12 @@ class FinishGoodController extends Controller
                          ->whereRaw('Bag.BCoCd = Fmd.FmdCoCd')
                          ;
                 })
-              ->where("Fmd.FmdTc", $request->FmTc)
-              ->where("Fmd.FmdYy", $request->FmYy)
-              ->where("Fmd.FmdChr", $request->FmChr)
-              ->where("Fmd.FmdNo", $request->FmNo)
-              ->where("Fmd.FmdCoCd", $request->company_code)
+              // ->where("Fmd.FmdTc", $request->FmTc)
+              // ->where("Fmd.FmdYy", $request->FmYy)
+              // ->where("Fmd.FmdChr", $request->FmChr)
+              // ->where("Fmd.FmdNo", $request->FmNo)
+              // ->where("Fmd.FmdCoCd", $request->company_code)
+              ->where("Fmd.FmdFmIdNo", $request->FmIdNo)
               ->orderBy("FmdSr", "ASC")
               ->get();
 

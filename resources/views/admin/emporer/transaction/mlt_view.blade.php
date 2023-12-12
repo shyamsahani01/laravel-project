@@ -188,7 +188,7 @@
                                                               <td>{{ round($data->TdRjPtQty, 4)  }}</td>
                                                               <td>{{ round($data->TdBGrWt, 4)  }}</td>
                                                               <td>{{ $data->TdFrBLoc  }}</td>
-                                                              <td>{{ $data->TdWrk  }}</td>
+                                                              <td>{{ $data->TdWrk  }} ({{ $data->worker_name  }})</td>
                                                               <td>{{ $data->TdDesc  }}</td>
                                                               <td></td>
                                                               <td>{{ $data->ModUsr  }}</td>

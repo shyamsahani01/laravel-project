@@ -94,7 +94,8 @@ $showurl = url('/emporer/orders/list?show='.request()->show.'&order_start_date='
                               <tr>
                                  <td  style="text-align: center;">{{ $orders_data->firstItem() +  $key }}</td>
                                  <!-- <td  style="text-align: center;" ><a href="/emporer/orders/ordersDetails?order_no={{ $data->order_no}}&company_code={{ $data->OmCoCd}}"  style="color: green;">{{ $data->order_no }}</a></td> -->
-                                 <td  style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmTc={{ $data->OmTc}}&OmYy={{ $data->OmYy}}&OmChr={{ $data->OmChr}}&OmNo={{ $data->OmNo}}&company_code={{ $data->OmCoCd}}"  style="color: green;">{{ $data->order_no }}</a></td>
+                                 <!-- <td  style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmTc={{ $data->OmTc}}&OmYy={{ $data->OmYy}}&OmChr={{ $data->OmChr}}&OmNo={{ $data->OmNo}}&company_code={{ $data->OmCoCd}}"  style="color: green;">{{ $data->order_no }}</a></td> -->
+                                 <td  style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmIdNo={{ $data->OmIdNo}}"  style="color: green;">{{ $data->order_no }}</a></td>
                                  <td  style="text-align: center;" >{{ $data->OmCoCd }}</td>
                                  <td  style="text-align: center;" >{{ $data->OmCmCd }}</td>
                                  <td  style="text-align: center;" >{{ $data->CmName }}</td>

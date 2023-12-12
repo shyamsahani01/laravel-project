@@ -28,7 +28,7 @@ class FGreportsController extends Controller
   public function unit1fgReportList(Request $request){
 
 
-    $title = 'Unit 1 Finish Goods Reports';
+    $title = 'Unit 1 Finish Goods Reports - (Only Silver Product Fg)';
     // select odomcmcd,odkt,fdqty,odsalprc*fdqty as FgValue,fdprdodno,fdprdodsr,fdgrwt, FdCoCd
     // from fgd
     // join orddsg on
@@ -58,20 +58,60 @@ class FGreportsController extends Controller
 
 
 
-    $query1 = $this->EmrSitapuraDB->table('Fgd');
+    // $query1 = $this->EmrSitapuraDB->table('Fgd');
+    // $query1->select(DB::raw("sum(FdQty) quantity,
+    //                       sum(FdGrWt) weight,
+    //                       FdDt") )
+    //      ->join('OrdDsg','odno', '=', 'fdprdodno' )
+    //     ->where("FdCoCd", "PJ") // "PC" or "PJ"
+    //     ->where(function($query) {
+    //       $query->where("OdKt", "S999")
+    //             ->orWhere("OdKt", "S925");
+    //     })
+    //     ->whereRaw("odsr=fdprdodsr")
+    //     ->whereRaw("odtc=fdprdodtc")
+    //     ->whereRaw("odchr=fdprdodchr")
+    //     ->groupBy("FdDt");
+    $query1 = $this->EmrSitapuraDB->table('Fg');
     $query1->select(DB::raw("sum(FdQty) quantity,
                           sum(FdGrWt) weight,
-                          FdDt") )
-         ->join('OrdDsg','odno', '=', 'fdprdodno' )
-        ->where("FdCoCd", "PJ") // "PC" or "PJ"
-        ->where(function($query) {
-          $query->where("OdKt", "S999")
-                ->orWhere("OdKt", "S925");
-        })
-        ->whereRaw("odsr=fdprdodsr")
-        ->whereRaw("odtc=fdprdodtc")
-        ->whereRaw("odchr=fdprdodchr")
-        ->groupBy("FdDt");
+                          Fg.FgDt FdDt") )
+        ->join("Fgd", "Fgd.FdFgIdNo", "Fg.FgIdNo")
+        ->where("FgCoCd", "PJ")
+        ->whereRaw("Fgd.FdBIdNo IN (
+                                      SELECT Fgd.FdBIdNo FROM FgRm
+                                      JOIN Fgd ON Fgd.FdIdNo = FgRm.FrFdIdNo
+                                      JOIN Fg ON Fg.FgIdNo = Fgd.FdFgIdNo
+                                      WHERE  FgRm.FrRmCtg = 'S'   AND FgCoCd = 'PJ'
+                                      )")
+        ->groupBy("Fg.FgDt");
+
+// get Silver rm types ================================
+//     SELECT FgRm.FrIdNo, Fgd.FdBIdNo, * FROM FgRm
+// JOIN Fgd ON Fgd.FdIdNo = FgRm.FrFdIdNo
+// JOIN Fg ON Fg.FgIdNo = Fgd.FdFgIdNo
+// WHERE FgRm.FrRmCtg = 'S' AND FgDt = '2023-11-06' AND FgCoCd = 'PJ'
+// ORDER BY FgRm.FrIdNo ASC
+
+// get sum of qty and weight by bag =============================================
+// SELECT SUM(FdQty), SUM(FdGrWt) FROM Fgd WHERE Fgd.FdBIdNo IN (
+// SELECT Fgd.FdBIdNo FROM FgRm
+// JOIN Fgd ON Fgd.FdIdNo = FgRm.FrFdIdNo
+// JOIN Fg ON Fg.FgIdNo = Fgd.FdFgIdNo
+// WHERE FgRm.FrRmCtg = 'S' AND FgDt = '2023-11-06' AND FgCoCd = 'PJ'
+// )
+
+// updtated query ======================================================
+// SELECT SUM(FdQty), SUM(FdGrWt), FgDt FROM Fg
+// JOIn Fgd ON Fgd.FdFgIdNo  = Fg.FgIdNo
+// WHERE Fgd.FdBIdNo IN (
+// SELECT Fgd.FdBIdNo FROM FgRm
+// JOIN Fgd ON Fgd.FdIdNo = FgRm.FrFdIdNo
+// JOIN Fg ON Fg.FgIdNo = Fgd.FdFgIdNo
+// WHERE ( FgRm.FrRmCtg = 'S' OR FgRm.FrRmCtg = 'G' ) AND FgDt = '2023-11-06'   AND FgCoCd = 'PJ2'
+// )
+// AND FgDt = '2023-11-06'
+// GROUP BY FgDt
 
     if(!empty($request->start_date) && !empty($request->end_date)){
         $query1->whereBetween('FdDt', [$request->start_date, $request->end_date]);
@@ -253,7 +293,7 @@ class FGreportsController extends Controller
             JOIN `tabEmployee Checkin` checkIn2 ON checkIn2.employee = tabEmployee.name
             JOIN  `tabSalary Structure Assignment` ON `tabSalary Structure Assignment`.employee = tabEmployee.name
                    AND `tabSalary Structure Assignment`.is_active = 1
-            WHERE tabEmployee.department LIKE  '%silver%'
+            WHERE tabEmployee.parent_department LIKE  '%production%'
                   AND tabEmployee.company = 'Pinkcity Jewelhouse Private Limited- Unit 1'
                   AND ( `tabEmployee Checkin`.log_type = 'IN' )
                   AND ( `tabEmployee Checkin`.time BETWEEN '$auto_start_date 08:00:00' AND '$auto_end_date 07:59:59' )
@@ -261,6 +301,8 @@ class FGreportsController extends Controller
                   AND ( checkIn2.time BETWEEN '$auto_start_date 08:00:00' AND '$auto_end_date 07:59:59' )
              GROUP BY tabEmployee.name";
         $employee_data = $this->erpnextDB->select($query_string);
+
+        // WHERE tabEmployee.department LIKE  '%silver%'
 
         $total_employee = 0;
         $actual_over_time_amount = 0;
@@ -392,7 +434,7 @@ class FGreportsController extends Controller
         JOIN `tabEmployee Checkin` checkIn2 ON checkIn2.employee = tabEmployee.name
         JOIN  `tabSalary Structure Assignment` ON `tabSalary Structure Assignment`.employee = tabEmployee.name
                AND `tabSalary Structure Assignment`.is_active = 1
-        WHERE tabEmployee.department LIKE  '%silver%'
+        WHERE tabEmployee.parent_department LIKE  '%production%'
               AND tabEmployee.company = 'Pinkcity Jewelhouse Private Limited- Unit 1'
               AND ( `tabEmployee Checkin`.log_type = 'IN' )
               AND ( `tabEmployee Checkin`.time BETWEEN '$auto_start_date 08:00:00' AND '$auto_end_date 07:59:59' )
@@ -401,29 +443,40 @@ class FGreportsController extends Controller
          GROUP BY tabEmployee.name";
     $employee_data = $this->erpnextDB->select($query_string);
 
+    // WHERE tabEmployee.department LIKE  '%silver%'
+
 
     // $query1 = $this->EmrDB->table('fgd')
     //                       ->where('FdDt',  date('Y-m-d', strtotime($fg_date) ) );
     // $fg_data =  $query1->get();
 
-    $query_string  = "SELECT odomcmcd,
-                             odkt,
-                             fdqty,
-                             odsalprc*fdqty as FgValue,
-                             fdprdodno,
-                             fdprdodsr,
-                             fdgrwt,
-                             FdCoCd
-                      FROM fgd
-                      JOIN orddsg ON odno = fdprdodno
-                            AND odsr = fdprdodsr
-                            AND odtc = fdprdodtc
-                            AND odchr = fdprdodchr
-                      WHERE ( OdKt = 'S999' OR OdKt = 'S925'   )
-                              AND FdCoCd = 'PJ'
-                              and fddt = '$auto_start_date'";
-    $fg_data = $this->EmrSitapuraDB->select($query_string);
+    // $query_string  = "SELECT odomcmcd,
+    //                          odkt,
+    //                          fdqty,
+    //                          odsalprc*fdqty as FgValue,
+    //                          fdprdodno,
+    //                          fdprdodsr,
+    //                          fdgrwt,
+    //                          FdCoCd
+    //                   FROM fgd
+    //                   JOIN orddsg ON odno = fdprdodno
+    //                         AND odsr = fdprdodsr
+    //                         AND odtc = fdprdodtc
+    //                         AND odchr = fdprdodchr
+    //                   WHERE ( OdKt = 'S999' OR OdKt = 'S925'   )
+    //                           AND FdCoCd = 'PJ'
+    //                           and fddt = '$auto_start_date'";
+    // $fg_data = $this->EmrSitapuraDB->select($query_string);
 
+    $query = $this->EmrSitapuraDB
+            ->table("Fg")
+            ->select(DB::raw("Fg.*, CONCAT(FgTc, '/', FgYy, '/', FgChr, '/', FgNo) voucher_no,
+                            (SELECT PDesc FROM Param WHERE PTyp = 'TC' and Param.PMCd = Fg.FgTc) type") )
+            ->where('FgCoCd', "PJ")
+            ->whereDate('FgDt', "$auto_start_date")
+            ->orderBy("FgDt", "DESC");
+
+    $fg_data = $query->get();
 
     return view('admin.fgreports.unit1.details',compact('title', 'employee_data', 'fg_data'));
   }
@@ -446,20 +499,34 @@ class FGreportsController extends Controller
 
     $title = 'Mahapura Finish Goods Reports';
 
-    $query1 = $this->EmrDB->table('Fgd');
+    // $query1 = $this->EmrDB->table('Fgd');
+    // $query1->select(DB::raw("sum(FdQty) quantity,
+    //                       sum(FdGrWt) weight,
+    //                       FdDt") )
+    //      ->join('OrdDsg','odno', '=', 'fdprdodno' )
+    //     ->where("FdCoCd", "PC") // "PC" or "PJ"
+    //     ->where(function($query) {
+    //       $query->where("OdKt", "S999")
+    //             ->orWhere("OdKt", "S925");
+    //     })
+    //     ->whereRaw("odsr=fdprdodsr")
+    //     ->whereRaw("odtc=fdprdodtc")
+    //     ->whereRaw("odchr=fdprdodchr")
+    //     ->groupBy("FdDt");
+
+    $query1 = $this->EmrSitapuraDB->table('Fg');
     $query1->select(DB::raw("sum(FdQty) quantity,
                           sum(FdGrWt) weight,
-                          FdDt") )
-         ->join('OrdDsg','odno', '=', 'fdprdodno' )
-        ->where("FdCoCd", "PC") // "PC" or "PJ"
-        ->where(function($query) {
-          $query->where("OdKt", "S999")
-                ->orWhere("OdKt", "S925");
-        })
-        ->whereRaw("odsr=fdprdodsr")
-        ->whereRaw("odtc=fdprdodtc")
-        ->whereRaw("odchr=fdprdodchr")
-        ->groupBy("FdDt");
+                          Fg.FgDt FdDt") )
+        ->join("Fgd", "Fgd.FdFgIdNo", "Fg.FgIdNo")
+        ->where("FgCoCd", "PJ")
+        ->whereRaw("Fgd.FdBIdNo IN (
+                                      SELECT Fgd.FdBIdNo FROM FgRm
+                                      JOIN Fgd ON Fgd.FdIdNo = FgRm.FrFdIdNo
+                                      JOIN Fg ON Fg.FgIdNo = Fgd.FdFgIdNo
+                                      WHERE  FgRm.FrRmCtg = 'S'   AND FgCoCd = 'PJ'
+                                      )")
+        ->groupBy("Fg.FgDt");
 
     if(!empty($request->start_date) && !empty($request->end_date)){
         $query1->whereBetween('FdDt', [$request->start_date, $request->end_date]);
@@ -531,7 +598,7 @@ class FGreportsController extends Controller
             JOIN `tabEmployee Checkin` checkIn2 ON checkIn2.employee = tabEmployee.name
             JOIN  `tabSalary Structure Assignment` ON `tabSalary Structure Assignment`.employee = tabEmployee.name
                    AND `tabSalary Structure Assignment`.is_active = 1
-            WHERE tabEmployee.department LIKE  '%silver%'
+            WHERE tabEmployee.parent_department LIKE  '%production%'
                   AND tabEmployee.company = 'Pinkcity Jewelhouse Private Ltd-Mahapura'
                   AND ( `tabEmployee Checkin`.log_type = 'IN' )
                   AND ( `tabEmployee Checkin`.time BETWEEN '$auto_start_date 08:00:00' AND '$auto_end_date 07:59:59' )
@@ -749,22 +816,33 @@ class FGreportsController extends Controller
         $auto_shift_start_date = $auto_start_date . " 09:30:00";
         $auto_shift_end_date = $auto_start_date ." 18:00:00";
 
-        $query_string  = "SELECT odomcmcd,
-                                 odkt,
-                                 fdqty,
-                                 odsalprc*fdqty as FgValue,
-                                 fdprdodno,
-                                 fdprdodsr,
-                                 fdgrwt,
-                                 FdCoCd
-                          FROM fgd
-                          JOIN orddsg ON odno = fdprdodno
-                                AND odsr = fdprdodsr
-                                AND odtc = fdprdodtc
-                                AND odchr = fdprdodchr
-                          WHERE ( OdKt = 'S999' OR OdKt = 'S925' OR OdKt LIKE '%kt%'   )
-                                  AND FdCoCd = 'PJ2'
-                                  and fddt = '$auto_start_date' ";
+        // $query_string  = "SELECT odomcmcd,
+        //                          odkt,
+        //                          fdqty,
+        //                          odsalprc*fdqty as FgValue,
+        //                          fdprdodno,
+        //                          fdprdodsr,
+        //                          fdgrwt,
+        //                          FdCoCd
+        //                   FROM fgd
+        //                   JOIN orddsg ON odno = fdprdodno
+        //                         AND odsr = fdprdodsr
+        //                         AND odtc = fdprdodtc
+        //                         AND odchr = fdprdodchr
+        //                   WHERE ( OdKt = 'S999' OR OdKt = 'S925' OR OdKt LIKE '%kt%'   )
+        //                           AND FdCoCd = 'PJ2'
+        //                           and fddt = '$auto_start_date' ";
+        $query_string  = "SELECT SUM(FdQty) qty, SUM(FdGrWt) weight, FgDt, FrRmCtg FROM Fg
+                          JOIN Fgd ON Fgd.FdFgIdNo  = Fg.FgIdNo
+                          JOIN FgRm ON FgRm.FrFdIdNo = Fgd.FdIdNo
+                          WHERE Fgd.FdBIdNo IN (
+                          SELECT Fgd.FdBIdNo FROM FgRm
+                          JOIN Fgd ON Fgd.FdIdNo = FgRm.FrFdIdNo
+                          JOIN Fg ON Fg.FgIdNo = Fgd.FdFgIdNo
+                          WHERE ( FgRm.FrRmCtg = 'S' OR FgRm.FrRmCtg = 'G' ) AND FgDt = '$auto_start_date'   AND FgCoCd = 'PJ2'
+                          )
+                          AND FgDt = '$auto_start_date'
+                          GROUP BY FgDt, FrRmCtg ";
         $fg_data_temp = $this->EmrSitapuraDB->select($query_string);
 
         $qty_silver = 0;
@@ -776,13 +854,24 @@ class FGreportsController extends Controller
 
         foreach ($fg_data_temp as $key3 => $data3) {
 
-          if(stripos($data3->odkt, "S999") !== false || stripos($data3->odkt, "S925") !== false ) {
-            $qty_silver = $qty_silver + $data3->fdqty;
-            $wt_silver = $wt_silver + $data3->fdgrwt;
+          // if(stripos($data3->odkt, "S999") !== false || stripos($data3->odkt, "S925") !== false ) {
+          //   $qty_silver = $qty_silver + $data3->fdqty;
+          //   $wt_silver = $wt_silver + $data3->fdgrwt;
+          // }
+          // elseif(stripos($data3->odkt, "kt") !== false) {
+          //   $qty_gold = $qty_gold + $data3->fdqty;
+          //   $wt_gold = $wt_gold + $data3->fdgrwt;
+          // }
+          // else {
+          //   // echo "hi11<br>";
+          // }
+          if($data3->FrRmCtg ==  "S" ) {
+            $qty_silver = $qty_silver + $data3->qty;
+            $wt_silver = $wt_silver + $data3->weight;
           }
-          elseif(stripos($data3->odkt, "kt") !== false) {
-            $qty_gold = $qty_gold + $data3->fdqty;
-            $wt_gold = $wt_gold + $data3->fdgrwt;
+          elseif($data3->FrRmCtg ==  "G") {
+            $qty_gold = $qty_gold + $data3->qty;
+            $wt_gold = $wt_gold + $data3->weight;
           }
           else {
             // echo "hi11<br>";
@@ -848,8 +937,7 @@ class FGreportsController extends Controller
             JOIN `tabEmployee Checkin` checkIn2 ON checkIn2.employee = tabEmployee.name
             JOIN  `tabSalary Structure Assignment` ON `tabSalary Structure Assignment`.employee = tabEmployee.name
                    AND `tabSalary Structure Assignment`.is_active = 1
-            WHERE (tabEmployee.department LIKE  '%silver%'
-                  OR tabEmployee.department LIKE  '%gold%' )
+            WHERE tabEmployee.parent_department LIKE  '%production%'
                   AND tabEmployee.company = 'Pinkcity Jewelhouse Private Limited-Unit 2'
                   AND ( `tabEmployee Checkin`.log_type = 'IN' )
                   AND ( `tabEmployee Checkin`.time BETWEEN '$auto_start_date 08:00:00' AND '$auto_end_date 07:59:59' )
@@ -857,6 +945,10 @@ class FGreportsController extends Controller
                   AND ( checkIn2.time BETWEEN '$auto_start_date 08:00:00' AND '$auto_end_date 07:59:59' )
              GROUP BY tabEmployee.name";
         $employee_data = $this->erpnextDB->select($query_string);
+
+        // tabEmployee.parent_department LIKE  '%production%'
+        // (tabEmployee.department LIKE  '%silver%'
+        //       OR tabEmployee.department LIKE  '%gold%' )
 
         $total_employee_silver = 0;
         $actual_over_time_amount_silver = 0;
@@ -1032,8 +1124,7 @@ class FGreportsController extends Controller
         JOIN `tabEmployee Checkin` checkIn2 ON checkIn2.employee = tabEmployee.name
         JOIN  `tabSalary Structure Assignment` ON `tabSalary Structure Assignment`.employee = tabEmployee.name
                AND `tabSalary Structure Assignment`.is_active = 1
-        WHERE (tabEmployee.department LIKE  '%silver%'
-              OR tabEmployee.department LIKE  '%gold%' )
+        WHERE tabEmployee.parent_department LIKE  '%production%'
               AND tabEmployee.company = 'Pinkcity Jewelhouse Private Limited-Unit 2'
               AND ( `tabEmployee Checkin`.log_type = 'IN' )
               AND ( `tabEmployee Checkin`.time BETWEEN '$auto_start_date 08:00:00' AND '$auto_end_date 07:59:59' )
@@ -1046,25 +1137,34 @@ class FGreportsController extends Controller
     //                       ->where('FdDt',  date('Y-m-d', strtotime($fg_date) ) );
     // $fg_data =  $query1->get();
 
-    $query_string  = "SELECT odomcmcd,
-                             odkt,
-                             fdqty,
-                             odsalprc*fdqty as FgValue,
-                             fdprdodno,
-                             fdprdodsr,
-                             fdgrwt,
-                             FdCoCd
-                      FROM fgd
-                      JOIN orddsg ON odno = fdprdodno
-                            AND odsr = fdprdodsr
-                            AND odtc = fdprdodtc
-                            AND odchr = fdprdodchr
-                      WHERE ( OdKt = 'S999' OR OdKt = 'S925' OR OdKt LIKE '%kt%'   )
-                              AND FdCoCd = 'PJ2'
-                              and fddt = '$auto_start_date'";
-    $fg_data = $this->EmrSitapuraDB->select($query_string);
+    // $query_string  = "SELECT odomcmcd,
+    //                          odkt,
+    //                          fdqty,
+    //                          odsalprc*fdqty as FgValue,
+    //                          fdprdodno,
+    //                          fdprdodsr,
+    //                          fdgrwt,
+    //                          FdCoCd
+    //                   FROM fgd
+    //                   JOIN orddsg ON odno = fdprdodno
+    //                         AND odsr = fdprdodsr
+    //                         AND odtc = fdprdodtc
+    //                         AND odchr = fdprdodchr
+    //                   WHERE ( OdKt = 'S999' OR OdKt = 'S925' OR OdKt LIKE '%kt%'   )
+    //                           AND FdCoCd = 'PJ2'
+    //                           and fddt = '$auto_start_date'";
+    // $fg_data = $this->EmrSitapuraDB->select($query_string);
 
+    $query = $this->EmrSitapuraDB
+            ->table("Fg")
+            ->select(DB::raw("Fg.*, CONCAT(FgTc, '/', FgYy, '/', FgChr, '/', FgNo) voucher_no,
+                            (SELECT PDesc FROM Param WHERE PTyp = 'TC' and Param.PMCd = Fg.FgTc) type") )
+            ->where('FgCoCd', "PJ2")
+            ->whereDate('FgDt', "$auto_start_date")
+            ->orderBy("FgDt", "DESC");
 
+    $fg_data = $query->get();
+    
     return view('admin.fgreports.unit2.details',compact('title', 'employee_data', 'fg_data'));
   }
 

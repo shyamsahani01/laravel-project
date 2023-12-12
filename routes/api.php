@@ -81,6 +81,7 @@ Route::get('webapi/get-job-opening-details', [ApiController::class, 'getJobOpeni
 Route::get('energy/getwaterReading', [EnergyController::class, 'getwaterReading'])->name('getwaterReading');
 
 Route::get('emr/update_design_bom_details', [EMRController::class, 'update_design_bom_details'])->name('update_design_bom_details');
+Route::get('emr/update_design_details', [EMRController::class, 'getEMRDesigns'])->name('getEMRDesigns');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

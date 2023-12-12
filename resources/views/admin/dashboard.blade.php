@@ -38,12 +38,12 @@
 
                                     <div class="col-md-4" style="background-color: #eee; border: 1px solid;">
                                         <h3 class="font-weight-bold" style="font-size: 1.25rem;text-align: center;color: black;">Sales Dashboard</h3>
-                                        <button id="go-button" class="btn btn-primary fa fa-expand pull-right go-button-sale" style="margin-top: -39px;"></button>
+                                        <button id="go-button1" class="btn btn-primary fa fa-expand pull-right go-button-sale" style="margin-top: -39px;"></button>
                                         <embed  type="text/html" class="element-sale" height="210" width="100%" src="https://app.powerbi.com/view?r=eyJrIjoiYzMwZDYwMjctOTQ0MS00YWVjLTliNmUtZmI4OTY0MDI4YTFlIiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9" width="500" height="800">
                                     </div>
                                     <div class="col-md-4" style="background-color: #eee; border: 1px solid;">
                                         <h3 class="font-weight-bold" style="font-size: 1.25rem;text-align: center;color: black;">Purchase Report-In Process</h3>
-                                        <button id="go-button" class="btn btn-primary fa fa-expand pull-right go-button" style="margin-top: -39px;"></button>
+                                        <button id="go-button2" class="btn btn-primary fa fa-expand pull-right go-button" style="margin-top: -39px;"></button>
                                         <embed type="text/html" class="element" height="210" width="100%" style="span.text display:none;" src="https://app.powerbi.com/view?r=eyJrIjoiYjFhZDExODUtYmYxYi00NzFiLWE0ZGQtYjAxYzE4NWYyN2I4IiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9&pageName=ReportSection" width="500" height="800">
                                     </div>
                                     @endif
@@ -59,7 +59,7 @@
                                     @if(auth()->user()->role == 'superadmin' || auth()->user()->role == 'attendance')
                                      <div class="col-md-4" style="background-color: #eee; border: 1px solid;">
                                         <h3 class="font-weight-bold" style="font-size: 1.25rem;text-align: center;color: black;">HRM Dashboard</h3>
-                                        <button id="go-button" class="btn btn-primary fa fa-expand pull-right go-button-hr" style="margin-top: -39px;"></button>
+                                        <button id="go-button3" class="btn btn-primary fa fa-expand pull-right go-button-hr" style="margin-top: -39px;"></button>
                                         <!-- <embed type="text/html" class="element-hr" height="210" width="100%" src="https://app.powerbi.com/view?r=eyJrIjoiN2IzZjUwMTQtNGIzZi00ZDVhLTkwM2QtNDc1NmY2NzlhYzI2IiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9&pageName=ReportSection"  width="500" height="800"> -->
                                         <!-- <embed type="text/html" class="element-hr" height="210" width="100%" src="https://app.powerbi.com/view?r=eyJrIjoiNjZmZTcyOGEtNjNkOC00ZDRjLWE3MDgtMDRkZmU0MzliODAzIiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9"  width="500" height="800"> -->
                                         <embed type="text/html" class="element-hr" height="210" width="100%" src="https://app.powerbi.com/view?r=eyJrIjoiYmZhOWM0ZTctYTI1Yy00NmQ4LTlmMjYtMjQ0NTYzY2VkZDAwIiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9"  width="500" height="800">
@@ -69,8 +69,28 @@
                                     @if(auth()->user()->role == 'superadmin' || auth()->user()->role == 'attendance')
                                      <div class="col-md-4" style="background-color: #eee; border: 1px solid;">
                                         <h3 class="font-weight-bold" style="font-size: 1.25rem;text-align: center;color: black;">Payroll Dashboard</h3>
-                                        <button id="go-button" class="btn btn-primary fa fa-expand pull-right go-button-hr-payroll" style="margin-top: -39px;"></button>
+                                        <button id="go-button4" class="btn btn-primary fa fa-expand pull-right go-button-hr-payroll" style="margin-top: -39px;"></button>
                                         <embed type="text/html" class="element-hr-payroll" height="210" width="100%" src="https://app.powerbi.com/view?r=eyJrIjoiMjdhNzM2NDYtY2NjZS00MWUxLTg0NTgtNTAwMzBhNDdmMGZhIiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9"  width="500" height="800">
+                                    </div>
+                                    @endif
+
+
+                                    @if(auth()->user()->role == 'superadmin' )
+                                     <div class="col-md-4" style="background-color: #eee; border: 1px solid;">
+                                        <h3 class="font-weight-bold" style="font-size: 1.25rem;text-align: center;color: black;">HR and Payroll Dashboard</h3>
+                                        <!-- <h6> ID :: itsupport@pinkcityjewels.in, PW :: pink@925</h6> -->
+                                        <button id="go-button5" class="btn btn-primary fa fa-expand pull-right go-button-hr-and-payroll" style="margin-top: -39px;"></button>
+                                        <!-- <embed type="text/html" class="element-hr-and-payroll" height="210" width="100%" src="https://app.powerbi.com/reportEmbed?reportId=978ca307-0d4f-49d1-a290-62b7dc092dd2&autoAuth=true&ctid=7b14c6a7-1819-4164-b212-1ed3ee423219"  > -->
+                                        <!-- <iframe title="HR and Payroll" height="210" width="100%" class="element-hr-and-payroll" src="https://app.powerbi.com/reportEmbed?reportId=f90fe030-f88f-46f0-a93f-c420c127038c&autoAuth=true&ctid=7b14c6a7-1819-4164-b212-1ed3ee423219" frameborder="0" allowFullScreen="true"></iframe> -->
+                                        <iframe title="HR and Payroll" height="210" width="100%" class="element-hr-and-payroll" src="https://app.powerbi.com/view?r=eyJrIjoiMjA0NTRlMDItMWJlZS00NzE4LWE4ZDktOWFlMTVhYjE4MWUzIiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9" frameborder="0" allowFullScreen="true"></iframe>
+                                    </div>
+                                    @endif
+
+                                    @if(auth()->user()->role == 'superadmin' )
+                                     <div class="col-md-4" style="background-color: #eee; border: 1px solid;">
+                                        <h3 class="font-weight-bold" style="font-size: 1.25rem;text-align: center;color: black;">Water Consumption Dashboard</h3>
+                                        <button id="go-button6" class="btn btn-primary fa fa-expand pull-right go-button-water" style="margin-top: -39px;"></button>
+                                        <embed type="text/html" class="element-water" height="210" width="100%" src="https://app.powerbi.com/view?r=eyJrIjoiYzc5NWU3MDUtOTVkNi00MzZlLWE3YjYtYTAxNTY5NjljOWYxIiwidCI6IjdiMTRjNmE3LTE4MTktNDE2NC1iMjEyLTFlZDNlZTQyMzIxOSJ9"  width="500" height="800">
                                     </div>
                                     @endif
                                 </div>
@@ -164,6 +184,21 @@ $(".go-button-hr-payroll").on('click', function() {
         GoOutFullscreen();
     else
         GoInFullscreen($(".element-hr-payroll").get(0));
+});
+
+$(".go-button-hr-and-payroll").on('click', function() {
+    if(IsFullScreenCurrently())
+        GoOutFullscreen();
+    else
+        GoInFullscreen($(".element-hr-and-payroll").get(0));
+    // window.open("https://app.powerbi.com/reportEmbed?reportId=f90fe030-f88f-46f0-a93f-c420c127038c&autoAuth=true&ctid=7b14c6a7-1819-4164-b212-1ed3ee423219", '_blank');
+});
+
+$(".go-button-water").on('click', function() {
+    if(IsFullScreenCurrently())
+        GoOutFullscreen();
+    else
+        GoInFullscreen($(".element-water").get(0));
 });
 
 $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function() {

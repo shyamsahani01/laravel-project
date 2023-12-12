@@ -140,7 +140,8 @@
                                                        @foreach($fg_bag_list as $key => $data)
                                                             <tr  style="text-align: center;">
                                                               <td>{{ $data->FmdSr  }}</td>
-                                                              <td><a href="/emporer/bag/bagDetails?BYy={{ $data->FmdBYy}}&BChr={{ $data->FmdBChr}}&BNo={{ $data->FmdBNo}}&company_code={{ $data->FmdCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
+                                                              <td><a href="javascript:void(0)" >{{ $data->bag_no  }}</a></td>
+                                                              <!-- <td><a href="/emporer/bag/bagDetails?BYy={{ $data->FmdBYy}}&BChr={{ $data->FmdBChr}}&BNo={{ $data->FmdBNo}}&company_code={{ $data->FmdCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td> -->
                                                               <td><a href="/emporer/design/designDetails?design_code={{ $data->BOdDmCd}}"  style="color: green;">{{ $data->BOdDmCd  }}</td>
                                                               <td>{{ $data->BOdSfx  }}</td>
                                                               <td>{{ $data->BOdDmSz  }}</td>

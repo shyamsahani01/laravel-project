@@ -85,8 +85,7 @@ $showurl = url("/emporer/finish_good_bm/list?$str");
                               @foreach($finish_good_data as $key => $data)
                               <tr>
                                  <td  style="text-align: center;">{{ $finish_good_data->firstItem() +  $key }}</td>
-                                 <td><a
-                                   href="/emporer/finish_good_bm/finishGoodBmDetails?FmTc={{ $data->FmTc}}&FmYy={{ $data->FmYy}}&FmChr={{ $data->FmChr}}&FmNo={{ $data->FmNo}}&company_code={{ $data->FmCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a></td>
+                                 <td><a href="/emporer/finish_good_bm/finishGoodBmDetails?FmTc={{ $data->FmTc}}&FmIdNo={{ $data->FmIdNo}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a></td>
                                  <td>{{ $data->type  }}</td>
                                  <td>{{ $data->FmCoCd  }}</td>
                                  <td>{{ date("D, d-m-Y",strtotime($data->FmDt)) }}</td>

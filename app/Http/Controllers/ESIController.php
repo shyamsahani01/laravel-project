@@ -133,7 +133,9 @@ public function esi_challan(Request $request){
 
 
 
-            $query1->whereRaw(" ( ( MONTH(relieving_date) = '$previous_month' AND YEAR(relieving_date) = '$previous_year' ) OR
+            // $query1->whereRaw(" ( ( MONTH(relieving_date) = '$previous_month' AND YEAR(relieving_date) = '$previous_year' ) OR
+            //                     ( MONTH(esic_exit_date) = '$previous_month' AND YEAR(esic_exit_date) = '$previous_year' ) )");
+            $query1->whereRaw(" (
                                 ( MONTH(esic_exit_date) = '$previous_month' AND YEAR(esic_exit_date) = '$previous_year' ) )");
 
           } else {
@@ -148,7 +150,9 @@ public function esi_challan(Request $request){
             // $query1->whereYear('esic_exit_date', $previous_year);
 
 
-            $query1->whereRaw(" ( ( MONTH(relieving_date) = '$previous_month' AND YEAR(relieving_date) = '$previous_year' ) OR
+            // $query1->whereRaw(" ( ( MONTH(relieving_date) = '$previous_month' AND YEAR(relieving_date) = '$previous_year' ) OR
+            //                     ( MONTH(esic_exit_date) = '$previous_month' AND YEAR(esic_exit_date) = '$previous_year' ) )");
+            $query1->whereRaw(" ( 
                                 ( MONTH(esic_exit_date) = '$previous_month' AND YEAR(esic_exit_date) = '$previous_year' ) )");
 
 

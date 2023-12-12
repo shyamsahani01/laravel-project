@@ -91,8 +91,7 @@ use App\Library\WebHelper;
                               @foreach($finish_good_data as $key => $data)
                               <tr>
                                  <td  style="text-align: center;">{{ $finish_good_data->firstItem() +  $key }}</td>
-                                 <td><a
-                                   href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FgTc}}&FgYy={{ $data->FgYy}}&FgChr={{ $data->FgChr}}&FgNo={{ $data->FgNo}}&company_code={{ $data->FgCoCd}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a></td>
+                                 <td><a href="/emporer/finish_good/finishGoodDetails?FgTc={{ $data->FgTc}}&FgIdNo={{ $data->FgIdNo}}"  style="color: green; font-weight:bold">{{ $data->voucher_no }} </a></td>
                                  <td>{{ $data->type  }}</td>
                                  <td>{{ $data->FgCoCd  }}</td>
                                  <td>{{ date("D, d-m-Y",strtotime($data->FgDt)) }}</td>

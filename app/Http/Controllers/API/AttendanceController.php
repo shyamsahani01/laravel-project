@@ -1383,7 +1383,7 @@ class AttendanceController extends Controller
     $erpnextDB = DB::connection("erpnext");
     $query2 = $erpnextDB
                 ->table("tabShift Type")
-                // ->where('name', 'Mahapura Unit Shift');
+                // ->where('name', 'Unit 1 Shift Sitapura');
                 ->where('name', 'Mahapura Unit Shift')
                 ->orWhere('name', 'ColorStones Unit Shift')
                 ->orWhere('name', 'Unit 1 Shift Sitapura')

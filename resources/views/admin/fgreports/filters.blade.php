@@ -30,7 +30,7 @@
             <div class="col-md-4 col-sm-6">
                <button type="submit" title="Submit" class="btn btn-success"><i class="fa fa-paper-plane"></i></button>
                <a href="{{ url('/fg/unit1/list') }}" style="color: white;" ><button type="button" title="Refresh" class="btn btn-danger"><i class="fa fa-refresh"></i></button></a>
-               <a href="{{ url('/fg/unit1/export?start_date='.request()->start_date.'&end_date='.request()->end_date . '&show='.request()->show) }}"  style="color: white;"><button type="button" title="Excel" class="btn btn-info"><i class="fa fa-file-excel-o"></i></button></a>
+               <!-- <a href="{{ url('/fg/unit1/export?start_date='.request()->start_date.'&end_date='.request()->end_date . '&show='.request()->show) }}"  style="color: white;"><button type="button" title="Excel" class="btn btn-info"><i class="fa fa-file-excel-o"></i></button></a> -->
                <!-- <button type="button" class="btn btn-info"><a href="{{ url('/fg/unit1fgReport/export?company='.request()->company.'&employee_name='.request()->employee_name.'&month='.request()->month.'&year='.request()->year . '&show='.request()->show) }}"  style="color: white;" ><i class="fa fa-file-excel-o"></i></a></button> -->
             </div>
          </div>
@@ -69,7 +69,7 @@
             <div class="col-md-4 col-sm-6">
                <button type="submit" title="Submit" class="btn btn-success"><i class="fa fa-paper-plane"></i></button>
                <a href="{{ url('/fg/unit2/list') }}" style="color: white;" ><button type="button" title="Refresh" class="btn btn-danger"><i class="fa fa-refresh"></i></button></a>
-               <a href="{{ url('/fg/unit2/export?start_date='.request()->start_date.'&end_date='.request()->end_date . '&show='.request()->show) }}"  style="color: white;"><button type="button" title="Excel" class="btn btn-info"><i class="fa fa-file-excel-o"></i></button></a>
+               <!-- <a href="{{ url('/fg/unit2/export?start_date='.request()->start_date.'&end_date='.request()->end_date . '&show='.request()->show) }}"  style="color: white;"><button type="button" title="Excel" class="btn btn-info"><i class="fa fa-file-excel-o"></i></button></a> -->
                <!-- <button type="button" class="btn btn-info"><a href="{{ url('/fg/unit1fgReport/export?company='.request()->company.'&employee_name='.request()->employee_name.'&month='.request()->month.'&year='.request()->year . '&show='.request()->show) }}"  style="color: white;" ><i class="fa fa-file-excel-o"></i></a></button> -->
             </div>
          </div>

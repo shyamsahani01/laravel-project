@@ -130,9 +130,9 @@
                                          <li class="nav-item">
                                              <a class="nav-link active" id="emp1-tab" data-toggle="tab" href="#emp1" role="tab" aria-controls="emp1" aria-selected="true" style="font-weight: 550;color: black;">Bag List</a>
                                          </li>
-                                         <!-- <li class="nav-item">
+                                         <li class="nav-item">
                                              <a class="nav-link" id="emp2-tab" data-toggle="tab" href="#emp2" role="tab" aria-controls="emp2" aria-selected="false" style="font-weight: 550;color: black;">Raw Material Wise</a>
-                                         </li> -->
+                                         </li>
                                          <!-- <li class="nav-item">
                                              <a class="nav-link" id="emp3-tab" data-toggle="tab" href="#emp3" role="tab" aria-controls="emp3" aria-selected="false" style="font-weight: 550;color: black;">BOM Summary</a>
                                          </li> -->
@@ -157,7 +157,7 @@
                                                          <th>Size</th>
                                                          <th>Quantity</th>
                                                          <th>Gross Weight</th>
-                                                         <th>Order No.</th>
+                                                         <!-- <th>Order No.</th> -->
                                                          <th>Bag Order Serial</th>
                                                          <th>Company</th>
                                                          <th>Sub Location</th>
@@ -174,13 +174,13 @@
                                                             <tr  style="text-align: center;">
                                                               <td><button class="btn btn-info" onclick="getFGRaw('{{ $data->FdIdNo}}', '{{ $data->bag_no}}',  this)"> Info </button></td>
                                                               <td>{{ $data->FdSr  }}</td>
-                                                              <td><a href="/emporer/bag/bagDetails?BYy={{ $data->FdBYy}}&BChr={{ $data->FdBChr}}&BNo={{ $data->FdBNo}}&company_code={{ $data->FdCoCd}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
+                                                              <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->FdBIdNo}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
                                                               <td><a href="/emporer/design/designDetails?design_code={{ $data->FdDmCd}}"  style="color: green;">{{ $data->FdDmCd  }}</td>
                                                               <td>{{ $data->FdSfx  }}</td>
                                                               <td>{{ $data->FdDmSz  }}</td>
                                                               <td>{{ round($data->FdQty, 4)  }} @php $total_qty += $data->FdQty; @endphp</td>
                                                               <td>{{ round($data->FdGrWt, 4)  }} @php $total_gross_wt += $data->FdGrWt; @endphp</td>
-                                                              <td style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmTc={{ $data->FdPrdOdTc}}&OmYy={{ $data->FdPrdOdYy}}&OmChr={{ $data->FdPrdOdChr}}&OmNo={{ $data->FdPrdOdNo}}&company_code={{ $data->FdCoCd}}"  style="color: green;">{{ $data->order_no }}</a></td>
+                                                              <!-- <td style="text-align: center;" ><a href="/emporer/orders/ordersDetails?OmIdNo="  style="color: green;">{{ $data->order_no }}</a></td> -->
                                                               <td>{{ $data->FdPrdOdSr  }}</td>
                                                               <td>{{ $data->FdCoCd  }}</td>
                                                               <td>{{ $data->FdSubLoc  }}</td>
@@ -232,6 +232,7 @@
                                                  <thead>
                                                    <tr style="text-align: center;">
                                                      <th>S.NO.</th>
+                                                     <th>FG S.NO.</th>
                                                      <th>Bag No.</th>
                                                      <th>Raw Material From Location</th>
                                                      <th>Issue / Receive</th>
@@ -253,6 +254,36 @@
                                                  </thead>
                                                  </thead>
                                                  <tbody>
+                                                   @if (count($fg_bag_raw_material_list) > 0)
+                                                   @php $count = 1; $total_gross_wt = 0; $total_qty = 0; @endphp
+                                                   @foreach($fg_bag_raw_material_list as $key => $data)
+                                                        <tr  style="text-align: center;">
+                                                          <td>{{ $count++ }}</td>
+                                                          <td>{{ $data->FrSrNo }}</td>
+                                                          <td><a href="/emporer/bag/bagDetails?BIdNo={{ $data->FdBIdNo}}"  style="color: green; font-weight:bold">{{ $data->bag_no  }}</a></td>
+                                                          <td>{{ $data->FrFrRmLoc }}</td>
+                                                          <td> {{ ( ($data->FrFrRmDc == "C") ? "I" : ( ($data->FrFrRmDc == "D") ? "R" : "" ) ) }}</td>
+                                                          <td class='parameter-desc' onclick="getParameterDescription('{{ $data->FrRmCtg }}', 'table', this, 'raw_material_category')">{{ $data->FrRmCtg }}</td>
+                                                          <td class='parameter-desc' onclick="getParameterDescription('{{ $data->FrRmSCtg }}', 'table', this, 'raw_material_sub_category', '{{ $data->FrRmCtg }}')"> {{ $data->FrRmSCtg }}</td>
+                                                          <td>{{ $data->FrRmCd }}</td>
+                                                          <td>{{ $data->FrLotNo }}</td>
+                                                          <td>{{ round($data->FrRmSz, 4) }}</td>
+                                                          <td>{{ round($data->FRRMSZ2, 4)  }}</td>
+                                                          <td>{{ round($data->FRRMSZ3, 4)  }}</td>
+                                                          <td>{{ round($data->FrRmStkRt, 4)  }}</td>
+                                                          <td>{{ round($data->FrRmQty, 4)  }}</td>
+                                                          <td>{{ round($data->FrRmWt, 4)  }}</td>
+                                                          <td class='parameter-desc' onclick="getParameterDescription('{{ $data->FrToRmLocTyp }}', 'table', this, 'location_type')">{{ $data->FrToRmLocTyp }}</td>
+                                                          <td>{{ $data->FrToRmLoc }}</td>
+                                                          <td>{{ $data->ModUsr }}</td>
+                                                          <td>{{ ( date('D, d-m-Y', strtotime($data->ModDt) ) . ' ' . $data->ModTime ) }}</td>
+                                                         </tr>
+                                                   @endforeach
+                                                   @else
+                                                     <tr>
+                                                       <td colspan="17" class="text-center text-danger"><h3><b>No Record Found</b></h3></td>
+                                                      </tr>
+                                                   @endif
                                                  </tbody>
                                               </table>
                                             </div>
@@ -327,6 +358,88 @@
  </div>
 
 
+ <style>
+ .dt-buttons.btn-group {
+   margin-bottom: -50px;
+ }
+ </style>
+
+ <script>
+
+ $(function() {
+   $('#new-datatable-2').DataTable( {
+     ordering: true,
+     dom: 'Bfrtip',
+     "lengthMenu": [[-1, 25, 50], ["All", 25, 50]],     // page length options
+     buttons: [
+       {
+         extend: 'excel',
+         text: 'EXCEL',
+         filename: function(){
+                 var d = new Date();
+                 var n = d.getTime();
+                 return 'fg_bag_details_' + n;
+             }
+       },
+       {
+         extend: 'csv',
+         text: 'CSV',
+         filename: function(){
+                 var d = new Date();
+                 var n = d.getTime();
+                 return 'fg_bag_details_' + n;
+             }
+       },
+       {
+         extend: 'pdf',
+         text: 'PDF',
+         filename: function(){
+                 var d = new Date();
+                 var n = d.getTime();
+                 return 'fg_bag_details_' + n;
+             }
+       },
+       'copy', 'pageLength']
+   } );
+   $('#new-datatable-5').DataTable( {
+     ordering: true,
+     dom: 'Bfrtip',
+     // "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],     // page length options
+     "lengthMenu": [[-1, 25, 50], ["All", 25, 50]],   // page length options
+     // buttons: ['excel', 'csv', 'copy', 'pdf', 'pageLength']
+     buttons: [
+       {
+         extend: 'excel',
+         text: 'EXCEL',
+         filename: function(){
+                 var d = new Date();
+                 var n = d.getTime();
+                 return 'fg_bag_rm_details_' + n;
+             }
+       },
+       {
+         extend: 'csv',
+         text: 'CSV',
+         filename: function(){
+                 var d = new Date();
+                 var n = d.getTime();
+                 return 'fg_bag_rm_details_' + n;
+             }
+       },
+       {
+         extend: 'pdf',
+         text: 'PDF',
+         filename: function(){
+                 var d = new Date();
+                 var n = d.getTime();
+                 return 'fg_bag_rm_details_' + n;
+             }
+       },
+       'copy', 'pageLength']
+   } );
+ });
+
+ </script>
 
 
  <script>

@@ -33,8 +33,9 @@ class SalarySheetExport implements FromView
                   ->select(DB::raw("SUM(tsd.amount) amount, tsc.name, tsc.type, tsc.salary_component_abbr") )
                   ->leftJoin('tabSalary Detail AS tsd', "tsd.abbr", "=", "tsc.salary_component_abbr")
                   ->leftJoin('tabSalary Slip AS tss', "tss.name", "=", "tsd.parent")
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
-                  ->where('te.occupation', '=', 'Worker')
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  // ->where('te.occupation', '=', 'Worker')
+                  ->where('tss.occupation', '=', 'Worker')
                   ->where('tss.docstatus', '<=', 1)
                   ->groupBy('tsc.name')
                   ->orderBy('tsc.type');
@@ -57,8 +58,9 @@ class SalarySheetExport implements FromView
                   ->select(DB::raw("SUM(tsd.amount) amount, tsc.name, tsc.type, tsc.salary_component_abbr") )
                   ->leftJoin('tabSalary Detail AS tsd', "tsd.abbr", "=", "tsc.salary_component_abbr")
                   ->leftJoin('tabSalary Slip AS tss', "tss.name", "=", "tsd.parent")
-                  ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
-                  ->where('te.occupation', '=', 'Staff')
+                  // ->leftJoin('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  // ->where('te.occupation', '=', 'Staff')
+                  ->where('tss.occupation', '=', 'Staff')
                   ->where('tss.docstatus', '<=', 1)
                   ->groupBy('tsc.name')
                   ->orderBy('tsc.type');
@@ -77,10 +79,10 @@ class SalarySheetExport implements FromView
 
       $query3 = DB::connection('erpnext')
                   ->table('tabSalary Slip AS tss')
-                  ->select(DB::raw("te.occupation, sum(tss.gross_monthly_salary) gross_monthly_salary, COUNT(te.employee) employee_count ") )
-                  ->join('tabEmployee AS te', "te.employee", "=", "tss.employee")
+                  ->select(DB::raw("tss.occupation, sum(tss.gross_monthly_salary) gross_monthly_salary, COUNT(tss.employee) employee_count ") )
+                  // ->join('tabEmployee AS te', "te.employee", "=", "tss.employee")
                   ->where('tss.docstatus', '<=', 1)
-                  ->groupBy('te.occupation');
+                  ->groupBy('tss.occupation');
 
         if(!empty($this->request->company)){
             $query3->where('tss.company',$this->request->company);

@@ -22,13 +22,16 @@
                               <th style="text-align: center;">S.NO.</th>
                               <th style="text-align: center; min-width: 100px;">DATE</th>
                               <th style="text-align: center; min-width: 150px;">
-                                <a href="javascript:void(0)" title="Silver Department Employees + 120 Contractor" class="table-heading-a" >No. OF PROD. WORKERS PRESENT TODAY</a>
+                                <!-- <a href="javascript:void(0)" title="Silver Department Employees + 120 Contractor" class="table-heading-a" >No. OF PROD. WORKERS PRESENT TODAY</a> -->
+                                <a href="javascript:void(0)" title="Production Department Employees " class="table-heading-a" >No. OF PROD. WORKERS PRESENT TODAY</a>
                               </th>
                               <th style="text-align: center; min-width: 150px;">
-                                <a href="javascript:void(0)" title="Silver Department Employees + 1 Lakh 20k" class="table-heading-a" >TODAY'S SALARY OF PRESENT PROD. WORKERS</a>
+                                <!-- <a href="javascript:void(0)" title="Silver Department Employees + 1 Lakh 20k" class="table-heading-a" >TODAY'S SALARY OF PRESENT PROD. WORKERS</a> -->
+                                <a href="javascript:void(0)" title="Production Department Employees + 1 Lakh 20k" class="table-heading-a" >TODAY'S SALARY OF PRESENT PROD. WORKERS</a>
                               </th>
                               <th style="text-align: center; min-width: 100px;">
-                                <a href="javascript:void(0)" title="Silver Department Employees Actual Over Time Amount" class="table-heading-a" >DIRECT PRODUCTION GW AMOUNT <a>
+                                <!-- <a href="javascript:void(0)" title="Silver Department Employees Actual Over Time Amount" class="table-heading-a" >DIRECT PRODUCTION GW AMOUNT <a> -->
+                                <a href="javascript:void(0)" title="Production Department Employees Actual Over Time Amount" class="table-heading-a" >DIRECT PRODUCTION GW AMOUNT <a>
                               </th>
                               <th style="text-align: center; min-width: 150px;">
                                 <a href="javascript:void(0)" title="TODAY'S  SALARY OF PRESENT PROD. WORKERS + DIRECT PRODUCTION GW AMOUNT" class="table-heading-a" >TOTAL DIRECT PRODUCTION COST AMOUNT </a>
@@ -74,8 +77,10 @@
                             @endphp
                             @foreach($fgData as $key => $data)
                               @php
-                                $No_OF_PROD_WORKERS_PRESENT_TODAY = ( $data->employee_data->total_employee > 0 ) ? ( $data->employee_data->total_employee + 120 ) : 0;
-                                $TODAY_SALARY_OF_PRESENT_PROD_WORKERS = ( round($data->employee_data->per_day_sallery) > 0 ) ? ( round($data->employee_data->per_day_sallery) + 120000 ) : 0;
+                                // $No_OF_PROD_WORKERS_PRESENT_TODAY = ( $data->employee_data->total_employee > 0 ) ? ( $data->employee_data->total_employee + 120 ) : 0;
+                                // $TODAY_SALARY_OF_PRESENT_PROD_WORKERS = ( round($data->employee_data->per_day_sallery) > 0 ) ? ( round($data->employee_data->per_day_sallery) + 120000 ) : 0; 
+                                $No_OF_PROD_WORKERS_PRESENT_TODAY = ( $data->employee_data->total_employee > 0 ) ? ( $data->employee_data->total_employee  ) : 0;
+                                $TODAY_SALARY_OF_PRESENT_PROD_WORKERS = ( round($data->employee_data->per_day_sallery) > 0 ) ? ( round($data->employee_data->per_day_sallery)  ) : 0;
                                 $direct_production_gw_amount = ( round($data->employee_data->over_time_sallery) > 0 ) ?  round($data->employee_data->over_time_sallery ) : 0;;
                                 $total_direct_production_cost_amount = $TODAY_SALARY_OF_PRESENT_PROD_WORKERS + $direct_production_gw_amount;
                                 $rs_per_pc = ( round($data->quantity) > 0 ) ? ( round ( $total_direct_production_cost_amount/ round($data->quantity) ) ) : 0;
