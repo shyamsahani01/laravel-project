@@ -8,6 +8,8 @@
       <th>Date</th>
       <th>In Time</th>
       <th>Out Time</th>
+      <th>Attendance Status</th>
+      <th>Shift Time</th>
       <th>Actual Total Working Hrs</th>
       <th>Actual OT Hrs</th>
       <th>Actual Less Hrs</th>
@@ -36,6 +38,8 @@
         <td>{{ date("Y-m-d, D", strtotime($data->date) ) }}</td>
         <td>{{ date("H:i:s", strtotime($data->in_time) ) }}</td>
         <td>{{ date("H:i:s", strtotime($data->out_time) )  }}</td>
+        <td>{{ $data->attendance_status }}</td>
+        <td>{{ $data->shift_time }}</td>
         <td>{{ $data->total_hours }}</td>
         <td>{{ $data->ot_hours }}</td>
         <td>{{ $data->less_hours }}</td>

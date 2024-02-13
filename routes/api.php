@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\WebController;
 use App\Http\Controllers\API\TestController;
 use App\Http\Controllers\API\AttendanceController;
+use App\Http\Controllers\API\AttendanceControllerNew;
 use App\Http\Controllers\API\SMSController;
 use App\Http\Controllers\API\EmailController;
 use App\Http\Controllers\API\ApiController;
@@ -43,6 +44,9 @@ Route::post('web/updateItemDetailsApi', [WebController::class, 'updateItemDetail
 Route::post('web/getUserAddedItemList', [WebController::class, 'getUserAddedItemList'])->name('getUserAddedItemList');
 Route::post('web/getDesignInfo', [WebController::class, 'getDesignInfo'])->name('getDesignInfo');
 
+Route::post('web/checkResmithOrder', [WebController::class, 'checkResmithOrder'])->name('checkResmithOrder');
+Route::post('web/uploadResmithProductVideo', [WebController::class, 'uploadResmithProductVideo'])->name('uploadResmithProductVideo');
+
 
 Route::get('web/getImages', [WebController::class, 'getImages'])->name('getImages');
 
@@ -65,7 +69,9 @@ Route::get('sms/employeeSalarySlipWhatsapp', [SMSController::class, 'employeeSal
 
 
 Route::get('attendance/getEmployeeAttendance', [AttendanceController::class, 'getEmployeeAttendance'])->name('attendance.getEmployeeAttendance');
+Route::get('attendance/getEmployeeAttendanceNew', [AttendanceControllerNew::class, 'getEmployeeAttendance'])->name('attendance.getEmployeeAttendanceNew');
 Route::get('attendance/getEmployeeMarkAttendance', [AttendanceController::class, 'getEmployeeMarkAttendance'])->name('attendance.getEmployeeMarkAttendance');
+// Route::get('attendance/getEmployeeMarkAttendance', [AttendanceController::class, 'autoEmployeeMarkAttendance'])->name('attendance.autoEmployeeMarkAttendance');
 Route::get('attendance/updateLeaveBalance', [AttendanceController::class, 'updateLeaveBalance'])->name('attendance.updateLeaveBalance');
 
 Route::get('webapi/update_production_workflow_tree', [ApiController::class, 'update_production_workflow_tree'])->name('update_production_workflow_tree');

@@ -53,6 +53,7 @@ class ComplianceSheetExport implements FromView
                   ->table("tabEmployee AS te")
                   // ->select(DB::Raw("te.*, tas.payroll_date, tas.amount, tas.ot_hour, SUM(report_emp_attendace_detail.ot_hours_round) ot_hours_round") )
                   ->select(DB::Raw("te.*, tas.payroll_date, tas.amount, tas.ot_hour") )
+                  // ->select(DB::Raw("te.*, tei.payroll_date, tei.ot_hour ") )
                   ->join('tabAttendance', "tabAttendance.employee", "te.employee")
                   ->leftJoin('tabAdditional Salary as tas', function ($join) {
                         $join->on('tas.employee', '=', 'te.employee')
@@ -60,6 +61,13 @@ class ComplianceSheetExport implements FromView
                         ->whereYear('tas.payroll_date', $this->year)
                         ->where('tas.salary_component', 'OT');
                     })
+
+                  // ->leftJoin('tabEmployee Incentive as tei', function ($join) {
+                  //       $join->on('tei.employee', '=', 'te.employee')
+                  //       ->whereMonth('tei.payroll_date', $this->month)
+                  //       ->whereYear('tei.payroll_date', $this->year)
+                  //       ->where('tei.salary_component', 'OT');
+                  //   })
                   // ->leftJoin('report_emp_attendace_detail', function ($join) {
                   //       $join->on('report_emp_attendace_detail.emp', '=', 'te.employee')
                   //       ->whereMonth('report_emp_attendace_detail.date', $this->month)

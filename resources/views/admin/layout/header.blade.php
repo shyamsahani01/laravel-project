@@ -28,7 +28,7 @@
                <li class=" @if (Request::segment(1) == 'adminusers') active @endif nav-menu-bar-li " ><a href="{{ url('adminusers') }}" ><i class="fa fa-list"></i> Admin List</a></li>
                @endif
                </li>
-               @if(auth()->user()->role == 'buying' || auth()->user()->role == 'superadmin')
+               @if(auth()->user()->role == 'buying' || auth()->user()->role == 'superadmin' ||  auth()->user()->role == 'reports' )
                <li  class=" buying-menu nav-menu-buying-bar-li  @if (Request::segment(1) == 'stockladger' || Request::segment(1) == 'purchaseorder' ) active @endif  " >
                   <a><i class="fa fa-shopping-cart "></i> Buying<span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu buying-menu-ul disabled-menu " >
@@ -136,17 +136,19 @@
                  @endif
 
 
-                  @if( auth()->user()->role == 'superadmin' || auth()->user()->role == 'reports' )
+                  @if( auth()->user()->role == 'superadmin'  )
                   <li  class=" emporer-menu  nav-menu-fg-bar-li  @if (Request::segment(1) == 'emporer') active @endif  " >
                      <a><i class="fa fa-diamond "></i> Emporer <span class="fa fa-chevron-down"></span></a>
                      <!-- <a><i class="fa fa-diamond "></i> Emporer <span class="fa fa-chevron-down"></span></a> -->
                      <ul class="nav child_menu emporer-menu-ul disabled-menu " >
                         <li class=" @if (Request::segment(2) == 'design'   ) active  @endif " ><a href="{{ url('/emporer/design/list') }}">Design</span></a></li>
                         <!-- <li class=" @if (Request::segment(2) == 'orders'  ) active  @endif " ><a href="{{ url('/emporer/orders/list') }}">Orders</span></a></li> -->
+
                         <li class=" @if (Request::segment(2) == 'orders'  || Request::segment(2) == 'bag' ) active @endif ">
                            <a>Orders <span class="fa fa-chevron-down"></span></a>
                            <ul class="nav child_menu ">
                              <li class=" @if (Request::segment(3) == 'list' )  @endif " ><a href="{{ url('/emporer/orders/list') }}"  >Orders List</a></li>
+                             <li class=" @if (Request::segment(3) == 'list' )  @endif " ><a href="{{ url('/emporer/orders-design/list') }}"  >Orders Design List</a></li>
                              <li class=" @if (Request::segment(3) == 'list' )  @endif " ><a href="{{ url('/emporer/bag/list') }}" >Bag</a></li>
                              <li class=" @if (Request::segment(2) == 'finish_good'  ) active  @endif " ><a href="{{ url('/emporer/finish_good/list') }}">Finish Good</span></a></li>
                              <li class=" @if (Request::segment(2) == 'finish_good_bm'  ) active  @endif " ><a href="{{ url('/emporer/finish_good_bm/list') }}">Finish Good - Bag Movement</span></a></li>
@@ -157,10 +159,37 @@
                         <li class=" @if (Request::segment(2) == 'transaction'  ) active  @endif " ><a href="{{ url('/emporer/transaction/list') }}">Transaction</span></a></li>
                         <li class=" @if (Request::segment(2) == 'parameter'  ) active  @endif " ><a href="{{ url('/emporer/parameter/list') }}">Parameter</span></a></li>
 
+                        <li class=" @if (Request::segment(2) == 'invoice'  ) active @endif ">
+                           <a>Invoice <span class="fa fa-chevron-down"></span></a>
+                           <ul class="nav child_menu ">
+                             <li class=" @if (Request::segment(3) == 'invoice-design' )  @endif " ><a href="{{ url('/emporer/invoice/list') }}"  > Invoice Design </a></li>
+                           </ul>
+                        </li>
+
                         <li class=" @if (Request::segment(2) == 'report'  ) active @endif ">
                            <a>Report <span class="fa fa-chevron-down"></span></a>
                            <ul class="nav child_menu ">
                              <li class=" @if (Request::segment(3) == 'what-is-where' )  @endif " ><a href="{{ url('/emporer/report/what-is-where') }}"  >What Is Where</a></li>
+                           </ul>
+                        </li>
+
+                     </ul>
+                  </li>
+                  @endif
+
+
+                  @if( auth()->user()->role == 'reports' )
+                  <li  class=" emporer-menu  nav-menu-fg-bar-li  @if (Request::segment(1) == 'emporer') active @endif  " >
+                     <a><i class="fa fa-diamond "></i> Emporer <span class="fa fa-chevron-down"></span></a>
+                     <!-- <a><i class="fa fa-diamond "></i> Emporer <span class="fa fa-chevron-down"></span></a> -->
+                     <ul class="nav child_menu emporer-menu-ul disabled-menu " >
+                        <!-- <li class=" @if (Request::segment(2) == 'design'   ) active  @endif " ><a href="{{ url('/emporer/design/list') }}">Design</span></a></li> -->
+                        <!-- <li class=" @if (Request::segment(2) == 'orders'  ) active  @endif " ><a href="{{ url('/emporer/orders/list') }}">Orders</span></a></li> -->
+
+                        <li class=" @if (Request::segment(2) == 'invoice'  ) active @endif ">
+                           <a>Invoice <span class="fa fa-chevron-down"></span></a>
+                           <ul class="nav child_menu ">
+                             <li class=" @if (Request::segment(3) == 'invoice-design' )  @endif " ><a href="{{ url('/emporer/invoice/list') }}"  > Invoice Design </a></li>
                            </ul>
                         </li>
 

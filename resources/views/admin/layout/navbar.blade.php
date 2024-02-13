@@ -28,7 +28,7 @@
                        {{$newName}}
                      </a>
                      <div class="dropdown-menu dropdown-usermenu pull-right" style="top: 2px !important; left: 58px !important;">
-                        @if( auth()->user()->role == 'superadmin' || auth()->user()->role == 'reports' )
+                        @if( auth()->user()->role == 'superadmin'  )
                         <a class="dropdown-item @if(auth()->user()->emrDB == 'Mahapura'){{ 'active' }}@endif"
                           @if(auth()->user()->emrDB != 'Mahapura') href="/emporer/set-emrDB?emrDB=Mahapura" @else href="javascript:void(0);" @endif
                            ><i class="fa fa-diamond pull-right"></i>Mahapura</a>

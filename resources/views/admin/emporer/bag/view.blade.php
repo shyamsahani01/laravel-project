@@ -146,7 +146,15 @@ function checkDigits($value='')
                                                      $bom_summary[$i]['quantity'] += $data->OrQty;
                                                      $bom_summary[$i]['weight'] += $data->OrWt;
                                                      $bom_summary[$i]['total_quantity'] += $bag_details->BQty * $data->OrQty;
-                                                     $bom_summary[$i]['total_weight'] += $bag_details->BQty * $data->OrWt;
+                                                     // $bom_summary[$i]['total_weight'] += $bag_details->BQty * $data->OrWt ;
+
+                                                     if($bom_summary[$i]['total_quantity'] > 0) {
+                                                       $bom_summary[$i]['total_weight'] += $bom_summary[$i]['total_quantity'] * $data->OrWt ;
+                                                     }
+                                                     else {
+                                                       $bom_summary[$i]['total_weight'] += $bag_details->BQty * $data->OrWt ;
+                                                     }
+
                                                      break;
                                                    }
                                                  }
@@ -158,7 +166,14 @@ function checkDigits($value='')
                                                  $bom_summary[$k]['quantity'] = $data->OrQty;
                                                  $bom_summary[$k]['weight'] = $data->OrWt;
                                                  $bom_summary[$k]['total_quantity'] = $bag_details->BQty * $data->OrQty;
-                                                 $bom_summary[$k]['total_weight'] = $bag_details->BQty * $data->OrWt;
+                                                 // $bom_summary[$k]['total_weight'] = $bag_details->BQty * $data->OrWt;
+                                                 if($bom_summary[$k]['total_quantity'] > 0) {
+                                                   $bom_summary[$k]['total_weight'] = $bom_summary[$k]['total_quantity'] * $data->OrWt ;
+                                                 }
+                                                 else {
+                                                   $bom_summary[$k]['total_weight'] = $bag_details->BQty * $data->OrWt ;
+                                                 }
+
                                                  $bom_summary[$k]['main_metail'] = $data->OrMainMet;
 
                                                  if($data->OrMainMet == "Y") {$main_metal_code = $data->OrRmCd . " ( $data->RmDesc )";}
@@ -386,6 +401,7 @@ function checkDigits($value='')
                                                <table id="new-datatable-2" class="table table-striped table-bordered" style="">
                                                   <thead>
                                                      <tr style="text-align: center;">
+                                                       <th>Design Code</th>
                                                        <th>S.NO.</th>
                                                        <th>Raw Material Category</th>
                                                        <th style="min-width: 100px;">Raw Material Sub Category</th>
@@ -422,6 +438,7 @@ function checkDigits($value='')
                                                      @php $count = 1 @endphp
                                                      @foreach($bag_orders_bom_details as $key => $data)
                                                           <tr  style="text-align: center;">
+                                                            <td>{{ $bag_details->BOdDmCd  }}</td>
                                                             <td>{{ $data->OrSrNo  }}</td>
                                                             <td class="parameter-desc" onclick="getParameterDescription('{{ $data->OrRmCtg  }}', 'table', this, 'raw_material_category')">{{ $data->OrRmCtg  }}</td>
                                                             <td class="parameter-desc" onclick="getParameterDescription('{{ $data->OrRmSCtg  }}', 'table', this, 'raw_material_sub_category', '{{ $data->OrRmCtg  }}')">{{ $data->OrRmSCtg  }}</td>

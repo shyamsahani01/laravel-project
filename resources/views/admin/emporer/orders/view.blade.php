@@ -319,6 +319,9 @@ use App\Library\WebHelper;
                                                                  <th>Customer Code</th>
                                                                  <th style="min-width: 125px;">Delivery Date</th>
                                                                  <th>Product Sequence</th>
+                                                                 <th>Order No</th>
+                                                                 <th>Order Date</th>
+                                                                 <th>Order Export Date</th>
                                                                  <th>User (Modified)</th>
                                                                  <th style="min-width: 125px;">Date (Modified)</th>
                                                                </tr>
@@ -361,6 +364,9 @@ use App\Library\WebHelper;
                                                                       <td>{{ $data->OdOmCmCd  }}</td>
                                                                       <td>{{ date("D, d-m-Y",strtotime($data->OdDelDt)) }}</td>
                                                                       <td>{{ $data->OdPrdSeq  }}</td>
+                                                                      <td>{{ $orders_details->order_no  }}</td>
+                                                                      <td>{{ date('D, d-m-Y', strtotime($orders_details->OmDt))   }}</td>
+                                                                      <td>{{ date('D, d-m-Y', strtotime($orders_details->OmExpDelDt))  }}</td>
                                                                       <td>{{ $data->ModUsr  }}</td>
                                                                       <td>{{ date("D, d-m-Y",strtotime($data->ModDt)) . ' ' . $data->ModTime }}</td>
                                                                      </tr>
@@ -409,6 +415,9 @@ use App\Library\WebHelper;
                                                                  <th>Rejected Bag Quantity</th>
                                                                  <th>Rejected Bag Parts Quantity</th>
                                                                  <th>FG Sub Location</th>
+                                                                 <th>Order No</th>
+                                                                 <th>Order Date</th>
+                                                                 <th>Export Delivery Date</th>
                                                                  <th>User (Modified)</th>
                                                                  <th style="min-width: 125px;">Date (Modified)</th>
                                                                </tr>

@@ -2,8 +2,19 @@
 @section('content')
 <link rel="stylesheet" href="/admin/assets/newTheme/vendors/resizable/dist/css/resizable-table-columns.css">
 <link rel="stylesheet" href="/admin/assets/newTheme/vendors/resizable/dist/samples/site.css">
+
 @php
-$showurl = url('/emporer/orders/list?show='.request()->show.'&order_start_date='.request()->order_start_date.'&order_end_date='.request()->order_end_date.'&customer_code='.request()->customer_code.'&customer_name='.request()->customer_name.'&order_no='.request()->order_no.'&expected_order_start_date='.request()->expected_order_start_date.'&purchase_order_no='.request()->purchase_order_no);
+$str = "";
+$str .= 'show='.request()->show;
+$str .= '&order_start_date='.request()->order_start_date;
+$str .= '&order_end_date='.request()->order_end_date;
+$str .= '&customer_code='.request()->customer_code;
+$str .= '&order_no='.request()->order_no;
+$str .= '&expected_order_start_date='.request()->expected_order_start_date;
+$str .= '&purchase_order_no='.request()->purchase_order_no;
+$str .= '&company='.request()->company;
+$str .= '&customer_code='.request()->customer_code;
+$showurl = url("/emporer/orders/list?$str");
 @endphp
 <style>
     table td,th {
@@ -40,6 +51,15 @@ $showurl = url('/emporer/orders/list?show='.request()->show.'&order_start_date='
                                       <label class="design1-form1">Select Customer Code</label>
                                       <select name="customer_code" id="customer_code" class="form-control select2-lib-dropdown-customer_code "> <?php if(isset(request()->customer_code)) { echo  '
                                         <option value="'.request()->customer_code.'" Selected >'.request()->customer_code.'</option>'; } ?>
+                                      </select>
+                                  </div>
+                                  <div class="col-md-2 col-sm-12  form-group">
+                                      <label class="design1-form1">Select Company</label>
+                                      <select name="company" class="form-control">
+                                         <option value="">Select Company</option>
+                                         <option value="PC" @if(request()->company == 'PC') Selected @endif>PC</option>
+                                         <option value="PJ" @if(request()->company == 'PJ') Selected @endif>PJ</option>
+                                         <option value="PJ2" @if(request()->company == 'PJ2') Selected @endif>PJ2</option>
                                       </select>
                                   </div>
                                   <!-- <div class="col-md-2 col-sm-12  form-group">
@@ -180,6 +200,7 @@ function customer_name_select2() {
       }
     })
 }
+
 
 $(document).ready(function(){
   customer_code_select2();

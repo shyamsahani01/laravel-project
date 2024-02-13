@@ -23,7 +23,7 @@ class AttendanceController extends Controller
 
   public function getEmployeeAttendance(Request $request) {
 
-    ini_set('max_execution_time', '1000000');
+    ini_set('max_execution_time', '10000000');
       if(empty($request->start_date)){
           echo "Start Date Is Required For Attendnce Entry";
           exit;
@@ -331,7 +331,7 @@ class AttendanceController extends Controller
 
       $last_day = date("t", strtotime($attendance_date) );
       $per_day_salary = $gross_monthly_salary / $last_day;
-      $per_hour_salary = $per_day_salary / 8.5; // 8.5 is total work hour in a day
+      $per_hour_salary = $per_day_salary / 8; // 8 is total work hour in a day
 
       $less_in_seconds = 0;
       $ot_in_seconds = 0;
@@ -349,6 +349,14 @@ class AttendanceController extends Controller
       $multiple_checkin = 0;
 
       $all_in_out_for_json = [];
+
+      $attendance_status = "";
+      $shift_time = 0;
+      $shift_time_hour = 0;
+      $laps_less_hour_in_seconds = 0;
+
+      $in_time_hour = (int) date('H', strtotime($in_time) );
+      $out_time_hour = (int) date('H', strtotime($out_time) );
       // $all_in_out_array = explode(",", $all_in_out_str);
       // $multiple_checkin = 0;
 
@@ -379,50 +387,51 @@ class AttendanceController extends Controller
 
         // echo "<pre>";
         $date_diff_obj = date_diff( date_create($in_time), date_create($out_time) );
+        print_r($date_diff_obj);
         // $date_diff_obj = date_diff(date_create($data->out_time), date_create($data->in_time) );
         $total_working_hours_data = sprintf('%02d', $date_diff_obj->h).":".sprintf('%02d', $date_diff_obj->i).":".sprintf('%02d', $date_diff_obj->s);
         $total_working_hours_seconds = strtotime($total_working_hours_data) - strtotime("00:00:00");
 
-        $all_in_out_array = explode(",",$all_in_out_str);
-        // for($i=0; $i<count($all_in_out_array) - 1; $i++) {
+        // $all_in_out_array = explode(",",$all_in_out_str);
+        // // for($i=0; $i<count($all_in_out_array) - 1; $i++) {
+        // //   $first_time = $all_in_out_array[$i];
+        // //   $second_time = $all_in_out_array[$i+1];
+        // // }
+        //
+        // $i=0; $j = 1; $k=0;
+        // $count_all_check_in = count($all_in_out_array);
+        // $all_check_in = count($all_in_out_array);
+        // $total_working_hours_seconds = 0;
+        // while($count_all_check_in >= 1) {
+        //
+        //   if($all_check_in <=2 ) {}
+        //   else { if($j>=count($all_in_out_array) - 1) {break;} }
+        //
         //   $first_time = $all_in_out_array[$i];
-        //   $second_time = $all_in_out_array[$i+1];
+        //   $second_time = $all_in_out_array[$j];
+        //   $date_diff = date_diff( date_create($first_time), date_create($second_time) );
+        //   print_r("<br>hi227#<br>");
+        //   print_r($first_time);
+        //   print_r($second_time);
+        //   print_r($date_diff);
+        //   if($date_diff->days <=0 && $date_diff->h <=0 && $date_diff->i <=4) {
+        //     print_r("<br>hi225#<br>");
+        //     $j++;
+        //     $count_all_check_in=$count_all_check_in-1;
+        //     continue;
+        //   } else {
+        //     print_r("<br>hi226#<br>");
+        //     $all_in_out_for_json[$k]['in_time'] = $first_time;
+        //     $all_in_out_for_json[$k]['out_time'] = $second_time;
+        //     $total_working_hours_data = sprintf('%02d', $date_diff->h).":".sprintf('%02d', $date_diff->i).":".sprintf('%02d', $date_diff->s);
+        //     $total_working_hours_seconds += (int) ( strtotime($total_working_hours_data) - strtotime("00:00:00") );
+        //     $i=$j+1;
+        //     $j=$j+2;
+        //     if($k >= 1) {$multiple_checkin = 1;}
+        //     $k++;
+        //     $count_all_check_in=$count_all_check_in-2;
+        //   }
         // }
-
-        $i=0; $j = 1; $k=0;
-        $count_all_check_in = count($all_in_out_array);
-        $all_check_in = count($all_in_out_array);
-        $total_working_hours_seconds = 0;
-        while($count_all_check_in >= 1) {
-
-          if($all_check_in <=2 ) {}
-          else { if($j>=count($all_in_out_array) - 1) {break;} }
-
-          $first_time = $all_in_out_array[$i];
-          $second_time = $all_in_out_array[$j];
-          $date_diff = date_diff( date_create($first_time), date_create($second_time) );
-          print_r("<br>hi227#<br>");
-          print_r($first_time);
-          print_r($second_time);
-          print_r($date_diff);
-          if($date_diff->days <=0 && $date_diff->h <=0 && $date_diff->i <=4) {
-            print_r("<br>hi225#<br>");
-            $j++;
-            $count_all_check_in=$count_all_check_in-1;
-            continue;
-          } else {
-            print_r("<br>hi226#<br>");
-            $all_in_out_for_json[$k]['in_time'] = $first_time;
-            $all_in_out_for_json[$k]['out_time'] = $second_time;
-            $total_working_hours_data = sprintf('%02d', $date_diff->h).":".sprintf('%02d', $date_diff->i).":".sprintf('%02d', $date_diff->s);
-            $total_working_hours_seconds += (int) ( strtotime($total_working_hours_data) - strtotime("00:00:00") );
-            $i=$j+1;
-            $j=$j+2;
-            if($k >= 1) {$multiple_checkin = 1;}
-            $k++;
-            $count_all_check_in=$count_all_check_in-2;
-          }
-        }
 
         // in case of holiday & weekoff
         if( $attendance_date == $holiday_date ) {
@@ -433,23 +442,31 @@ class AttendanceController extends Controller
           $in_time_diff_obj = date_diff(date_create($in_time), date_create($attendance_date . " 09:30:00") );
           $out_time_diff_obj = date_diff(date_create($attendance_date . " 18:00:00"), date_create($out_time) );
 
+
+
+
+
           // means late check in
           $in_time_diff = '00:00:00';
           $in_time_diff=sprintf('%02d', $in_time_diff_obj->h).":".sprintf('%02d', $in_time_diff_obj->i).":".sprintf('%02d', $in_time_diff_obj->s);
           if($in_time_diff_obj->invert == 1)
           {
             $less_in_seconds = strtotime($in_time_diff) - strtotime("00:00:00");
-            // for less hour give 5 minute gap
-            // if($less_in_seconds > (5*60) ) { $less_in_seconds = $less_in_seconds - (5*60); }
-            // else {
-            //   $less_in_seconds = 0;
-            // }
+            // for less hour give 10 minute gap
+            // if($less_in_seconds > (10*60) ) { $less_in_seconds = $less_in_seconds - (10*60); }
+            if($less_in_seconds > (10*60) ) {   }
+            else {
+              $laps_less_hour_in_seconds = $less_in_seconds;
+              $less_in_seconds = 0;
+            }
 
             $less_hours_data =  gmdate("H:i:s", $less_in_seconds);
           }
           else { // check for OT
             // $ot_in_seconds = strtotime($in_time_diff) - strtotime("00:00:00");
             $access_in_seconds = strtotime($in_time_diff) - strtotime("00:00:00");
+
+
           }
 
 
@@ -467,6 +484,20 @@ class AttendanceController extends Controller
             $ot_out_seconds = strtotime($out_time_diff) - strtotime("00:00:00");
             $access_out_seconds = strtotime($out_time_diff) - strtotime("00:00:00");
           }
+
+          // if arrive after 6PM -----------
+          if($in_time_hour > 18 && $in_time_hour < 8) {
+            $out_time_diff_obj = date_diff(date_create($in_time), date_create($out_time) );
+
+            $out_time_diff = '00:00:00';
+            $out_time_diff=sprintf('%02d', $out_time_diff_obj->h).":".sprintf('%02d', $out_time_diff_obj->i).":".sprintf('%02d', $out_time_diff_obj->s);
+
+            $ot_out_seconds = strtotime($out_time_diff) - strtotime("00:00:00");
+            $access_out_seconds = strtotime($out_time_diff) - strtotime("00:00:00");
+
+          }
+
+
 
           $total_less_seconds = $less_in_seconds + $less_out_seconds;
           $total_access_seconds = $access_in_seconds + $access_out_seconds;
@@ -503,6 +534,61 @@ class AttendanceController extends Controller
           }
         }
 
+        // $shift_time = gmdate("H:i:s", ($total_working_hours_seconds - $total_access_seconds - $laps_less_hour_in_seconds) );
+        $shift_time = gmdate("H:i:s", ($total_working_hours_seconds - $total_access_seconds) );
+        $shift_time_hour = $this->timeToHour( ($total_working_hours_seconds - $total_access_seconds) );
+        if($shift_time_hour < 4) {
+          $attendance_status = "A";
+
+          // update less hour ---
+          if($shift_time_hour > 0) {
+            $less_hours_data = $shift_time;
+            $less_hours_round_data = $this->timeToHour($total_less_seconds);
+          }
+
+
+          // update shift time + access time
+            $access_time_data = gmdate("H:i:s", ( $total_access_seconds + ( strtotime($shift_time) - strtotime("00:00:00") ) ) );
+            $access_time_round_data = $this->timeToHour( ( $total_access_seconds + ( strtotime($shift_time) - strtotime("00:00:00") ) ) );
+
+        }
+        elseif($shift_time_hour >= 4 && $shift_time_hour < 6) {
+          $attendance_status = "HD";
+
+
+          // 4 hour shift for half day
+          $shift_time = "04:00:00";
+          $shift_time_hour = 4;
+
+          // update less hour ---
+          if($shift_time_hour > 0) {
+            $less_hours_data = "";
+            $less_hours_round_data = 0;
+          }
+
+
+
+          // for after 9AM To before 6PM
+          if( $out_time_hour > 9 && $out_time_hour < 18  ) {
+            print_r("<br>hi12#<br>");
+            $access_time_data = gmdate("H:i:s", ( $total_working_hours_seconds -  ( 4*60*60  ) ) );
+            $access_time_round_data = $this->timeToHour(( $total_working_hours_seconds - ( 4*60*60  ) ));
+          }
+          // for after 6PM To before 9AM
+          // if( $out_time_hour >= 18 || $out_time_hour < 9  ) {
+          else {
+            print_r("<br>hi13#<br>");
+              // $access_time_data = gmdate("H:i:s", ( $total_working_hours_seconds - ( strtotime($shift_time) - strtotime("00:00:00") ) + $total_access_seconds  ) );
+              // $access_time_round_data = $this->timeToHour( ( $total_working_hours_seconds - ( strtotime($shift_time) - strtotime("00:00:00") ) + $total_access_seconds  ) );
+              $access_time_data = gmdate("H:i:s", ( $total_working_hours_seconds -  ( 4*60*60  ) ) );
+              $access_time_round_data = $this->timeToHour(( $total_working_hours_seconds - ( 4*60*60  ) ));
+          }
+
+        }
+        elseif($shift_time_hour >= 6 ) {
+          $attendance_status = "P";
+        }
+
         $in_time_data = date('Y-m-d H:i:s', strtotime($in_time) );
         $out_time_data = date('Y-m-d H:i:s', strtotime($out_time) );
 
@@ -534,6 +620,10 @@ class AttendanceController extends Controller
                           "all_in_out"=>$all_in_out_str,
                           "multiple_checkin"=>$multiple_checkin,
                           "all_in_out_json"=>json_encode($all_in_out_for_json),
+
+                          "shift_time"=>$shift_time,
+                          "shift_time_hour"=>$shift_time_hour,
+                          "attendance_status"=>$attendance_status,
                         ];
 
 
@@ -598,7 +688,7 @@ class AttendanceController extends Controller
                     ELSE 0
                    END) total_present, employee, employee_name, company") )
                   // ->where('ta.employee', "HR-EMP-PJHM-0627")
-                  // ->where('ta.employee', "HR-EMP-PCPL-0029")
+                  // ->where('ta.employee', "HR-EMP-PJHM-0713")
                   ->where('ta.attendance_date', ">", ($year - 1) ."-12-31")
                   ->where('ta.attendance_date', "<",  ($year + 1) ."-01-01")
                   ->where('ta.docstatus', "=",  "1")
@@ -760,7 +850,7 @@ class AttendanceController extends Controller
                 ->table('tabEmployee')
                 ->where('status', "Active")
                 // ->where('employee', "HR-EMP-PJHM-0627")
-                // ->where('employee', "HR-EMP-PCPL-0029")
+                // ->where('employee', "HR-EMP-PJHM-0713")
                 // ->where('company', "Pinkcity Jewelhouse Private Ltd-Mahapura")
                 ->get();
 
@@ -797,6 +887,13 @@ class AttendanceController extends Controller
           foreach ($query3_data as $k2 => $v2) {
             if($v2->total_present >= 10) {
               $total_cl += 0.59;
+              // if($v2->month_no == 12) {
+              //   $total_cl += 0.69;
+              // }
+              // else {
+              //   $total_cl += 0.59;
+              // }
+
             }
           }
 
@@ -1225,8 +1322,8 @@ class AttendanceController extends Controller
                 ->table("tabShift Type")
                 // ->where('name', 'Unit 1 Shift Sitapura');
                 ->where('name', 'Mahapura Unit Shift')
-                ->orWhere('name', 'Unit 1 Shift Sitapura')
                 ->orWhere('name', 'ColorStones Unit Shift')
+                ->orWhere('name', 'Unit 1 Shift Sitapura')
                 ->orWhere('name', 'Unit 2 Shift Sitapura');
     $allUnits_data = $query2->get();
 
@@ -1304,6 +1401,7 @@ class AttendanceController extends Controller
             CURLOPT_POSTFIELDS => $post_data,
             CURLOPT_HTTPHEADER => array(
               'X-Custom-Header: value',
+              // "Authorization: token " .getenv("ERP_TOKEN"),
               "Authorization: token 8df39ff6e216a4b:4f0295ed14f70b9",
             ),
           ));
@@ -1328,8 +1426,9 @@ class AttendanceController extends Controller
     echo "<br>check_unit1 : $check_unit1<br>";
     echo "<br>check_unit2 : $check_unit2<br>";
 
-    \Log::info("MarkAttendance Cron is working fine for Date between  : " .$request->start_date . " to " . $request->end_date . " on time : " . date("Y-m-d h:i:s", time()));
-    echo " MarkAttendance Cron is working fine for Date between  : " . $request->start_date . " to " . $request->end_date . " on time : " . date("Y-m-d h:i:s", time());
+
+    \Log::info("MarkAttendance Cron is working fine for Date between  : " .$auto_start_date . " to " . $auto_end_date . " on time : " . date("Y-m-d h:i:s", time()));
+    echo " MarkAttendance Cron is working fine for Date between  : " . $auto_start_date . " to " . $auto_end_date . " on time : " . date("Y-m-d h:i:s", time());
 
   }
 
@@ -1360,6 +1459,9 @@ class AttendanceController extends Controller
 
     $auto_start_date = $start_date;
     $auto_end_date = $end_date;
+
+    // if(isset($request->start_date)) { $auto_start_date = $request->start_date; }
+    // if(isset($request->end_date)) { $auto_end_date = $request->end_date; }
 
     $allUnits = [
       "Mahapura Unit Shift"=>[

@@ -679,6 +679,123 @@ public function getJobOpeningDetails(Request $request){
   }
 
 
+  public function checkResmithOrder(Request $request){
+
+   if( $request->validate([
+       'barcode' => 'required',
+       // 'username' => 'required',
+       ]) ) {
+         $data = DB::connection('erpnext')
+                 ->table('tabQuotation')
+                 ->where('name',  $request->barcode )
+                 ->first();
+         if(!empty($data)) {
+           $this->jsonResponse("Quotation is found.", true, $data);
+         } else {
+            $this->jsonResponse("Quotation not found.", true);
+         }
+       }
+
+ }
+
+
+ public function uploadResmithProductVideo(Request $request){
+   ini_set('max_execution_time', '1000000');
+
+   // $this->jsonResponse("video is successfully uploaded.", true, ["res" => $_REQUEST, "file" => $_FILES] );
+
+  if( $request->validate([
+      // 'barcode' => 'required',
+      // 'video' => 'size:5000000',
+      ]) ) {
+
+        // print_r($_REQUEST);
+        // print_r($_FILES);
+
+
+        // upload image ================ end =============================
+
+        // $file = $request->file('video');
+        //  $destinationPath = public_path('uploads/resmith');
+         // $destinationPath = 'uploads/resmith';
+
+         // $file->move($destinationPath,$file->getClientOriginalName());
+
+
+      }
+
+//       ini_set('post_max_size', '64MB');
+// ini_set('upload_max_filesize', '64MB');
+
+      // phpinfo();
+              $file = $request->file('video');
+              // dd($_FILES);
+              // dd($file);
+
+
+
+              // $file = $request->file('image');
+
+      // //Display File Name
+      // echo 'File Name: '.$file->getClientOriginalName();
+      // echo '<br>';
+      //
+      // //Display File Extension
+      // echo 'File Extension: '.$file->getClientOriginalExtension();
+      // echo '<br>';
+      //
+      // //Display File Real Path
+      // echo 'File Real Path: '.$file->getRealPath();
+      // echo '<br>';
+      //
+      // //Display File Size
+      // echo 'File Size: '.$file->getSize();
+      // echo '<br>';
+      //
+      // //Display File Mime Type
+      // echo 'File Mime Type: '.$file->getMimeType();
+
+      //Move Uploaded File
+
+
+      $destinationPath = 'public/uploads/resmith/';
+      $file_name = $file->move($destinationPath,$file->getClientOriginalName());
+
+      $file_path = "http://reports.pinkcityindia.com/$file_name";
+
+
+                // // $file_name = $files->getClientOriginalName();
+                // // print_r($file_name);
+                // // dd($files);
+                // $file_path = "";
+                // $uploaded_file_name = "";
+                // // print_r($file_name);
+                // // print_r($file_path);
+                // // dd($files);
+                // // $save_file = new File;
+                // $uploaded_file_name = str_replace("uploads/resmith/","",$file_path);
+                //
+                // // dd($files);
+                //
+                // $target_dir = "uploads/resmith/";
+                // $target_file = $target_dir . basename($_FILES["video"]["name"]);
+                //
+                // move_uploaded_file($_FILES["video"]["tmp_name"], $target_file);
+
+
+
+            // $this->jsonResponse("video is successfully uploaded.", true, ["file_path" => $file_path, "file_name" => $uploaded_file_name] );
+            $this->jsonResponse("video is successfully uploaded.", true, ["file_path" => $file_path, "file_name" => $file_name, "res" => $_REQUEST, "file" => $_FILES] );
+
+            if($file_path) {
+              $this->jsonResponse("video is successfully uploaded.", true, $uploaded_file_name);
+            } else {
+               $this->jsonResponse("unable to upload video.", true);
+            }
+
+}
+
+
 
 
 }

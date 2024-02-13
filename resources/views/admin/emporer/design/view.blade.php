@@ -436,6 +436,7 @@ use App\Library\WebHelper;
                                                <table id="new-datatable-2" class="table table-striped table-bordered" style="">
                                                   <thead>
                                                      <tr style="text-align: center;">
+                                                       <th>Design Code</th>
                                                        <th>S.NO.</th>
                                                        <th>Raw Material Category</th>
                                                        <th>Raw Material Sub Category</th>
@@ -462,6 +463,7 @@ use App\Library\WebHelper;
                                                      @php $count = 1 @endphp
                                                      @foreach($design_bom_details as $key => $data)
                                                           <tr  style="text-align: center;">
+                                                            <td>{{ $design_details->DmCd  }}</td>
                                                             <td>{{ $data->DrSr  }}</td>
                                                             <td class="parameter-desc" onclick="getParameterDescription('{{ $data->DrRmCtg  }}', 'table', this,  'raw_material_category')">{{ $data->DrRmCtg  }}</td>
                                                             <td class="parameter-desc" onclick="getParameterDescription('{{ $data->DrRmSCtg  }}', 'table', this, 'raw_material_sub_category', '{{ $data->DrRmCtg  }}' )">{{ $data->DrRmSCtg  }}</td>

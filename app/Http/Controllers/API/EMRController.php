@@ -210,7 +210,7 @@ class EMRController extends Controller
                       // ->where('DmCd',  "BRS99657" )
                       ->orderBy('DmDsgDt',  "DESC" )
                     // ->offset(0)
-                    ->limit(100)
+                    ->limit(1000)
                     ->get();
 
     echo "<pre>";

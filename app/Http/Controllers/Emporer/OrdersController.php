@@ -71,6 +71,9 @@ class OrdersController extends Controller
       $query->orderBy("OmDt", "DESC");
     }
 
+    if(!empty($request->company)){
+        $query->where('OrdMst.OmCoCd', $request->company);
+    }
     if(!empty($request->customer_code)){
         $query->where('OrdMst.OmCmCd', $request->customer_code);
     }
@@ -97,6 +100,78 @@ class OrdersController extends Controller
 
     // Helper::LoginIpandTime($request->getClientIp());
     return view('admin.emporer.orders.list', $data );
+  }
+
+  public function orderDesignlist(Request $request){
+
+    $this->check_db($request);
+
+    $title = "Emporer Orders Design - $this->emrDBName ";
+
+
+    $query = DB::connection($this->emrDB)
+            ->table("OrdDsg")
+            // ->select(DB::raw("OrdDsg.*, OrdMst.*,  CONCAT(OmTc, '/', OmYy, '/', OmChr, '/', OmNo) order_no, CustMst.CmName,
+            //                   DsgMst.DmCd, DsgMst.DmCtg, DsgMst.DmTcTyp") )
+            ->select(DB::raw("OrdDsg.*, OrdMst.*,  CONCAT(OmTc, '/', OmYy, '/', OmChr, '/', OmNo) order_no, CustMst.CmName") )
+            ->leftJoin("OrdMst", "OrdMst.OmIdNo" ,"OrdDsg.OdOmIdNo")
+            // ->leftJoin("DsgMst", "DsgMst.DmCd" ,"OrdDsg.OdDmCd")
+            ->leftJoin("CustMst", "CustMst.CmCd", "OrdMst.OmCmCd");
+
+    if(!empty($request->order_start_date)){
+        $query->whereDate('OmDt', ">=", $request->order_start_date);
+    }
+    if(!empty($request->order_end_date)){
+        $query->whereDate('OmDt', "<=", $request->order_end_date);
+    }
+
+    // expected == export
+    if(!empty($request->expected_order_start_date)){
+        $query->whereDate('OmExpDelDt', ">=", $request->expected_order_start_date);
+    }
+    if(!empty($request->expected_order_end_date)){
+        $query->whereDate('OmExpDelDt', "<=", $request->expected_order_end_date);
+    }
+
+    if(!empty($request->expected_order_start_date) || !empty($request->expected_order_end_date) ){
+        $query->orderBy("OmExpDelDt", "DESC");
+    }
+    elseif(!empty($request->order_start_date) ) {
+      $query->orderBy("OmDt", "ASC");
+    }
+    else {
+      $query->orderBy("OmDt", "DESC");
+    }
+
+    if(!empty($request->company)){
+        $query->where('OrdMst.OmCoCd', $request->company);
+    }
+    if(!empty($request->customer_code)){
+        $query->where('OrdMst.OmCmCd', $request->customer_code);
+    }
+    if(!empty($request->customer_name)){
+        $query->where('CustMst.CmName', $request->customer_name);
+    }
+    if(!empty($request->purchase_order_no)){
+        $query->where('OmPoNo',  "like", "%$request->purchase_order_no%");
+    }
+    if(!empty($request->order_no)){
+        $query->whereRaw("CONCAT(OmTc, '/', OmYy, '/', OmChr, '/', OmNo) like '%$request->order_no%'");
+    }
+
+    if(!empty($request->show)){
+      $pagination = $request->show;
+    }else{
+      $pagination = 20;
+    }
+
+    $orders_design_details = $query->paginate($pagination);
+
+    $data['title'] = $title;
+    $data['orders_design_details'] = $orders_design_details;
+
+    // Helper::LoginIpandTime($request->getClientIp());
+    return view('admin.emporer.orders.design_list', $data );
   }
 
 
@@ -158,6 +233,9 @@ class OrdersController extends Controller
     // Helper::LoginIpandTime($request->getClientIp());
     return view('admin.emporer.orders.view', $data );
   }
+
+
+
 
 
   public function orderTracking(Request $request){

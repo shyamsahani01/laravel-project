@@ -17,6 +17,7 @@ use App\Http\Controllers\ESSLController;
 use App\Http\Controllers\Jade\JadePowerBiController;
 use App\Http\Controllers\Emporer\DesignController;
 use App\Http\Controllers\Emporer\OrdersController;
+use App\Http\Controllers\Emporer\InvoiceController;
 use App\Http\Controllers\Emporer\BagController;
 use App\Http\Controllers\Emporer\ParameterController;
 use App\Http\Controllers\Emporer\FinishGoodController;
@@ -297,8 +298,12 @@ Route::get('/emporer/design/designDetails', [DesignController::class, 'designDet
 
 Route::get('/emporer/orders/list', [OrdersController::class, 'list'])->name('emporer.orders.list');
 Route::get('/emporer/orders/ordersDetails', [OrdersController::class, 'ordersDetails'])->name('emporer.orders.ordersDetails');
+Route::get('/emporer/orders-design/list', [OrdersController::class, 'orderDesignlist'])->name('emporer.orders.orderDesignlist');
 Route::get('/emporer/set-emrDB', [OrdersController::class, 'setEmrDB'])->name('setEmrDB');
 Route::get('/emporer/get-order-design-bag-details', [OrdersController::class, 'orderDesignsBagDetails'])->name('emporer.orders.orderDesignsBagDetails');
+
+Route::get('/emporer/invoice/list', [InvoiceController::class, 'list'])->name('emporer.invoice.list');
+Route::get('/emporer/invoice/invoiceDetails', [InvoiceController::class, 'invoiceDetails'])->name('emporer.orders.invoiceDetails');
 
 
 Route::get('/emporer/bag/list', [BagController::class, 'list'])->name('emporer.bag.list');

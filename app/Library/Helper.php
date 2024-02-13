@@ -440,7 +440,8 @@ class Helper {
             // "Authorization: token " .getenv("ERP_TOKEN"),
             "Authorization: token 8df39ff6e216a4b:4f0295ed14f70b9",
         );
-        $url = 'https://erp.pinkcityindia.com/api/method/erpnext.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field';
+        // $url = 'https://erp.pinkcityindia.com/api/method/erpnext.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field';
+        $url = 'https://10.200.20.162/api/method/hrms.hr.doctype.employee_checkin.employee_checkin.add_log_based_on_employee_field';
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

@@ -66,15 +66,18 @@ $showurl = url('/hr/emp_ot_lesshours/ot_lesshours_report?show='.request()->show.
                               <th>Employee Code</th>
                               <th>Employee Name</th>
                               <th>ESSL Code</th>
-                              <th style="width: 150px;">Date</th>
+                              <th style="min-width: 140px;">Date</th>
                               <th>In Time</th>
                               <th>Out Time</th>
-                              <th>Multiple Check-IN</th>
-                              <th>All In Out</th>
+                              <!-- <th>Multiple Check-IN</th>
+                              <th>All In Out</th> -->
+                              <th>Attendance Status</th>
+                              <th>Shift Time</th>
                               <th>Actual Total Working Hrs</th>
                               <th>Actual OT Hrs</th>
                               <th>Actual Less Hrs</th>
                               <th>Actual Access Hrs</th>
+                              <th>Shift Time Hrs</th>
                               <th>Total Working Hrs</th>
                               <th>OT Include</th>
                               <th>OT Hrs</th>
@@ -101,16 +104,19 @@ $showurl = url('/hr/emp_ot_lesshours/ot_lesshours_report?show='.request()->show.
                                 <td>{{ date("Y-m-d, D", strtotime($data->date) ) }}</td>
                                 <td>{{ date("H:i:s", strtotime($data->in_time) ) }}</td>
                                 <td>{{ date("H:i:s", strtotime($data->out_time) )  }}</td>
-                                <td>{{ ($data->multiple_checkin == 1 ) ? "Multi Check-IN Yes" : "No" }}</td>
+                                <!-- <td>{{ ($data->multiple_checkin == 1 ) ? "Multi Check-IN Yes" : "No" }}</td>
                                 <td>
                                   @if($data->multiple_checkin == 1)
                                   <a href="javascript:void(0)" onclick="openAllCheckin({{ $data->id  }})" style="color: white;" class="btn btn-success design1-form1-btn"><i class="fa fa-eye"></i></a>
                                   @endif
-                                </td>
+                                </td> -->
+                                <td>{{ $data->attendance_status }}</td>
+                                <td>{{ $data->shift_time }}</td>
                                 <td>{{ $data->total_hours }}</td>
                                 <td>{{ $data->ot_hours }}</td>
                                 <td>{{ $data->less_hours }}</td>
                                 <td>{{ $data->access_hours }}</td>
+                                <td>{{ $data->shift_time_hour }}</td>
                                 <td>{{ $data->total_hours_round }}</td>
                                 <td>{{ ($data->ot_includes == 1 ) ?  "Yes" : "No" }}</td>
                                 <td>{{ $data->ot_hours_round }}</td>

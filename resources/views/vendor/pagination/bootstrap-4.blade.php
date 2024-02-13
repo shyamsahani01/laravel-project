@@ -15,15 +15,37 @@ $filter = 'start_date='.request()->start_date.'&end_date='.request()->end_date.'
 @endphp
 @endif
 
+
+
 @if(Request::segment(1) == 'emporer' && Request::segment(2) == 'orders' )
 @php
-$filter = 'show='.request()->show.'&order_start_date='.request()->order_start_date.'&order_end_date='.request()->order_end_date.'&customer_code='.request()->customer_code.'&customer_name='.request()->customer_name.'&order_no='.request()->order_no.'&expected_order_start_date='.request()->expected_order_start_date.'&purchase_order_no='.request()->purchase_order_no;
+$str = "";
+$str .= 'show='.request()->show;
+$str .= '&order_start_date='.request()->order_start_date;
+$str .= '&order_end_date='.request()->order_end_date;
+$str .= '&customer_code='.request()->customer_code;
+$str .= '&order_no='.request()->order_no;
+$str .= '&expected_order_start_date='.request()->expected_order_start_date;
+$str .= '&purchase_order_no='.request()->purchase_order_no;
+$str .= '&company='.request()->company;
+$str .= '&customer_code='.request()->customer_code;
+$filter = $str;
 @endphp
 @endif
 
-@if(Request::segment(1) == 'emporer' && Request::segment(2) == 'design' )
+@if(Request::segment(1) == 'emporer' && Request::segment(2) == 'orders-design' )
 @php
-$filter = 'show='.request()->show.'&order_start_date='.request()->order_start_date.'&order_end_date='.request()->order_end_date.'&customer_code='.request()->customer_code.'&customer_name='.request()->customer_name.'&order_no='.request()->order_no.'&expected_order_start_date='.request()->expected_order_start_date.'&purchase_order_no='.request()->purchase_order_no;
+$str = "";
+$str .= 'show='.request()->show;
+$str .= '&order_start_date='.request()->order_start_date;
+$str .= '&order_end_date='.request()->order_end_date;
+$str .= '&customer_code='.request()->customer_code;
+$str .= '&order_no='.request()->order_no;
+$str .= '&expected_order_start_date='.request()->expected_order_start_date;
+$str .= '&purchase_order_no='.request()->purchase_order_no;
+$str .= '&company='.request()->company;
+$str .= '&customer_code='.request()->customer_code;
+$filter = $str;
 @endphp
 @endif
 
@@ -105,6 +127,20 @@ $str .= '&voucher_no='.request()->voucher_no;
 $filter = $str;
 @endphp
 @endif
+
+@if(Request::segment(1) == 'emporer' && Request::segment(2) == 'invoice' )
+@php
+$str = "";
+$str .= 'show='.request()->show;
+$str .= '&start_date='.request()->start_date;
+$str .= '&end_date='.request()->end_date;
+$str .= '&invoice_no='.request()->invoice_no;
+$str .= '&company='.request()->company;
+$str .= '&customer_code='.request()->customer_code;
+$filter = $str;
+@endphp
+@endif
+
 
 @if(Request::segment(1) == 'emporer' &&  Request::segment(2) == 'report' && Request::segment(3) == 'what-is-where' )
 @php
